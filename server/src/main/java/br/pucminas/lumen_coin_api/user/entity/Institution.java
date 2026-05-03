@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import br.pucminas.lumen_coin_api.user.enums.UserRole;
 
 @Entity
 @Table(name = "tb_institutions", indexes = @Index(name = "idx_institutions_cnpj", columnList = "cnpj"))
@@ -21,4 +22,9 @@ public class Institution extends User {
 
     @Column(name = "address", length = 300)
     private String address;
+
+    @Override
+    public UserRole getRole() {
+        return UserRole.INSTITUTION;
+    }
 }

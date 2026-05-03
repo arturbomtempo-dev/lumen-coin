@@ -1,6 +1,7 @@
 package br.pucminas.lumen_coin_api.user.entity;
 
 import br.pucminas.lumen_coin_api.user.enums.Avatar;
+import br.pucminas.lumen_coin_api.user.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 public abstract class User {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
@@ -35,7 +36,7 @@ public abstract class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "avatar", nullable = false, length = 10)
+    @Column(name = "avatar", nullable = false, length = 15)
     private Avatar avatar;
 
     @CreationTimestamp
@@ -45,4 +46,6 @@ public abstract class User {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    public abstract UserRole getRole();
 }

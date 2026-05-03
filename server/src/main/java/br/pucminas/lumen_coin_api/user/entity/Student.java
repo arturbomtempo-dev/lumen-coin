@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import br.pucminas.lumen_coin_api.user.enums.UserRole;
 
 @Entity
 @Table(name = "tb_students", indexes = @Index(name = "idx_students_cpf", columnList = "cpf"))
@@ -27,4 +28,9 @@ public class Student extends User {
 
     @Column(name = "balance", nullable = false)
     private int balance = 0;
+
+    @Override
+    public UserRole getRole() {
+        return UserRole.STUDENT;
+    }
 }
