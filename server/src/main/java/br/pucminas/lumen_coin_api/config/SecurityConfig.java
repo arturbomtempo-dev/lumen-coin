@@ -70,7 +70,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         // Public: login + register students, institutions, companies
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/logout").permitAll()
                         .requestMatchers(HttpMethod.POST, "/students", "/institutions", "/companies").permitAll()
                         // Public reads
                         .requestMatchers(HttpMethod.GET, "/students/**", "/teachers/**",

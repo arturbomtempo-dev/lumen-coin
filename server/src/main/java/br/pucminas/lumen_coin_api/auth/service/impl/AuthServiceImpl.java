@@ -5,6 +5,7 @@ import br.pucminas.lumen_coin_api.auth.dto.response.AuthResponse;
 import br.pucminas.lumen_coin_api.auth.service.AuthService;
 import br.pucminas.lumen_coin_api.security.JwtService;
 import br.pucminas.lumen_coin_api.security.UserPrincipal;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,21 +20,23 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
 
     @Override
-    public AuthResponse login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request, HttpServletResponse response) {
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email(), request.password()));
 
         UserPrincipal principal = (UserPrincipal) auth.getPrincipal();
-        String token = jwtService.generateToken(principal);
+        response.addCookie(jwtService.buildAuthCookie(principal));
 
         return new AuthResponse(
-                token,
-                "Bearer",
-                jwtService.getExpirationMs(),
                 principal.getUserId(),
                 principal.getName(),
                 principal.getUsername(),
                 principal.getAvatar(),
                 principal.getRole());
+    }
+
+    @Override
+    public void logout(HttpServletResponse response) {
+        response.addCookie(jwtService.buildClearCookie());
     }
 }
