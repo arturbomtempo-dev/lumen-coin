@@ -43,7 +43,8 @@ src/
 
 ## Code Language and Comments
 
-- All code, variable names, function names, file names, and string literals must be written in **English**.
+- All code must be written in **English**: variable names, function names, type names, file names, constants, and all identifiers.
+- **UI text displayed to the user** (labels, buttons, placeholders, toast messages, headers, error messages, and any other visible text) must be written in **Portuguese**.
 - **No comments are allowed anywhere in the codebase** — no `//`, no `/* */`, no template comments. Code must be self-explanatory through naming and structure alone.
 - If the logic is unclear without a comment, refactor it until it is clear.
 
