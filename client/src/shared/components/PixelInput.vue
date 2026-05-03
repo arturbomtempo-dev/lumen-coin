@@ -30,7 +30,7 @@ const emit = defineEmits<{
         :maxlength="maxLength"
         :readonly="readonly"
         :class="[
-            'w-full bg-input text-foreground placeholder:text-muted-foreground',
+            'w-full bg-input text-foreground',
             'border-2 border-border px-3 py-2 font-display text-lg',
             'shadow-[inset_2px_2px_0_0_hsl(var(--border)/0.25)]',
             'focus:outline-none focus:ring-2 focus:ring-ring',
