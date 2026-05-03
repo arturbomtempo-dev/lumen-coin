@@ -1,7 +1,7 @@
 import router from '@/app/router';
-import { useToastStore } from '@/shared/stores/toast.store';
 import { useUIStore } from '@/shared/stores/ui.store';
 import axios from 'axios';
+import { toast } from 'vue-sonner';
 
 export const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
@@ -22,12 +22,11 @@ api.interceptors.response.use(
     },
     (error) => {
         const ui = useUIStore();
-        const toast = useToastStore();
 
         ui.stopLoading();
 
         const message = error.response?.data?.message || 'Unexpected error occurred';
-        toast.addToast(message, 'error');
+        toast.error(message);
 
         if (error.response?.status === 401) {
             router.push('/login');

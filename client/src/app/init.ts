@@ -1,6 +1,4 @@
-import { useAuthStore } from '@/modules/auth/stores/auth.store';
-
+// No backend integration yet — init is a no-op placeholder
 export async function initializeApp() {
-    const auth = useAuthStore();
-    await auth.checkAuth();
+    // future: auth check, feature flags, etc.
 }

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import GlobalLoading from '@/shared/components/GlobalLoading.vue';
-import ToastContainer from '@/shared/components/ToastContainer.vue';
+import { Toaster } from 'vue-sonner'
+import GlobalLoading from '@/shared/components/GlobalLoading.vue'
 </script>
 
 <template>
-    <GlobalLoading />
-    <ToastContainer />
-    <router-view />
+  <GlobalLoading />
+  <Toaster position="top-right" rich-colors />
+  <router-view />
 </template>
