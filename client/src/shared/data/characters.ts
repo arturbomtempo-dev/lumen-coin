@@ -1,4 +1,11 @@
-export type MarioCharacter = 'mario' | 'luigi' | 'peach' | 'toad' | 'yoshi' | 'bowser' | 'instituicao';
+export type MarioCharacter =
+    | 'mario'
+    | 'luigi'
+    | 'peach'
+    | 'toad'
+    | 'yoshi'
+    | 'bowser'
+    | 'instituicao';
 
 export const MARIO_CHARACTERS: { id: MarioCharacter; nome: string; classe: string }[] = [
     { id: 'mario', nome: 'Mario', classe: 'Encanador Herói' },

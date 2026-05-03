@@ -20,10 +20,7 @@ import { toast } from 'vue-sonner';
 import { useStudentStore } from '@/modules/student/stores/student.store';
 
 import { cursos, instituicoes } from '@/shared/data/mockData';
-import {
-    MARIO_CHARACTERS,
-    type MarioCharacter,
-} from '@/shared/data/characters';
+import { MARIO_CHARACTERS, type MarioCharacter } from '@/shared/data/characters';
 
 import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
@@ -111,23 +108,15 @@ const progress = computed<number>(() => {
 });
 
 const passwordsMatch = computed<boolean | null>(() => {
-    if (
-        !studentForm.value.senha ||
-        !studentForm.value.confirmarSenha
-    ) {
+    if (!studentForm.value.senha || !studentForm.value.confirmarSenha) {
         return null;
     }
 
-    return (
-        studentForm.value.senha ===
-        studentForm.value.confirmarSenha
-    );
+    return studentForm.value.senha === studentForm.value.confirmarSenha;
 });
 
 const studentCharacters = computed(() => {
-    return MARIO_CHARACTERS.filter(
-        (item) => item.id !== 'instituicao',
-    );
+    return MARIO_CHARACTERS.filter((item) => item.id !== 'instituicao');
 });
 
 function formatCpf(value: string): string {
@@ -152,15 +141,10 @@ function formatPhone(value: string): string {
     const numericValue = value.replace(/\D/g, '').slice(0, 11);
 
     if (numericValue.length <= 10) {
-        return numericValue
-            .replace(/^(\d{2})(\d)/, '($1) $2')
-            .replace(/(\d{4})(\d)/, '$1-$2');
+        return numericValue.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d)/, '$1-$2');
     }
 
-    return numericValue.replace(
-        /^(\d{2})(\d{5})(\d{4})$/,
-        '($1) $2-$3',
-    );
+    return numericValue.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
 }
 
 function formatCep(value: string): string {
@@ -226,12 +210,9 @@ function goToNextStep(): void {
 
     studentStore.setPersonagem(character.value);
 
-    toast.success(
-        `Bem-vindo(a), ${studentForm.value.nome || 'Jogador'}!`,
-        {
-            description: 'PERSONAGEM CRIADO! +100 moedas bônus!',
-        },
-    );
+    toast.success(`Bem-vindo(a), ${studentForm.value.nome || 'Jogador'}!`, {
+        description: 'PERSONAGEM CRIADO! +100 moedas bônus!',
+    });
 
     router.push('/app/aluno');
 }
@@ -261,10 +242,7 @@ function goBack(): void {
                     <div
                         class="w-7 h-7 border-2 border-border bg-primary flex items-center justify-center shadow-[2px_2px_0px_hsl(var(--border))]"
                     >
-                        <PhArrowLeft
-                            :size="14"
-                            weight="bold"
-                        />
+                        <PhArrowLeft :size="14" weight="bold" />
                     </div>
 
                     <span>VOLTAR À TELA INICIAL</span>
@@ -275,10 +253,7 @@ function goBack(): void {
                         <div
                             class="bg-hud border-2 border-border p-2 shadow-[4px_4px_0px_hsl(var(--border))]"
                         >
-                            <MarioAvatar
-                                :character="character"
-                                :size="56"
-                            />
+                            <MarioAvatar :character="character" :size="56" />
                         </div>
 
                         <div>
@@ -288,9 +263,7 @@ function goBack(): void {
                         </div>
                     </div>
 
-                    <div class="font-pixel text-[9px] text-primary">
-                        ETAPA {{ step + 1 }}
-                    </div>
+                    <div class="font-pixel text-[9px] text-primary">ETAPA {{ step + 1 }}</div>
                 </div>
 
                 <div class="mb-6">
@@ -331,18 +304,9 @@ function goBack(): void {
                                       : 'bg-card'
                             "
                         >
-                            <PhCheckCircle
-                                v-if="index < step"
-                                :size="18"
-                                weight="fill"
-                            />
+                            <PhCheckCircle v-if="index < step" :size="18" weight="fill" />
 
-                            <component
-                                :is="item.icon"
-                                v-else
-                                :size="18"
-                                weight="fill"
-                            />
+                            <component :is="item.icon" v-else :size="18" weight="fill" />
                         </div>
 
                         <p class="font-pixel text-[7px] leading-3">
@@ -354,9 +318,7 @@ function goBack(): void {
                 <div class="space-y-4">
                     <template v-if="step === 0">
                         <div>
-                            <p class="font-pixel text-[10px] mb-4">
-                                ESCOLHA SEU PERSONAGEM
-                            </p>
+                            <p class="font-pixel text-[10px] mb-4">ESCOLHA SEU PERSONAGEM</p>
 
                             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                 <button
@@ -374,10 +336,7 @@ function goBack(): void {
                                     <div
                                         class="bg-hud border-2 border-border p-3 flex justify-center mb-3"
                                     >
-                                        <MarioAvatar
-                                            :character="item.id"
-                                            :size="56"
-                                        />
+                                        <MarioAvatar :character="item.id" :size="56" />
                                     </div>
 
                                     <p class="font-pixel text-[10px]">
@@ -403,9 +362,7 @@ function goBack(): void {
 
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label class="font-pixel text-[9px] block mb-2">
-                                        CPF
-                                    </label>
+                                    <label class="font-pixel text-[9px] block mb-2"> CPF </label>
 
                                     <PixelInput
                                         :model-value="studentForm.cpf"
@@ -416,9 +373,7 @@ function goBack(): void {
                                 </div>
 
                                 <div>
-                                    <label class="font-pixel text-[9px] block mb-2">
-                                        RG
-                                    </label>
+                                    <label class="font-pixel text-[9px] block mb-2"> RG </label>
 
                                     <PixelInput
                                         :model-value="studentForm.rg"
@@ -430,9 +385,7 @@ function goBack(): void {
                             </div>
 
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2">
-                                    TELEFONE
-                                </label>
+                                <label class="font-pixel text-[9px] block mb-2"> TELEFONE </label>
 
                                 <PixelInput
                                     :model-value="studentForm.telefone"
@@ -447,9 +400,7 @@ function goBack(): void {
                     <template v-if="step === 2">
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2">
-                                    CEP
-                                </label>
+                                <label class="font-pixel text-[9px] block mb-2"> CEP </label>
 
                                 <PixelInput
                                     :model-value="studentForm.cep"
@@ -460,47 +411,27 @@ function goBack(): void {
                             </div>
 
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2">
-                                    CIDADE
-                                </label>
+                                <label class="font-pixel text-[9px] block mb-2"> CIDADE </label>
 
-                                <PixelInput
-                                    v-model="studentForm.cidade"
-                                    placeholder="Cidade"
-                                />
+                                <PixelInput v-model="studentForm.cidade" placeholder="Cidade" />
                             </div>
 
                             <div class="col-span-2">
-                                <label class="font-pixel text-[9px] block mb-2">
-                                    RUA
-                                </label>
+                                <label class="font-pixel text-[9px] block mb-2"> RUA </label>
 
-                                <PixelInput
-                                    v-model="studentForm.rua"
-                                    placeholder="Rua"
-                                />
+                                <PixelInput v-model="studentForm.rua" placeholder="Rua" />
                             </div>
 
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2">
-                                    NÚMERO
-                                </label>
+                                <label class="font-pixel text-[9px] block mb-2"> NÚMERO </label>
 
-                                <PixelInput
-                                    v-model="studentForm.numero"
-                                    placeholder="123"
-                                />
+                                <PixelInput v-model="studentForm.numero" placeholder="123" />
                             </div>
 
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2">
-                                    BAIRRO
-                                </label>
+                                <label class="font-pixel text-[9px] block mb-2"> BAIRRO </label>
 
-                                <PixelInput
-                                    v-model="studentForm.bairro"
-                                    placeholder="Bairro"
-                                />
+                                <PixelInput v-model="studentForm.bairro" placeholder="Bairro" />
                             </div>
 
                             <div class="col-span-2">
@@ -538,19 +469,13 @@ function goBack(): void {
                             </div>
 
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2">
-                                    CURSO
-                                </label>
+                                <label class="font-pixel text-[9px] block mb-2"> CURSO </label>
 
                                 <select
                                     v-model="studentForm.curso"
                                     class="w-full border-2 border-border bg-card px-3 py-2 font-pixel text-[10px]"
                                 >
-                                    <option
-                                        v-for="course in cursos"
-                                        :key="course"
-                                        :value="course"
-                                    >
+                                    <option v-for="course in cursos" :key="course" :value="course">
                                         {{ course }}
                                     </option>
                                 </select>
@@ -561,9 +486,7 @@ function goBack(): void {
                     <template v-if="step === 4">
                         <div class="space-y-4">
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2">
-                                    E-MAIL
-                                </label>
+                                <label class="font-pixel text-[9px] block mb-2"> E-MAIL </label>
 
                                 <PixelInput
                                     v-model="studentForm.email"
@@ -573,9 +496,7 @@ function goBack(): void {
                             </div>
 
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2">
-                                    SENHA
-                                </label>
+                                <label class="font-pixel text-[9px] block mb-2"> SENHA </label>
 
                                 <div class="relative">
                                     <PixelInput
@@ -590,17 +511,9 @@ function goBack(): void {
                                         type="button"
                                         @click="showPassword = !showPassword"
                                     >
-                                        <PhEyeSlash
-                                            v-if="showPassword"
-                                            :size="18"
-                                            weight="bold"
-                                        />
+                                        <PhEyeSlash v-if="showPassword" :size="18" weight="bold" />
 
-                                        <PhEye
-                                            v-else
-                                            :size="18"
-                                            weight="bold"
-                                        />
+                                        <PhEye v-else :size="18" weight="bold" />
                                     </button>
                                 </div>
                             </div>
@@ -613,11 +526,7 @@ function goBack(): void {
                                 <div class="relative">
                                     <PixelInput
                                         v-model="studentForm.confirmarSenha"
-                                        :type="
-                                            showConfirmPassword
-                                                ? 'text'
-                                                : 'password'
-                                        "
+                                        :type="showConfirmPassword ? 'text' : 'password'"
                                         class="pr-10"
                                         placeholder="••••••••"
                                     />
@@ -625,10 +534,7 @@ function goBack(): void {
                                     <button
                                         class="absolute right-3 top-1/2 -translate-y-1/2"
                                         type="button"
-                                        @click="
-                                            showConfirmPassword =
-                                                !showConfirmPassword
-                                        "
+                                        @click="showConfirmPassword = !showConfirmPassword"
                                     >
                                         <PhEyeSlash
                                             v-if="showConfirmPassword"
@@ -636,28 +542,16 @@ function goBack(): void {
                                             weight="bold"
                                         />
 
-                                        <PhEye
-                                            v-else
-                                            :size="18"
-                                            weight="bold"
-                                        />
+                                        <PhEye v-else :size="18" weight="bold" />
                                     </button>
                                 </div>
 
                                 <p
                                     v-if="passwordsMatch !== null"
                                     class="font-pixel text-[8px] mt-2"
-                                    :class="
-                                        passwordsMatch
-                                            ? 'text-success'
-                                            : 'text-destructive'
-                                    "
+                                    :class="passwordsMatch ? 'text-success' : 'text-destructive'"
                                 >
-                                    {{
-                                        passwordsMatch
-                                            ? 'SENHAS COINCIDEM'
-                                            : 'SENHAS DIFERENTES'
-                                    }}
+                                    {{ passwordsMatch ? 'SENHAS COINCIDEM' : 'SENHAS DIFERENTES' }}
                                 </p>
                             </div>
                         </div>
@@ -665,30 +559,16 @@ function goBack(): void {
                 </div>
 
                 <div class="flex justify-between gap-3 mt-7">
-                    <PixelButton
-                        :disabled="step === 0"
-                        variant="ghost"
-                        @click="goToPreviousStep"
-                    >
-                        <PhArrowLeft
-                            :size="16"
-                            weight="bold"
-                        />
+                    <PixelButton :disabled="step === 0" variant="ghost" @click="goToPreviousStep">
+                        <PhArrowLeft :size="16" weight="bold" />
 
                         VOLTAR
                     </PixelButton>
 
                     <PixelButton @click="goToNextStep">
-                        {{
-                            step === studentSteps.length - 1
-                                ? 'FINALIZAR'
-                                : 'PRÓXIMA'
-                        }}
+                        {{ step === studentSteps.length - 1 ? 'FINALIZAR' : 'PRÓXIMA' }}
 
-                        <PhArrowRight
-                            :size="16"
-                            weight="bold"
-                        />
+                        <PhArrowRight :size="16" weight="bold" />
                     </PixelButton>
                 </div>
             </PixelCard>
