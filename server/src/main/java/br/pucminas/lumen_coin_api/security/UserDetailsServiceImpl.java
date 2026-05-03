@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -20,5 +22,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return userRepository.findByEmail(email)
                 .map(UserPrincipal::of)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+    }
+
+    @Transactional(readOnly = true)
+    public UserDetails loadUserById(UUID userId) throws UsernameNotFoundException {
+        return userRepository.findById(userId)
+                .map(UserPrincipal::of)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with ID: " + userId));
     }
 }
