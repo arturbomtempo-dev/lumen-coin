@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/users/students")
+@RequestMapping("/students")
 @RequiredArgsConstructor
 public class StudentController {
     private final StudentService studentService;

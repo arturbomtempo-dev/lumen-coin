@@ -3,7 +3,7 @@ package br.pucminas.lumen_coin_api.user.service.impl;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterInstitutionRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.InstitutionResponse;
 import br.pucminas.lumen_coin_api.user.entity.Institution;
-import br.pucminas.lumen_coin_api.user.enums.UserRole;
+import br.pucminas.lumen_coin_api.user.enums.Avatar;
 import br.pucminas.lumen_coin_api.user.exception.CnpjAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
@@ -40,12 +40,11 @@ public class InstitutionServiceImpl implements InstitutionService {
         Institution institution = new Institution();
         institution.setName(request.name());
         institution.setEmail(request.email());
-        institution.setPasswordHash(passwordEncoder.encode(request.password()));
-        institution.setImagem(request.imagem());
-        institution.setRole(UserRole.INSTITUTION);
+        institution.setPassword(passwordEncoder.encode(request.password()));
+        institution.setAvatar(request.avatar() != null ? request.avatar() : Avatar.INSTITUTION);
         institution.setCnpj(request.cnpj());
-        institution.setCep(request.cep());
-        institution.setEndereco(request.endereco());
+        institution.setZipCode(request.zipCode());
+        institution.setAddress(request.address());
 
         return mapper.toResponse(institutionRepository.save(institution));
     }

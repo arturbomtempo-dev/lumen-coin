@@ -16,9 +16,9 @@ public class Teacher extends User {
     @Column(name = "cpf", unique = true, nullable = false, length = 11)
     private String cpf;
 
-    @Column(name = "departamento", length = 150)
-    private String departamento;
+    @Column(name = "department", length = 150)
+    private String department;
 
-    @Column(name = "saldo", nullable = false)
-    private int saldo = 0;
+    @Column(name = "balance", nullable = false)
+    private int balance = 0;
 }

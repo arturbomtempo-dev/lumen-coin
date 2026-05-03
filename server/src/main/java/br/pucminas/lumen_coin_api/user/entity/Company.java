@@ -15,7 +15,4 @@ public class Company extends User {
 
     @Column(name = "cnpj", unique = true, nullable = false, length = 14)
     private String cnpj;
-
-    @Column(name = "descricao", length = 2000)
-    private String descricao;
 }

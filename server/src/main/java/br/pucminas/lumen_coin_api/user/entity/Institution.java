@@ -16,9 +16,9 @@ public class Institution extends User {
     @Column(name = "cnpj", unique = true, nullable = false, length = 14)
     private String cnpj;
 
-    @Column(name = "cep", length = 8)
-    private String cep;
+    @Column(name = "zip_code", length = 8)
+    private String zipCode;
 
-    @Column(name = "endereco", length = 300)
-    private String endereco;
+    @Column(name = "address", length = 300)
+    private String address;
 }

@@ -1,5 +1,6 @@
 package br.pucminas.lumen_coin_api.user.dto.request;
 
+import br.pucminas.lumen_coin_api.user.enums.Avatar;
 import jakarta.validation.constraints.*;
 
 public record RegisterCompanyRequest(
@@ -10,9 +11,7 @@ public record RegisterCompanyRequest(
 
                 @NotBlank(message = "Password is required") @Size(min = 8, max = 72, message = "Password must be between 8 and 72 characters") String password,
 
-                @Size(max = 500, message = "Imagem must not exceed 500 characters") String imagem,
+                Avatar avatar,
 
-                @NotBlank(message = "CNPJ is required") @Pattern(regexp = "\\d{14}", message = "CNPJ must contain exactly 14 digits") String cnpj,
-
-                @Size(max = 2000, message = "Descricao must not exceed 2000 characters") String descricao) {
+                @NotBlank(message = "CNPJ is required") @Pattern(regexp = "\\d{14}", message = "CNPJ must contain exactly 14 digits") String cnpj) {
 }

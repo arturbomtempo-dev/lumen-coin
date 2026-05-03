@@ -1,6 +1,6 @@
 package br.pucminas.lumen_coin_api.user.dto.response;
 
-import br.pucminas.lumen_coin_api.user.enums.UserRole;
+import br.pucminas.lumen_coin_api.user.enums.Avatar;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -9,11 +9,10 @@ public record TeacherResponse(
                 UUID id,
                 String name,
                 String email,
-                String imagem,
-                UserRole role,
+                Avatar avatar,
                 String cpf,
-                String departamento,
-                int saldo,
+                String department,
+                int balance,
                 Instant createdAt,
                 Instant updatedAt) {
 }

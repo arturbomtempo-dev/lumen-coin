@@ -6,5 +6,7 @@ public enum Avatar {
     PEACH,
     TOAD,
     YOSHI,
-    BOWSER
+    BOWSER,
+    COMPANY,
+    INSTITUTION
 }

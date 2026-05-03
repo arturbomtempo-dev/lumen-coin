@@ -3,7 +3,6 @@ package br.pucminas.lumen_coin_api.user.service.impl;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterTeacherRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.TeacherResponse;
 import br.pucminas.lumen_coin_api.user.entity.Teacher;
-import br.pucminas.lumen_coin_api.user.enums.UserRole;
 import br.pucminas.lumen_coin_api.user.exception.CpfAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
@@ -40,11 +39,10 @@ public class TeacherServiceImpl implements TeacherService {
         Teacher teacher = new Teacher();
         teacher.setName(request.name());
         teacher.setEmail(request.email());
-        teacher.setPasswordHash(passwordEncoder.encode(request.password()));
-        teacher.setImagem(request.imagem());
-        teacher.setRole(UserRole.TEACHER);
+        teacher.setPassword(passwordEncoder.encode(request.password()));
+        teacher.setAvatar(request.avatar());
         teacher.setCpf(request.cpf());
-        teacher.setDepartamento(request.departamento());
+        teacher.setDepartment(request.department());
 
         return mapper.toResponse(teacherRepository.save(teacher));
     }
