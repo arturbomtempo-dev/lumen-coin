@@ -3,7 +3,7 @@ package br.pucminas.lumen_coin_api.user.service.impl;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterCompanyRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.CompanyResponse;
 import br.pucminas.lumen_coin_api.user.entity.Company;
-import br.pucminas.lumen_coin_api.user.enums.UserRole;
+import br.pucminas.lumen_coin_api.user.enums.Avatar;
 import br.pucminas.lumen_coin_api.user.exception.CnpjAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
@@ -40,11 +40,9 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = new Company();
         company.setName(request.name());
         company.setEmail(request.email());
-        company.setPasswordHash(passwordEncoder.encode(request.password()));
-        company.setImagem(request.imagem());
-        company.setRole(UserRole.COMPANY);
+        company.setPassword(passwordEncoder.encode(request.password()));
+        company.setAvatar(request.avatar() != null ? request.avatar() : Avatar.COMPANY);
         company.setCnpj(request.cnpj());
-        company.setDescricao(request.descricao());
 
         return mapper.toResponse(companyRepository.save(company));
     }

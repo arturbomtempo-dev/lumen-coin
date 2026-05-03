@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import br.pucminas.lumen_coin_api.user.enums.UserRole;
 
 @Entity
 @Table(name = "tb_students", indexes = @Index(name = "idx_students_cpf", columnList = "cpf"))
@@ -16,15 +17,20 @@ public class Student extends User {
     @Column(name = "cpf", unique = true, nullable = false, length = 11)
     private String cpf;
 
-    @Column(name = "rg", length = 20)
+    @Column(name = "rg", nullable = false, length = 10)
     private String rg;
 
-    @Column(name = "descricao", length = 2000)
-    private String descricao;
+    @Column(name = "zip_code", length = 8)
+    private String zipCode;
 
-    @Column(name = "endereco", length = 300)
-    private String endereco;
+    @Column(name = "address", length = 300)
+    private String address;
 
-    @Column(name = "saldo", nullable = false)
-    private int saldo = 0;
+    @Column(name = "balance", nullable = false)
+    private int balance = 0;
+
+    @Override
+    public UserRole getRole() {
+        return UserRole.STUDENT;
+    }
 }

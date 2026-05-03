@@ -3,7 +3,6 @@ package br.pucminas.lumen_coin_api.user.service.impl;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterStudentRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.StudentResponse;
 import br.pucminas.lumen_coin_api.user.entity.Student;
-import br.pucminas.lumen_coin_api.user.enums.UserRole;
 import br.pucminas.lumen_coin_api.user.exception.CpfAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
@@ -40,13 +39,12 @@ public class StudentServiceImpl implements StudentService {
         Student student = new Student();
         student.setName(request.name());
         student.setEmail(request.email());
-        student.setPasswordHash(passwordEncoder.encode(request.password()));
-        student.setImagem(request.imagem());
-        student.setRole(UserRole.STUDENT);
+        student.setPassword(passwordEncoder.encode(request.password()));
+        student.setAvatar(request.avatar());
         student.setCpf(request.cpf());
         student.setRg(request.rg());
-        student.setDescricao(request.descricao());
-        student.setEndereco(request.endereco());
+        student.setZipCode(request.zipCode());
+        student.setAddress(request.address());
 
         return mapper.toResponse(studentRepository.save(student));
     }
