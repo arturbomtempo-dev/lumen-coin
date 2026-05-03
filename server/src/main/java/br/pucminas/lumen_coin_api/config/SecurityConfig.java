@@ -72,11 +72,7 @@ public class SecurityConfig {
                         // Public: login + register students, institutions, companies
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/logout").permitAll()
                         .requestMatchers(HttpMethod.POST, "/students", "/institutions", "/companies").permitAll()
-                        // Public reads
-                        .requestMatchers(HttpMethod.GET, "/students/**", "/teachers/**",
-                                "/institutions/**", "/companies/**")
-                        .permitAll()
-                        // Everything else requires authentication (e.g. POST /teachers)
+                        // Everything else requires authentication
                         .anyRequest().authenticated())
                 .build();
     }

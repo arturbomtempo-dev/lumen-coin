@@ -27,16 +27,12 @@ public class AuthServiceImpl implements AuthService {
         UserPrincipal principal = (UserPrincipal) auth.getPrincipal();
         response.addCookie(jwtService.buildAuthCookie(principal));
 
-        return new AuthResponse(
-                principal.getUserId(),
-                principal.getName(),
-                principal.getUsername(),
-                principal.getAvatar(),
-                principal.getRole());
+        return new AuthResponse("Logged in successfully");
     }
 
     @Override
-    public void logout(HttpServletResponse response) {
+    public AuthResponse logout(HttpServletResponse response) {
         response.addCookie(jwtService.buildClearCookie());
+        return new AuthResponse("Logged out successfully");
     }
 }
