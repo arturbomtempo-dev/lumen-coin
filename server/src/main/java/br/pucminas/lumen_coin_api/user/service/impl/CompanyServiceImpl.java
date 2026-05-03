@@ -1,6 +1,7 @@
 package br.pucminas.lumen_coin_api.user.service.impl;
 
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterCompanyRequest;
+import br.pucminas.lumen_coin_api.user.dto.request.UpdateCompanyRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.CompanyResponse;
 import br.pucminas.lumen_coin_api.user.entity.Company;
 import br.pucminas.lumen_coin_api.user.enums.Avatar;
@@ -62,5 +63,47 @@ public class CompanyServiceImpl implements CompanyService {
         return companyRepository.findById(id)
                 .map(mapper::toResponse)
                 .orElseThrow(() -> new UserNotFoundException(id));
+    }
+
+    @Override
+    @Transactional
+    public CompanyResponse update(UUID id, UpdateCompanyRequest request) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        if (request.name() != null)
+            company.setName(request.name());
+
+        if (request.email() != null && !request.email().equals(company.getEmail())) {
+            if (userRepository.existsByEmail(request.email())) {
+                throw new EmailAlreadyInUseException(request.email());
+            }
+            company.setEmail(request.email());
+        }
+
+        if (request.password() != null) {
+            company.setPassword(passwordEncoder.encode(request.password()));
+        }
+
+        if (request.avatar() != null)
+            company.setAvatar(request.avatar());
+
+        if (request.cnpj() != null && !request.cnpj().equals(company.getCnpj())) {
+            if (companyRepository.existsByCnpj(request.cnpj())) {
+                throw new CnpjAlreadyInUseException(request.cnpj());
+            }
+            company.setCnpj(request.cnpj());
+        }
+
+        return mapper.toResponse(companyRepository.save(company));
+    }
+
+    @Override
+    @Transactional
+    public void softDelete(UUID id) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        company.setActive(false);
+        companyRepository.save(company);
     }
 }

@@ -1,6 +1,7 @@
 package br.pucminas.lumen_coin_api.user.service.impl;
 
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterStudentRequest;
+import br.pucminas.lumen_coin_api.user.dto.request.UpdateStudentRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.StudentResponse;
 import br.pucminas.lumen_coin_api.user.entity.Student;
 import br.pucminas.lumen_coin_api.user.exception.CpfAlreadyInUseException;
@@ -64,5 +65,54 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.findById(id)
                 .map(mapper::toResponse)
                 .orElseThrow(() -> new UserNotFoundException(id));
+    }
+
+    @Override
+    @Transactional
+    public StudentResponse update(UUID id, UpdateStudentRequest request) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        if (request.name() != null)
+            student.setName(request.name());
+
+        if (request.email() != null && !request.email().equals(student.getEmail())) {
+            if (userRepository.existsByEmail(request.email())) {
+                throw new EmailAlreadyInUseException(request.email());
+            }
+            student.setEmail(request.email());
+        }
+
+        if (request.password() != null) {
+            student.setPassword(passwordEncoder.encode(request.password()));
+        }
+
+        if (request.avatar() != null)
+            student.setAvatar(request.avatar());
+
+        if (request.cpf() != null && !request.cpf().equals(student.getCpf())) {
+            if (studentRepository.existsByCpf(request.cpf())) {
+                throw new CpfAlreadyInUseException(request.cpf());
+            }
+            student.setCpf(request.cpf());
+        }
+
+        if (request.rg() != null)
+            student.setRg(request.rg());
+        if (request.zipCode() != null)
+            student.setZipCode(request.zipCode());
+        if (request.address() != null)
+            student.setAddress(request.address());
+
+        return mapper.toResponse(studentRepository.save(student));
+    }
+
+    @Override
+    @Transactional
+    public void softDelete(UUID id) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        student.setActive(false);
+        studentRepository.save(student);
     }
 }

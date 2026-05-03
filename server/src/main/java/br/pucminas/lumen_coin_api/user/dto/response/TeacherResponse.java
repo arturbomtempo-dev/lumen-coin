@@ -13,6 +13,7 @@ public record TeacherResponse(
                 String cpf,
                 String department,
                 int balance,
+                UUID institutionId,
                 Instant createdAt,
                 Instant updatedAt) {
 }

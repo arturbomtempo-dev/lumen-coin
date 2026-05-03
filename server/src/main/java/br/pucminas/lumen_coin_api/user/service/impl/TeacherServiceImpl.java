@@ -1,6 +1,7 @@
 package br.pucminas.lumen_coin_api.user.service.impl;
 
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterTeacherRequest;
+import br.pucminas.lumen_coin_api.user.dto.request.UpdateTeacherRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.TeacherResponse;
 import br.pucminas.lumen_coin_api.user.entity.Teacher;
 import br.pucminas.lumen_coin_api.user.exception.CpfAlreadyInUseException;
@@ -28,7 +29,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional
-    public TeacherResponse register(RegisterTeacherRequest request) {
+    public TeacherResponse register(RegisterTeacherRequest request, UUID institutionId) {
         if (userRepository.existsByEmail(request.email())) {
             throw new EmailAlreadyInUseException(request.email());
         }
@@ -43,6 +44,7 @@ public class TeacherServiceImpl implements TeacherService {
         teacher.setAvatar(request.avatar());
         teacher.setCpf(request.cpf());
         teacher.setDepartment(request.department());
+        teacher.setInstitutionId(institutionId);
 
         return mapper.toResponse(teacherRepository.save(teacher));
     }
@@ -62,5 +64,50 @@ public class TeacherServiceImpl implements TeacherService {
         return teacherRepository.findById(id)
                 .map(mapper::toResponse)
                 .orElseThrow(() -> new UserNotFoundException(id));
+    }
+
+    @Override
+    @Transactional
+    public TeacherResponse update(UUID id, UpdateTeacherRequest request) {
+        Teacher teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        if (request.name() != null)
+            teacher.setName(request.name());
+
+        if (request.email() != null && !request.email().equals(teacher.getEmail())) {
+            if (userRepository.existsByEmail(request.email())) {
+                throw new EmailAlreadyInUseException(request.email());
+            }
+            teacher.setEmail(request.email());
+        }
+
+        if (request.password() != null) {
+            teacher.setPassword(passwordEncoder.encode(request.password()));
+        }
+
+        if (request.avatar() != null)
+            teacher.setAvatar(request.avatar());
+
+        if (request.cpf() != null && !request.cpf().equals(teacher.getCpf())) {
+            if (teacherRepository.existsByCpf(request.cpf())) {
+                throw new CpfAlreadyInUseException(request.cpf());
+            }
+            teacher.setCpf(request.cpf());
+        }
+
+        if (request.department() != null)
+            teacher.setDepartment(request.department());
+
+        return mapper.toResponse(teacherRepository.save(teacher));
+    }
+
+    @Override
+    @Transactional
+    public void softDelete(UUID id) {
+        Teacher teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        teacher.setActive(false);
+        teacherRepository.save(teacher);
     }
 }

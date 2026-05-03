@@ -1,6 +1,7 @@
 package br.pucminas.lumen_coin_api.user.service;
 
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterCompanyRequest;
+import br.pucminas.lumen_coin_api.user.dto.request.UpdateCompanyRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.CompanyResponse;
 
 import java.util.List;
@@ -12,4 +13,8 @@ public interface CompanyService {
     List<CompanyResponse> findAll();
 
     CompanyResponse findById(UUID id);
+
+    CompanyResponse update(UUID id, UpdateCompanyRequest request);
+
+    void softDelete(UUID id);
 }
