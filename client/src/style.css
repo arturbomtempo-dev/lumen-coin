@@ -2,6 +2,9 @@
 @import 'tailwindcss';
 
 @theme {
+    --color-login-day: hsl(var(--login-day));
+    --color-login-night: hsl(var(--login-night));
+    --color-login-bg: hsl(var(--login-bg));
     --color-background: hsl(var(--background));
     --color-foreground: hsl(var(--foreground));
     --color-card: hsl(var(--card));
@@ -69,6 +72,9 @@
     --ring: 45 95% 52%;
     --hud: 235 60% 10%;
     --hud-foreground: 45 95% 60%;
+    --login-day: 197 71% 73%;
+    --login-night: 0 0% 10%;
+    --login-bg: var(--login-day);
 }
 
 .dark {
@@ -102,6 +108,7 @@
     --ring: 48 100% 58%;
     --hud: 0 0% 0%;
     --hud-foreground: 48 100% 60%;
+    --login-bg: 215 62% 24%;
 }
 
 * {

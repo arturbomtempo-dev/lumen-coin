@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { RouterLink, useRouter } from 'vue-router';
+import { ref } from 'vue';
+import { RouterLink } from 'vue-router';
 import {
     PhArrowLeft,
     PhGameController,
     PhSun,
     PhMoon,
     PhSparkle,
-    PhStudent,
-    PhGraduationCap,
-    PhBuildings,
     PhEye,
     PhEyeSlash,
 } from '@phosphor-icons/vue';
@@ -19,117 +16,33 @@ import PixelInput from '@/shared/components/PixelInput.vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import { useThemeStore } from '@/shared/stores/theme.store';
+import Cloud from './_components/Cloud.vue';
 
 const themeStore = useThemeStore();
-const router = useRouter();
 
-type Role = 'aluno' | 'professor' | 'empresa' | 'instituicao';
-
-const role = ref<Role>('aluno');
 const email = ref('');
 const senha = ref('');
 const showPwd = ref(false);
 
-const avatarChar = computed(() =>
-    role.value === 'professor' ? 'luigi' : role.value === 'empresa' ? 'toad' : 'mario'
-);
-
-const roleItems = [
-    { id: 'aluno' as Role, label: 'ALUNO', icon: PhStudent },
-    { id: 'professor' as Role, label: 'PROFESSOR', icon: PhGraduationCap },
-    { id: 'empresa' as Role, label: 'EMPRESA', icon: PhBuildings },
-    { id: 'instituicao' as Role, label: 'INSTITUIÇÃO', icon: PhBuildings },
-];
-
-function submit(e: Event) {
-    e.preventDefault();
-    const route =
-        role.value === 'aluno'
-            ? '/app/aluno'
-            : role.value === 'professor'
-              ? '/app/professor'
-              : role.value === 'empresa'
-                ? '/app/empresa'
-                : '/app/instituicao';
-    router.push(route);
-}
 </script>
 
 <template>
     <div class="min-h-screen flex flex-col">
-        <header class="bg-hud text-hud-foreground border-b-4 border-border">
-            <div class="container flex items-center justify-between py-3">
-                <RouterLink to="/" class="flex items-center gap-2 font-pixel text-[10px]">
-                    <PhArrowLeft weight="bold" />
-                    <PhGameController weight="fill" class="pixel-icon text-primary" :size="18" />
-                    VOLTAR AO MUNDO 1-1
-                </RouterLink>
-                <button
-                    class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))]"
-                    @click="themeStore.toggle"
-                >
-                    <PhSun v-if="themeStore.theme === 'night'" weight="fill" class="pixel-icon" />
-                    <PhMoon v-else weight="fill" class="pixel-icon" />
-                    {{ themeStore.theme === 'night' ? 'DIA' : 'NOITE' }}
-                </button>
-            </div>
-        </header>
 
-        <main class="flex-1 relative overflow-hidden">
+        <main class="flex-1 relative overflow-hidden bg-login-bg transition-colors duration-300">
             <div class="absolute inset-0 bg-info/10" />
             <!-- Clouds -->
-            <svg
-                width="80"
-                height="40"
-                viewBox="0 0 16 8"
-                class="absolute top-10 left-6 opacity-80"
-                shape-rendering="crispEdges"
-            >
-                <rect x="2" y="3" width="12" height="3" fill="#ffffff" />
-                <rect x="3" y="2" width="3" height="1" fill="#ffffff" />
-                <rect x="7" y="1" width="3" height="2" fill="#ffffff" />
-                <rect x="11" y="2" width="3" height="1" fill="#ffffff" />
-                <rect x="1" y="6" width="14" height="1" fill="hsl(var(--border))" />
-                <rect x="2" y="2" width="1" height="1" fill="hsl(var(--border))" />
-                <rect x="6" y="1" width="1" height="1" fill="hsl(var(--border))" />
-                <rect x="10" y="1" width="1" height="1" fill="hsl(var(--border))" />
-                <rect x="14" y="2" width="1" height="1" fill="hsl(var(--border))" />
-            </svg>
-            <svg
-                width="80"
-                height="40"
-                viewBox="0 0 16 8"
-                class="absolute top-20 right-12 opacity-70"
-                shape-rendering="crispEdges"
-            >
-                <rect x="2" y="3" width="12" height="3" fill="#ffffff" />
-                <rect x="3" y="2" width="3" height="1" fill="#ffffff" />
-                <rect x="7" y="1" width="3" height="2" fill="#ffffff" />
-                <rect x="11" y="2" width="3" height="1" fill="#ffffff" />
-                <rect x="1" y="6" width="14" height="1" fill="hsl(var(--border))" />
-                <rect x="2" y="2" width="1" height="1" fill="hsl(var(--border))" />
-                <rect x="6" y="1" width="1" height="1" fill="hsl(var(--border))" />
-                <rect x="10" y="1" width="1" height="1" fill="hsl(var(--border))" />
-                <rect x="14" y="2" width="1" height="1" fill="hsl(var(--border))" />
-            </svg>
-            <!-- Cloud 3 -->
-            <svg
-                width="80"
-                height="40"
-                viewBox="0 0 16 8"
-                class="absolute top-40 left-1/3 opacity-60"
-                shape-rendering="crispEdges"
-            >
-                <rect x="2" y="3" width="12" height="3" fill="#ffffff" />
-                <rect x="3" y="2" width="3" height="1" fill="#ffffff" />
-                <rect x="7" y="1" width="3" height="2" fill="#ffffff" />
-                <rect x="11" y="2" width="3" height="1" fill="#ffffff" />
-                <rect x="1" y="6" width="14" height="1" fill="hsl(var(--border))" />
-                <rect x="2" y="2" width="1" height="1" fill="hsl(var(--border))" />
-                <rect x="6" y="1" width="1" height="1" fill="hsl(var(--border))" />
-                <rect x="10" y="1" width="1" height="1" fill="hsl(var(--border))" />
-                <rect x="14" y="2" width="1" height="1" fill="hsl(var(--border))" />
-            </svg>
+               <div class="absolute top-10 left-8">
+                 <Cloud />
+                </div>
+
+                <div class="absolute top-24 right-16 opacity-80">
+                    <Cloud />
+                </div>
+
+                <div class="absolute top-40 left-1/3 opacity-70">
+                    <Cloud />
+                </div>
             <!-- Hills -->
             <div
                 class="absolute bottom-24 left-0 right-0 h-32 opacity-30"
@@ -154,49 +67,44 @@ function submit(e: Event) {
                     ?
                 </div>
             </div>
+            
             <!-- Pipe -->
             <div class="absolute bottom-24 left-10 hidden md:block">
                 <div class="w-20 h-8 bg-success border-4 border-border" />
                 <div class="w-16 h-16 bg-success border-4 border-t-0 border-border ml-2" />
             </div>
             <!-- Mario -->
-            <div class="absolute bottom-24 right-1/4 hidden lg:block animate-bob">
+             <div class="absolute bottom-24 right-1/4 block animate-bob z-0">
                 <MarioAvatar character="mario" :size="72" />
             </div>
+            
 
-            <div class="relative container py-10 flex items-center justify-center min-h-full">
-                <PixelCard class="w-full max-w-md p-6 md:p-8 crt-scanlines">
+            <div class="relative min-h-screen container z-10  py-10 flex items-center justify-center">
+                <PixelCard class="w-full max-w-md p-6 md:p-8 space-y-5 crt-scanlines">
+                    <!-- VOLTAR -->
+        <RouterLink to="/"
+          class="mb-5 flex items-center gap-3 font-pixel text-[9px] cursor-pointer transition-all"
+        >
+          <div
+            class="w-7 h-7 border-2 border-black bg-amber-300 flex items-center justify-center shadow-[2px_2px_0px_black] translate-y-0 hover:translate-y-0.5 hover:translate-x-0.5 hover:shadow-none transition-transform"
+          >
+            <PhArrowLeft :size="14" weight="bold" />
+          </div>
+
+          <span class="hover:text-primary">VOLTAR À TELA INICIAL</span>
+        </RouterLink>
                     <div class="flex items-center gap-3 mb-5">
-                        <div class="border-2 border-border bg-hud p-2">
-                            <MarioAvatar :character="avatarChar" :size="48" />
-                        </div>
+                        
                         <div>
-                            <div class="font-pixel text-[10px] text-primary">▶ INSERT COIN</div>
-                            <h1 class="font-pixel text-lg">ENTRAR NO ARCADE</h1>
+                            
+                            <h1 class="font-pixel text-lg">ENTRAR</h1>
                         </div>
-                        <div class="ml-auto"><CoinIcon :size="28" class="animate-bob" /></div>
+                        <div class="ml-auto animate-bob"><CoinIcon :size="28" class="animate-bob" /></div>
                     </div>
 
-                    <!-- Role selector -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
-                        <button
-                            v-for="r in roleItems"
-                            :key="r.id"
-                            type="button"
-                            class="border-2 border-border p-2 font-pixel text-[9px] flex flex-col items-center gap-1 transition-all"
-                            :class="
-                                role === r.id
-                                    ? 'bg-primary text-primary-foreground shadow-[3px_3px_0_0_hsl(var(--border))]'
-                                    : 'bg-card hover:-translate-y-0.5'
-                            "
-                            @click="role = r.id"
-                        >
-                            <component :is="r.icon" weight="fill" class="pixel-icon" :size="18" />
-                            {{ r.label }}
-                        </button>
-                    </div>
+                   
 
-                    <form class="space-y-4" @submit="submit">
+                    <form class="space-y-4">
                         <div>
                             <label class="font-pixel text-[10px] block mb-2">E-MAIL</label>
                             <PixelInput
@@ -234,8 +142,8 @@ function submit(e: Event) {
                             <a href="#" class="hover:text-primary">ESQUECI A SENHA</a>
                         </div>
 
-                        <PixelButton variant="primary" class="w-full" type="submit">
-                            <PhSparkle weight="fill" class="pixel-icon" /> PRESS START
+                        <PixelButton variant="primary" class="w-full cursor-pointer" type="submit">
+                            <PhSparkle weight="fill" class="pixel-icon cursor-pointer" /> PRESS START
                         </PixelButton>
                     </form>
 
@@ -249,13 +157,11 @@ function submit(e: Event) {
 
                     <RouterLink to="/signup">
                         <PixelButton variant="success" class="w-full"
-                            >CRIAR NOVO PERSONAGEM</PixelButton
+                            >CRIAR PERSONAGEM</PixelButton
                         >
                     </RouterLink>
 
-                    <p class="font-display text-base text-center mt-5 opacity-80">
-                        ★ 1-UP · sua jornada acadêmica continua ★
-                    </p>
+                    
                 </PixelCard>
             </div>
         </main>
