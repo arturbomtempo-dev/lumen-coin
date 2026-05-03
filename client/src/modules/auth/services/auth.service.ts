@@ -22,8 +22,16 @@ export type RegisterCompanyDto = {
     password: string;
 };
 
+export type AuthResponse = {
+    id: string;
+    name: string;
+    email: string;
+    avatar: string;
+    role: string;
+};
+
 export function loginRequest(dto: LoginDto) {
-    return api.post('/auth/login', dto);
+    return api.post<AuthResponse>('/auth/login', dto);
 }
 
 export function registerStudentRequest(dto: RegisterStudentDto) {

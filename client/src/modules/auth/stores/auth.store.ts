@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { meRequest, logoutRequest } from '../services/auth.service';
 
-export type UserRole = 'student' | 'teacher' | 'company';
+export type UserRole = 'student' | 'teacher' | 'company' | 'institution';
 
 export type AuthUser = {
     id: string;

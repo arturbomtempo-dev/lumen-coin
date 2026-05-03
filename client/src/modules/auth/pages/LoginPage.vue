@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
 import { PhArrowLeft, PhSparkle, PhEye, PhEyeSlash } from '@phosphor-icons/vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
@@ -8,10 +8,42 @@ import PixelInput from '@/shared/components/PixelInput.vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import Cloud from './_components/Cloud.vue';
+import { useAuthStore } from '@/modules/auth/stores/auth.store';
+import { loginRequest } from '@/modules/auth/services/auth.service';
+import type { UserRole } from '@/modules/auth/stores/auth.store';
+
+const router = useRouter();
+const authStore = useAuthStore();
 
 const email = ref('');
 const senha = ref('');
 const showPwd = ref(false);
+const isSubmitting = ref(false);
+
+const ROLE_ROUTES: Record<string, string> = {
+    STUDENT: 'student-dashboard',
+    TEACHER: 'teacher-dashboard',
+    INSTITUTION: 'institution-dashboard',
+    COMPANY: 'company-dashboard',
+};
+
+async function handleLogin(e: Event) {
+    e.preventDefault();
+    if (!email.value || !senha.value) return;
+    isSubmitting.value = true;
+    try {
+        const { data } = await loginRequest({ email: email.value, password: senha.value });
+        authStore.setUser({
+            id: data.id,
+            name: data.name,
+            email: data.email,
+            role: data.role.toLowerCase() as UserRole,
+        });
+        router.push({ name: ROLE_ROUTES[data.role] ?? 'home' });
+    } finally {
+        isSubmitting.value = false;
+    }
+}
 </script>
 
 <template>
@@ -91,7 +123,7 @@ const showPwd = ref(false);
                         </div>
                     </div>
 
-                    <form class="space-y-4">
+                    <form class="space-y-4" @submit="handleLogin">
                         <div>
                             <label class="font-pixel text-[10px] block mb-2">E-MAIL</label>
                             <PixelInput
@@ -129,7 +161,12 @@ const showPwd = ref(false);
                             <a href="#" class="hover:text-primary">ESQUECI A SENHA</a>
                         </div>
 
-                        <PixelButton variant="primary" class="w-full cursor-pointer" type="submit">
+                        <PixelButton
+                            variant="primary"
+                            class="w-full cursor-pointer"
+                            type="submit"
+                            :disabled="isSubmitting"
+                        >
                             <PhSparkle weight="fill" class="pixel-icon cursor-pointer" /> PRESS
                             START
                         </PixelButton>
