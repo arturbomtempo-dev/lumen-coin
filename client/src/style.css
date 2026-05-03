@@ -108,6 +108,11 @@
     border-color: hsl(var(--border));
 }
 
+button:not(:disabled),
+[role='button']:not(:disabled) {
+    cursor: pointer;
+}
+
 /* Match front-base container: centered, 2rem padding, max-width 1400px */
 .container {
     width: 100%;
