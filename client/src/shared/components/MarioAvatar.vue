@@ -64,6 +64,15 @@ const palettes: Record<MarioCharacter, Record<string, string>> = {
         shoe: '#1F1F1F',
         spot: '#FFFFFF',
     },
+    instituicao: {
+    hat: '#2563EB',
+    shirt: '#1D4ED8',
+    overall: '#E5E7EB',
+    skin: '#93C5FD',
+    hair: '#1E3A8A',
+    shoe: '#111827',
+    spot: '#F8FAFC',
+  },
 };
 </script>
 
@@ -83,8 +92,6 @@ const palettes: Record<MarioCharacter, Record<string, string>> = {
             <rect x="6" y="0" width="1" height="1" fill="#F8D000" />
             <rect x="8" y="0" width="1" height="1" fill="#F8D000" />
             <rect x="4" y="1" width="5" height="1" fill="#F8D000" />
-            <rect x="5" y="1" width="1" height="1" fill="#1F4FD8" />
-            <rect x="7" y="1" width="1" height="1" fill="#E52521" />
             <rect x="3" y="2" width="6" height="1" :fill="palettes.peach.hair" />
             <rect x="2" y="3" width="2" height="4" :fill="palettes.peach.hair" />
             <rect x="8" y="3" width="2" height="4" :fill="palettes.peach.hair" />
@@ -158,6 +165,26 @@ const palettes: Record<MarioCharacter, Record<string, string>> = {
             <rect x="5" y="7" width="2" height="1" :fill="palettes.bowser.spot" />
             <rect x="2" y="10" width="3" height="2" :fill="palettes.bowser.shoe" />
             <rect x="7" y="10" width="3" height="2" :fill="palettes.bowser.shoe" />
+        </template>
+         <!-- INSTITUIÇÃO -->
+        <template v-else-if="character === 'instituicao'">
+        <rect x="2" y="0" width="8" height="2" :fill="palettes.instituicao.hat" />
+
+        <rect x="2" y="2" width="8" height="8" :fill="palettes.instituicao.shirt" />
+
+        <rect x="5" y="7" width="2" height="3" :fill="palettes.instituicao.shoe" />
+
+        <rect x="3" y="3" width="1" height="1" :fill="palettes.instituicao.spot" />
+        <rect x="5" y="3" width="1" height="1" :fill="palettes.instituicao.spot" />
+        <rect x="7" y="3" width="1" height="1" :fill="palettes.instituicao.spot" />
+
+        <rect x="3" y="5" width="1" height="1" :fill="palettes.instituicao.spot" />
+        <rect x="5" y="5" width="1" height="1" :fill="palettes.instituicao.spot" />
+        <rect x="7" y="5" width="1" height="1" :fill="palettes.instituicao.spot" />
+
+        <rect x="1" y="10" width="10" height="1" :fill="palettes.instituicao.overall" />
+
+        <rect x="0" y="11" width="12" height="1" fill="#5B2B0E" />
         </template>
 
         <template v-else>

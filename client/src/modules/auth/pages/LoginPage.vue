@@ -1,24 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
-import {
-    PhArrowLeft,
-    PhGameController,
-    PhSun,
-    PhMoon,
-    PhSparkle,
-    PhEye,
-    PhEyeSlash,
-} from '@phosphor-icons/vue';
+import { PhArrowLeft, PhSparkle, PhEye, PhEyeSlash } from '@phosphor-icons/vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import MarioAvatar from '@/shared/components/MarioAvatar.vue';
-import { useThemeStore } from '@/shared/stores/theme.store';
 import Cloud from './_components/Cloud.vue';
-
-const themeStore = useThemeStore();
 
 const email = ref('');
 const senha = ref('');
