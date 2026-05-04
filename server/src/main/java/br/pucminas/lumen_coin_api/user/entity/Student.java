@@ -29,6 +29,9 @@ public class Student extends User {
     @Column(name = "balance", nullable = false)
     private int balance = 0;
 
+    @Column(name = "course_id")
+    private java.util.UUID courseId;
+
     @Override
     public UserRole getRole() {
         return UserRole.STUDENT;

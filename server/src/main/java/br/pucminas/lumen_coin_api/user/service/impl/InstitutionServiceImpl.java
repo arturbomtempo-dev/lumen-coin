@@ -1,9 +1,12 @@
 package br.pucminas.lumen_coin_api.user.service.impl;
 
+import br.pucminas.lumen_coin_api.course.entity.Course;
+import br.pucminas.lumen_coin_api.course.repository.CourseRepository;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterInstitutionRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateInstitutionRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.InstitutionResponse;
 import br.pucminas.lumen_coin_api.user.entity.Institution;
+import br.pucminas.lumen_coin_api.user.entity.Student;
 import br.pucminas.lumen_coin_api.user.entity.Teacher;
 import br.pucminas.lumen_coin_api.user.enums.Avatar;
 import br.pucminas.lumen_coin_api.user.exception.CnpjAlreadyInUseException;
@@ -11,6 +14,7 @@ import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
 import br.pucminas.lumen_coin_api.user.mapper.UserMapper;
 import br.pucminas.lumen_coin_api.user.repository.InstitutionRepository;
+import br.pucminas.lumen_coin_api.user.repository.StudentRepository;
 import br.pucminas.lumen_coin_api.user.repository.TeacherRepository;
 import br.pucminas.lumen_coin_api.user.repository.UserRepository;
 import br.pucminas.lumen_coin_api.user.service.InstitutionService;
@@ -27,6 +31,8 @@ import java.util.UUID;
 public class InstitutionServiceImpl implements InstitutionService {
     private final InstitutionRepository institutionRepository;
     private final TeacherRepository teacherRepository;
+    private final StudentRepository studentRepository;
+    private final CourseRepository courseRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
@@ -116,6 +122,14 @@ public class InstitutionServiceImpl implements InstitutionService {
 
         List<Teacher> teachers = teacherRepository.findByInstitutionId(id);
         teacherRepository.deleteAll(teachers);
+
+        List<Course> courses = courseRepository.findByInstitutionId(id);
+        courses.forEach(course -> {
+            List<Student> enrolled = studentRepository.findByCourseId(course.getId());
+            enrolled.forEach(s -> s.setCourseId(null));
+            studentRepository.saveAll(enrolled);
+        });
+        courseRepository.deleteAll(courses);
 
         institutionRepository.delete(institution);
     }

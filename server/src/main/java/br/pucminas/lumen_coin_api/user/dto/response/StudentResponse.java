@@ -15,6 +15,7 @@ public record StudentResponse(
                 String zipCode,
                 String address,
                 int balance,
+                UUID courseId,
                 Instant createdAt,
                 Instant updatedAt) {
 }

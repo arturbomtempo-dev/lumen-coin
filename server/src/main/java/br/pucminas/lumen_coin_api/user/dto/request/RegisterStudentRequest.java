@@ -19,5 +19,7 @@ public record RegisterStudentRequest(
 
                 @Pattern(regexp = "\\d{8}", message = "Zip code must contain exactly 8 digits") String zipCode,
 
-                @Size(max = 300, message = "Address must not exceed 300 characters") String address) {
+                @Size(max = 300, message = "Address must not exceed 300 characters") String address,
+
+                @NotNull(message = "Course ID is required") java.util.UUID courseId) {
 }

@@ -1,5 +1,7 @@
 package br.pucminas.lumen_coin_api.user.service.impl;
 
+import br.pucminas.lumen_coin_api.course.exception.CourseNotFoundException;
+import br.pucminas.lumen_coin_api.course.repository.CourseRepository;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterStudentRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateStudentRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.StudentResponse;
@@ -24,6 +26,7 @@ import java.util.UUID;
 public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
     private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
 
@@ -46,6 +49,11 @@ public class StudentServiceImpl implements StudentService {
         student.setRg(request.rg());
         student.setZipCode(request.zipCode());
         student.setAddress(request.address());
+
+        if (!courseRepository.existsById(request.courseId())) {
+            throw new CourseNotFoundException(request.courseId());
+        }
+        student.setCourseId(request.courseId());
 
         return mapper.toResponse(studentRepository.save(student));
     }
@@ -103,6 +111,13 @@ public class StudentServiceImpl implements StudentService {
             student.setZipCode(request.zipCode());
         if (request.address() != null)
             student.setAddress(request.address());
+
+        if (request.courseId() != null) {
+            if (!courseRepository.existsById(request.courseId())) {
+                throw new CourseNotFoundException(request.courseId());
+            }
+            student.setCourseId(request.courseId());
+        }
 
         return mapper.toResponse(studentRepository.save(student));
     }
