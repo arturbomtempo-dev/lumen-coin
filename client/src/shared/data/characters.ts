@@ -5,7 +5,8 @@ export type MarioCharacter =
     | 'toad'
     | 'yoshi'
     | 'bowser'
-    | 'institution';
+    | 'institution'
+    | 'company';
 
 export const MARIO_CHARACTERS: { id: MarioCharacter; name: string; title: string }[] = [
     { id: 'mario', name: 'Mario', title: 'Encanador Herói' },
@@ -15,4 +16,5 @@ export const MARIO_CHARACTERS: { id: MarioCharacter; name: string; title: string
     { id: 'yoshi', name: 'Yoshi', title: 'Companheiro Saltador' },
     { id: 'bowser', name: 'Bowser', title: 'Boss Final' },
     { id: 'institution', name: 'Instituição', title: 'Entidade Educacional' },
+    { id: 'company', name: 'Empresa Parceira', title: 'Loja do Reino' },
 ];

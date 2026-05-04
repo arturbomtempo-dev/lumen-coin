@@ -10,7 +10,6 @@ import {
     PhStorefront,
     PhGraduationCap,
     PhStudent,
-    PhBuildings,
     PhLightning,
     PhShieldCheck,
     PhTicket,
@@ -203,10 +202,8 @@ const themeStore = useThemeStore();
                 <div id="perfis" class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mt-10">
                     <PixelCard class="p-6 flex flex-col">
                         <div class="flex items-center gap-3 mb-4">
-                            <div
-                                class="border-2 border-border bg-primary text-primary-foreground p-2"
-                            >
-                                <PhBuildings weight="fill" class="pixel-icon" :size="24" />
+                            <div class="border-2 border-border bg-hud p-2">
+                                <MarioAvatar character="institution" :size="40" />
                             </div>
                             <div>
                                 <div class="font-pixel text-[10px] text-primary">PLAYER 0</div>
@@ -215,40 +212,51 @@ const themeStore = useThemeStore();
                         </div>
                         <div class="flex-1 flex flex-col justify-center">
                             <p class="font-sans text-sm text-foreground/80">
-                            O castelo do reino. Cria cursos, cadastra professores e acompanha alunos
-                            matriculados.
+                                O castelo do reino. Cria cursos, cadastra professores e acompanha
+                                alunos matriculados.
                             </p>
                             <ul class="mt-4 space-y-2 font-sans text-sm">
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Cadastra e gerencia <strong>cursos</strong> oferecidos.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Cadastra <strong>professores</strong> na plataforma.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Vincula professores a um ou mais cursos.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Visualiza todos os alunos matriculados por curso.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Pode remover professores e cursos quando necessário.</span
-                                >
-                            </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Cadastra e gerencia
+                                        <strong>cursos</strong> oferecidos.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Cadastra <strong>professores</strong> na plataforma.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Vincula professores a um ou mais cursos.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Visualiza todos os alunos matriculados por curso.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Pode remover professores e cursos quando necessário.</span
+                                    >
+                                </li>
                             </ul>
                         </div>
                         <div class="mt-auto pt-5">
@@ -273,49 +281,64 @@ const themeStore = useThemeStore();
                         </div>
                         <div class="flex-1 flex flex-col justify-center">
                             <p class="font-sans text-sm text-foreground/80">
-                            O herói da jornada. Recebe moedas pelo bom desempenho e troca por
-                            recompensas no marketplace.
+                                O herói da jornada. Recebe moedas pelo bom desempenho e troca por
+                                recompensas no marketplace.
                             </p>
                             <ul class="mt-4 space-y-2 font-sans text-sm">
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Cadastro grátis com nome, e-mail, CPF, RG, endereço,
-                                    instituição e curso.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Recebe moedas de qualquer professor da sua instituição.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Cada moeda recebida gera notificação com o motivo e o nome do
-                                    professor.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Pode resgatar vantagens enquanto houver saldo suficiente.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Cupons gerados são únicos e devem ser apresentados na empresa
-                                    parceira.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Saldo nunca expira; conquistas e nível ficam no perfil.</span
-                                >
-                            </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Cadastro grátis com nome, e-mail, CPF, RG, endereço,
+                                        instituição e curso.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Recebe moedas de qualquer professor da sua
+                                        instituição.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Cada moeda recebida gera notificação com o motivo e o nome
+                                        do professor.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Pode resgatar vantagens enquanto houver saldo
+                                        suficiente.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Cupons gerados são únicos e devem ser apresentados na
+                                        empresa parceira.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Saldo nunca expira; conquistas e nível ficam no
+                                        perfil.</span
+                                    >
+                                </li>
                             </ul>
                         </div>
                         <div class="mt-auto pt-5">
@@ -342,49 +365,63 @@ const themeStore = useThemeStore();
                         </div>
                         <div class="flex-1 flex flex-col justify-center">
                             <p class="font-sans text-sm text-foreground/80">
-                            O mestre do arcade. Reconhece bons alunos com moedas e mantém o
-                            histórico transparente.
+                                O mestre do arcade. Reconhece bons alunos com moedas e mantém o
+                                histórico transparente.
                             </p>
                             <ul class="mt-4 space-y-2 font-sans text-sm">
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Cadastro feito pela instituição (não público).</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Recebe <strong>1000 moedas por semestre</strong> para
-                                    distribuir.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Pode visualizar todos os alunos das turmas em que
-                                    leciona.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Cada envio exige um <strong>motivo obrigatório</strong> que o
-                                    aluno verá.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Saldo não distribuído não acumula no semestre seguinte.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Histórico completo de envios fica disponível no painel.</span
-                                >
-                            </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Cadastro feito pela instituição (não público).</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Recebe <strong>1000 moedas por semestre</strong> para
+                                        distribuir.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Pode visualizar todos os alunos das turmas em que
+                                        leciona.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Cada envio exige um <strong>motivo obrigatório</strong> que
+                                        o aluno verá.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Saldo não distribuído não acumula no semestre
+                                        seguinte.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Histórico completo de envios fica disponível no
+                                        painel.</span
+                                    >
+                                </li>
                             </ul>
                         </div>
                         <div class="mt-auto pt-5">
@@ -399,10 +436,8 @@ const themeStore = useThemeStore();
 
                     <PixelCard class="p-6 flex flex-col">
                         <div class="flex items-center gap-3 mb-4">
-                            <div
-                                class="border-2 border-border bg-accent text-accent-foreground p-2"
-                            >
-                                <PhBuildings weight="fill" class="pixel-icon" :size="24" />
+                            <div class="border-2 border-border bg-hud p-2">
+                                <MarioAvatar character="company" :size="40" />
                             </div>
                             <div>
                                 <div class="font-pixel text-[10px] text-primary">PLAYER 3</div>
@@ -411,50 +446,63 @@ const themeStore = useThemeStore();
                         </div>
                         <div class="flex-1 flex flex-col justify-center">
                             <p class="font-sans text-sm text-foreground/80">
-                            A loja do reino. Cria vantagens e valida cupons gerados pelos alunos no
-                            resgate.
+                                A loja do reino. Cria vantagens e valida cupons gerados pelos alunos
+                                no resgate.
                             </p>
                             <ul class="mt-4 space-y-2 font-sans text-sm">
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Cadastro mediante aprovação para virar parceiro oficial.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Pode criar quantas vantagens quiser, com nome, descrição, custo
-                                    e imagem.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Pode <strong>ativar/desativar</strong> qualquer vantagem a
-                                    qualquer momento.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Valida cupons únicos no portal antes de liberar a
-                                    recompensa.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Cada cupom só pode ser usado uma vez.</span
-                                >
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
-                                <span class="text-foreground/85"
-                                    >Sem cobrança: a empresa apenas honra a vantagem
-                                    oferecida.</span
-                                >
-                            </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Cadastro mediante aprovação para virar parceiro
+                                        oficial.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Pode criar quantas vantagens quiser, com nome, descrição,
+                                        custo e imagem.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Pode <strong>ativar/desativar</strong> qualquer vantagem a
+                                        qualquer momento.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Valida cupons únicos no portal antes de liberar a
+                                        recompensa.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Cada cupom só pode ser usado uma vez.</span
+                                    >
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-primary font-pixel text-[10px] mt-0.5"
+                                        >►</span
+                                    >
+                                    <span class="text-foreground/85"
+                                        >Sem cobrança: a empresa apenas honra a vantagem
+                                        oferecida.</span
+                                    >
+                                </li>
                             </ul>
                         </div>
                         <div class="mt-auto pt-5">
@@ -486,7 +534,7 @@ const themeStore = useThemeStore();
                         <MarioAvatar :character="c.id" :size="72" />
                     </div>
                     <div class="font-pixel text-[10px] mt-3">{{ c.name.toUpperCase() }}</div>
-                    <div class="font-sans text-xs text-muted-foreground mt-1">{{ c.classe }}</div>
+                    <div class="font-sans text-xs text-muted-foreground mt-1">{{ c.title }}</div>
                 </PixelCard>
             </div>
         </section>

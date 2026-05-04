@@ -65,6 +65,21 @@ const palettes: Record<MarioCharacter, Record<string, string>> = {
         spot: '#FFFFFF',
     },
     institution: {
+        hat: '#C0392B',
+
+        shirt: '#1E4D32',
+
+        overall: '#B68252',
+
+        skin: '#66B97A',
+
+        hair: '#6B3F1F',
+
+        shoe: '#3B2411',
+
+        spot: '#F4F1DC',
+    },
+    company: {
         hat: '#2563EB',
         shirt: '#1D4ED8',
         overall: '#E5E7EB',
@@ -166,18 +181,46 @@ const palettes: Record<MarioCharacter, Record<string, string>> = {
             <rect x="2" y="10" width="3" height="2" :fill="palettes.bowser.shoe" />
             <rect x="7" y="10" width="3" height="2" :fill="palettes.bowser.shoe" />
         </template>
+
+        <!-- ✅ ATUALIZADO -->
+
         <template v-else-if="character === 'institution'">
-            <rect x="2" y="0" width="8" height="2" :fill="palettes.institution.hat" />
-            <rect x="2" y="2" width="8" height="8" :fill="palettes.institution.shirt" />
-            <rect x="5" y="7" width="2" height="3" :fill="palettes.institution.shoe" />
-            <rect x="3" y="3" width="1" height="1" :fill="palettes.institution.spot" />
-            <rect x="5" y="3" width="1" height="1" :fill="palettes.institution.spot" />
-            <rect x="7" y="3" width="1" height="1" :fill="palettes.institution.spot" />
-            <rect x="3" y="5" width="1" height="1" :fill="palettes.institution.spot" />
-            <rect x="5" y="5" width="1" height="1" :fill="palettes.institution.spot" />
-            <rect x="7" y="5" width="1" height="1" :fill="palettes.institution.spot" />
-            <rect x="1" y="10" width="10" height="1" :fill="palettes.institution.overall" />
-            <rect x="0" y="11" width="12" height="1" fill="#5B2B0E" />
+            <rect x="1" y="1" width="10" height="9" :fill="palettes.institution.hair" />
+
+            <rect x="2" y="2" width="8" height="7" :fill="palettes.institution.shirt" />
+
+            <rect x="2" y="9" width="8" height="1" :fill="palettes.institution.overall" />
+
+            <rect x="0" y="11" width="12" height="1" :fill="palettes.institution.overall" />
+
+            <!-- A+ centralizado -->
+
+            <text
+                x="6"
+                y="6"
+                text-anchor="middle"
+                dominant-baseline="middle"
+                font-size="3"
+                font-weight="bold"
+                fill="#FFFFFF"
+                style="font-family: monospace"
+            >
+                A+
+            </text>
+        </template>
+
+        <template v-else-if="character === 'company'">
+            <rect x="2" y="0" width="8" height="2" :fill="palettes.company.hat" />
+            <rect x="2" y="2" width="8" height="8" :fill="palettes.company.shirt" />
+            <rect x="5" y="7" width="2" height="3" :fill="palettes.company.shoe" />
+            <rect x="3" y="3" width="1" height="1" :fill="palettes.company.spot" />
+            <rect x="5" y="3" width="1" height="1" :fill="palettes.company.spot" />
+            <rect x="7" y="3" width="1" height="1" :fill="palettes.company.spot" />
+            <rect x="3" y="5" width="1" height="1" :fill="palettes.company.spot" />
+            <rect x="5" y="5" width="1" height="1" :fill="palettes.company.spot" />
+            <rect x="7" y="5" width="1" height="1" :fill="palettes.company.spot" />
+            <rect x="1" y="10" width="10" height="1" :fill="palettes.company.overall" />
+            <rect x="0" y="11" width="12" height="1" :fill="palettes.company.shoe" />
         </template>
 
         <template v-else>
