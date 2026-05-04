@@ -1,7 +1,21 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
-
+import {
+    getPublicCourses,
+    getPublicInstitutions,
+    registerStudentRequest,
+    type CourseOption,
+    type InstitutionOption,
+} from '@/modules/auth/services/auth.service';
+import {
+    registerStudentSchema,
+    type RegisterStudentFormData,
+} from '@/modules/schemas/register-student.schema';
+import MarioAvatar from '@/shared/components/MarioAvatar.vue';
+import PixelButton from '@/shared/components/PixelButton.vue';
+import PixelCard from '@/shared/components/PixelCard.vue';
+import PixelInput from '@/shared/components/PixelInput.vue';
+import { useForm } from '@/shared/composables/useForm';
+import { MARIO_CHARACTERS, type MarioCharacter } from '@/shared/data/characters';
 import {
     PhArrowLeft,
     PhArrowRight,
@@ -14,36 +28,10 @@ import {
     PhIdentificationCard,
     PhUser,
 } from '@phosphor-icons/vue';
-
+import { vMaska } from 'maska/vue';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
-
-import { useStudentStore } from '@/modules/student/stores/student.store';
-
-import { MARIO_CHARACTERS, type MarioCharacter } from '@/shared/data/characters';
-import { cursos, instituicoes } from '@/shared/data/mockData';
-
-import MarioAvatar from '@/shared/components/MarioAvatar.vue';
-import PixelButton from '@/shared/components/PixelButton.vue';
-import PixelCard from '@/shared/components/PixelCard.vue';
-import PixelInput from '@/shared/components/PixelInput.vue';
-
-interface StudentForm {
-    name: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-    cpf: string;
-    rg: string;
-    phone: string;
-    zipCode: string;
-    street: string;
-    number: string;
-    complement: string;
-    neighborhood: string;
-    city: string;
-    institution: string;
-    course: string;
-}
 
 interface StudentStep {
     label: string;
@@ -52,15 +40,13 @@ interface StudentStep {
 
 const router = useRouter();
 
-const studentStore = useStudentStore();
-
-const step = ref<number>(0);
-
-const showPassword = ref<boolean>(false);
-
-const showConfirmPassword = ref<boolean>(false);
-
+const step = ref(0);
+const attemptedSteps = ref<Record<number, boolean>>({});
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 const character = ref<MarioCharacter>('mario');
+const institutions = ref<InstitutionOption[]>([]);
+const courses = ref<CourseOption[]>([]);
 
 const studentSteps = ref<StudentStep[]>([
     {
@@ -85,11 +71,20 @@ const studentSteps = ref<StudentStep[]>([
     },
 ]);
 
-const studentForm = ref<StudentForm>({
+const {
+    fields: studentData,
+    errors: studentErrors,
+    isSubmitting,
+    validate,
+    clearErrors,
+} = useForm(registerStudentSchema);
+
+studentData.value = {
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
+    avatar: 'MARIO',
     cpf: '',
     rg: '',
     phone: '',
@@ -99,125 +94,139 @@ const studentForm = ref<StudentForm>({
     complement: '',
     neighborhood: '',
     city: '',
-    institution: instituicoes[0],
-    course: cursos[0],
-});
+    institutionId: '',
+    courseId: '',
+};
 
-const progress = computed<number>(() => {
-    return ((step.value + 1) / studentSteps.value.length) * 100;
-});
+const progress = computed(() => ((step.value + 1) / studentSteps.value.length) * 100);
 
 const passwordsMatch = computed<boolean | null>(() => {
-    if (!studentForm.value.password || !studentForm.value.confirmPassword) {
+    if (!studentData.value.password || !studentData.value.confirmPassword) {
         return null;
     }
 
-    return studentForm.value.password === studentForm.value.confirmPassword;
+    return studentData.value.password === studentData.value.confirmPassword;
 });
 
 const studentCharacters = computed(() => {
-    return MARIO_CHARACTERS.filter((item) => item.id !== 'institution');
+    return MARIO_CHARACTERS.filter((item) => item.id !== 'institution' && item.id !== 'company');
 });
 
-function formatCpf(value: string): string {
-    const numericValue = value.replace(/\D/g, '').slice(0, 11);
+const availableCourses = computed(() =>
+    courses.value.filter((course) => course.institutionId === studentData.value.institutionId)
+);
 
-    return numericValue
-        .replace(/^(\d{3})(\d)/, '$1.$2')
-        .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
-        .replace(/\.(\d{3})(\d)/, '.$1-$2');
+const avatarByCharacter: Record<
+    Exclude<MarioCharacter, 'company' | 'institution'>,
+    RegisterStudentFormData['avatar']
+> = {
+    mario: 'MARIO',
+    luigi: 'LUIGI',
+    peach: 'PEACH',
+    toad: 'TOAD',
+    yoshi: 'YOSHI',
+    bowser: 'BOWSER',
+};
+
+const stepFields: Record<number, Array<keyof RegisterStudentFormData>> = {
+    0: ['avatar'],
+    1: ['name', 'cpf', 'rg', 'phone'],
+    2: ['zipCode', 'street', 'number', 'complement', 'neighborhood', 'city'],
+    3: ['institutionId', 'courseId'],
+    4: ['email', 'password', 'confirmPassword'],
+};
+
+const rgMaskOptions = {
+    mask: 'AA-##.###.###',
+    tokens: {
+        A: {
+            pattern: /[A-Za-z]/,
+            transform: (char: string) => char.toUpperCase(),
+        },
+    },
+};
+
+const phoneMaskOptions = {
+    mask: ['(##) ####-####', '(##) #####-####'],
+};
+
+function digitsOnly(value: string) {
+    return value.replace(/\D/g, '');
 }
 
-function formatRg(value: string): string {
-    const numericValue = value.replace(/\D/g, '').slice(0, 9);
-
-    return numericValue
-        .replace(/^(\d{2})(\d)/, '$1.$2')
-        .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
-        .replace(/\.(\d{3})(\d)/, '.$1-$2');
+function alphaNumericOnly(value: string) {
+    return value.replace(/[^A-Za-z0-9]/g, '');
 }
 
-function formatPhone(value: string): string {
-    const numericValue = value.replace(/\D/g, '').slice(0, 11);
+function buildAddress() {
+    const parts = [
+        (studentData.value.street ?? '').trim(),
+        (studentData.value.number ?? '').trim(),
+        (studentData.value.complement ?? '').trim(),
+        (studentData.value.neighborhood ?? '').trim(),
+        (studentData.value.city ?? '').trim(),
+    ].filter((value) => value.length > 0);
 
-    if (numericValue.length <= 10) {
-        return numericValue.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d)/, '$1-$2');
+    if (parts.length === 0) return undefined;
+
+    return parts.join(', ').slice(0, 300);
+}
+
+function validateCurrentStep() {
+    attemptedSteps.value[step.value] = true;
+
+    const parseResult = registerStudentSchema.safeParse(studentData.value);
+
+    studentErrors.value = {};
+
+    if (parseResult.success) {
+        return true;
     }
 
-    return numericValue.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+    const fieldsForStep = new Set(stepFields[step.value]);
+    let hasError = false;
+
+    parseResult.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof RegisterStudentFormData;
+        if (!fieldsForStep.has(field)) return;
+        studentErrors.value[field] = issue.message;
+        hasError = true;
+    });
+
+    return !hasError;
 }
 
-function formatCep(value: string): string {
-    const numericValue = value.replace(/\D/g, '').slice(0, 8);
-
-    return numericValue.replace(/^(\d{5})(\d)/, '$1-$2');
-}
-
-function handleCpfInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-
-    studentForm.value.cpf = formatCpf(inputElement.value);
-}
-
-function handleRgInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-
-    studentForm.value.rg = formatRg(inputElement.value);
-}
-
-function handlePhoneInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-
-    studentForm.value.phone = formatPhone(inputElement.value);
-}
-
-function handleCepInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-
-    studentForm.value.zipCode = formatCep(inputElement.value);
-
-    const numericCep = inputElement.value.replace(/\D/g, '');
-
-    if (numericCep.length === 8) {
-        fetchAddressByCep(numericCep);
-    }
+function hasAttemptedCurrentStep() {
+    return Boolean(attemptedSteps.value[step.value]);
 }
 
 async function fetchAddressByCep(cep: string): Promise<void> {
     try {
         const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-
         const addressData = await response.json();
 
         if (addressData.erro) {
             return;
         }
 
-        studentForm.value.street = addressData.logradouro ?? '';
-        studentForm.value.neighborhood = addressData.bairro ?? '';
-        studentForm.value.city = addressData.localidade ?? '';
+        studentData.value.street = addressData.logradouro ?? '';
+        studentData.value.neighborhood = addressData.bairro ?? '';
+        studentData.value.city = addressData.localidade ?? '';
     } catch {
         return;
     }
 }
 
-function goToNextStep(): void {
-    if (step.value < studentSteps.value.length - 1) {
-        step.value += 1;
+function handleZipCodeChange(value: string) {
+    studentData.value.zipCode = value;
+    const numericCep = digitsOnly(value);
 
-        return;
+    if (numericCep.length === 8) {
+        void fetchAddressByCep(numericCep);
     }
-
-    studentStore.setCharacter(character.value);
-
-    toast.success(`Bem-vindo(a), ${studentForm.value.name || 'Jogador'}!`, {
-        description: 'PERSONAGEM CRIADO! +100 moedas bônus!',
-    });
-
-    router.push('/app/aluno');
 }
 
-function goToPreviousStep(): void {
+function goToPreviousStep() {
     if (step.value <= 0) {
         return;
     }
@@ -225,9 +234,99 @@ function goToPreviousStep(): void {
     step.value -= 1;
 }
 
-function goBack(): void {
+function goBack() {
     router.back();
 }
+
+async function submitStudent() {
+    if (!validate()) {
+        return;
+    }
+
+    isSubmitting.value = true;
+
+    try {
+        await registerStudentRequest({
+            name: studentData.value.name.trim(),
+            email: studentData.value.email.trim(),
+            password: studentData.value.password,
+            avatar: studentData.value.avatar,
+            cpf: digitsOnly(studentData.value.cpf),
+            rg: alphaNumericOnly(studentData.value.rg).toUpperCase(),
+            zipCode: digitsOnly(studentData.value.zipCode) || undefined,
+            address: buildAddress(),
+            institutionId: studentData.value.institutionId,
+            courseId: studentData.value.courseId,
+        });
+
+        toast.success('Aluno cadastrado com sucesso!', {
+            description: 'Faça login para acessar o portal.',
+        });
+
+        clearErrors();
+        await router.push({ name: 'login' });
+    } catch {
+    } finally {
+        isSubmitting.value = false;
+    }
+}
+
+async function goToNextStep() {
+    if (!validateCurrentStep()) {
+        return;
+    }
+
+    if (step.value >= studentSteps.value.length - 1) {
+        await submitStudent();
+        return;
+    }
+
+    step.value += 1;
+}
+
+async function loadInstitutions() {
+    const response = await getPublicInstitutions();
+    institutions.value = response.data;
+}
+
+async function loadCourses() {
+    const response = await getPublicCourses();
+    courses.value = response.data;
+}
+
+watch(character, (value) => {
+    if (value === 'company' || value === 'institution') {
+        return;
+    }
+    studentData.value.avatar = avatarByCharacter[value];
+});
+
+watch(
+    () => studentData.value.institutionId,
+    () => {
+        studentData.value.courseId = '';
+
+        if (hasAttemptedCurrentStep()) {
+            validateCurrentStep();
+        }
+    }
+);
+
+watch(
+    studentData,
+    () => {
+        if (!hasAttemptedCurrentStep()) {
+            return;
+        }
+
+        validateCurrentStep();
+    },
+    { deep: true }
+);
+
+onMounted(async () => {
+    await Promise.all([loadInstitutions(), loadCourses()]);
+});
 </script>
 
 <template>
@@ -344,6 +443,13 @@ function goBack(): void {
                                     </p>
                                 </button>
                             </div>
+                            <p
+                                v-if="studentErrors.avatar"
+                                class="font-sans text-xs mt-2"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ studentErrors.avatar }}
+                            </p>
                         </div>
                     </template>
 
@@ -355,9 +461,16 @@ function goBack(): void {
                                 </label>
 
                                 <PixelInput
-                                    v-model="studentForm.name"
+                                    v-model="studentData.name"
                                     placeholder="Digite seu nome"
                                 />
+                                <p
+                                    v-if="studentErrors.name"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ studentErrors.name }}
+                                </p>
                             </div>
 
                             <div class="grid grid-cols-2 gap-3">
@@ -365,22 +478,36 @@ function goBack(): void {
                                     <label class="font-pixel text-[9px] block mb-2"> CPF </label>
 
                                     <PixelInput
-                                        :model-value="studentForm.cpf"
+                                        v-model="studentData.cpf"
+                                        v-maska="'###.###.###-##'"
                                         maxlength="14"
                                         placeholder="000.000.000-00"
-                                        @input="handleCpfInput"
                                     />
+                                    <p
+                                        v-if="studentErrors.cpf"
+                                        class="font-sans text-xs mt-1"
+                                        style="color: hsl(var(--destructive))"
+                                    >
+                                        {{ studentErrors.cpf }}
+                                    </p>
                                 </div>
 
                                 <div>
                                     <label class="font-pixel text-[9px] block mb-2"> RG </label>
 
                                     <PixelInput
-                                        :model-value="studentForm.rg"
-                                        maxlength="12"
-                                        placeholder="00.000.000-0"
-                                        @input="handleRgInput"
+                                        v-model="studentData.rg"
+                                        v-maska="rgMaskOptions"
+                                        maxlength="13"
+                                        placeholder="MG-89.183.736"
                                     />
+                                    <p
+                                        v-if="studentErrors.rg"
+                                        class="font-sans text-xs mt-1"
+                                        style="color: hsl(var(--destructive))"
+                                    >
+                                        {{ studentErrors.rg }}
+                                    </p>
                                 </div>
                             </div>
 
@@ -388,11 +515,18 @@ function goBack(): void {
                                 <label class="font-pixel text-[9px] block mb-2"> TELEFONE </label>
 
                                 <PixelInput
-                                    :model-value="studentForm.phone"
+                                    v-model="studentData.phone"
+                                    v-maska="phoneMaskOptions"
                                     maxlength="15"
                                     placeholder="(00) 00000-0000"
-                                    @input="handlePhoneInput"
                                 />
+                                <p
+                                    v-if="studentErrors.phone"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ studentErrors.phone }}
+                                </p>
                             </div>
                         </div>
                     </template>
@@ -403,38 +537,74 @@ function goBack(): void {
                                 <label class="font-pixel text-[9px] block mb-2"> CEP </label>
 
                                 <PixelInput
-                                    :model-value="studentForm.zipCode"
+                                    v-model="studentData.zipCode"
+                                    v-maska="'#####-###'"
                                     maxlength="9"
                                     placeholder="00000-000"
-                                    @input="handleCepInput"
+                                    @update:model-value="handleZipCodeChange"
                                 />
+                                <p
+                                    v-if="studentErrors.zipCode"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ studentErrors.zipCode }}
+                                </p>
                             </div>
 
                             <div>
                                 <label class="font-pixel text-[9px] block mb-2"> CIDADE </label>
 
-                                <PixelInput v-model="studentForm.city" placeholder="Cidade" />
+                                <PixelInput v-model="studentData.city" placeholder="Cidade" />
+                                <p
+                                    v-if="studentErrors.city"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ studentErrors.city }}
+                                </p>
                             </div>
 
                             <div class="col-span-2">
                                 <label class="font-pixel text-[9px] block mb-2"> RUA </label>
 
-                                <PixelInput v-model="studentForm.street" placeholder="Rua" />
+                                <PixelInput v-model="studentData.street" placeholder="Rua" />
+                                <p
+                                    v-if="studentErrors.street"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ studentErrors.street }}
+                                </p>
                             </div>
 
                             <div>
                                 <label class="font-pixel text-[9px] block mb-2"> NÚMERO </label>
 
-                                <PixelInput v-model="studentForm.number" placeholder="123" />
+                                <PixelInput v-model="studentData.number" placeholder="123" />
+                                <p
+                                    v-if="studentErrors.number"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ studentErrors.number }}
+                                </p>
                             </div>
 
                             <div>
                                 <label class="font-pixel text-[9px] block mb-2"> BAIRRO </label>
 
                                 <PixelInput
-                                    v-model="studentForm.neighborhood"
+                                    v-model="studentData.neighborhood"
                                     placeholder="Bairro"
                                 />
+                                <p
+                                    v-if="studentErrors.neighborhood"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ studentErrors.neighborhood }}
+                                </p>
                             </div>
 
                             <div class="col-span-2">
@@ -443,9 +613,16 @@ function goBack(): void {
                                 </label>
 
                                 <PixelInput
-                                    v-model="studentForm.complement"
+                                    v-model="studentData.complement"
                                     placeholder="Apto, bloco..."
                                 />
+                                <p
+                                    v-if="studentErrors.complement"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ studentErrors.complement }}
+                                </p>
                             </div>
                         </div>
                     </template>
@@ -458,30 +635,51 @@ function goBack(): void {
                                 </label>
 
                                 <select
-                                    v-model="studentForm.institution"
+                                    v-model="studentData.institutionId"
                                     class="w-full border-2 border-border bg-card px-3 py-2 font-pixel text-[10px]"
                                 >
+                                    <option disabled value="">Selecione uma instituição</option>
                                     <option
-                                        v-for="institution in instituicoes"
-                                        :key="institution"
-                                        :value="institution"
+                                        v-for="institution in institutions"
+                                        :key="institution.id"
+                                        :value="institution.id"
                                     >
-                                        {{ institution }}
+                                        {{ institution.name }}
                                     </option>
                                 </select>
+                                <p
+                                    v-if="studentErrors.institutionId"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ studentErrors.institutionId }}
+                                </p>
                             </div>
 
                             <div>
                                 <label class="font-pixel text-[9px] block mb-2"> CURSO </label>
 
                                 <select
-                                    v-model="studentForm.course"
-                                    class="w-full border-2 border-border bg-card px-3 py-2 font-pixel text-[10px]"
+                                    v-model="studentData.courseId"
+                                    :disabled="!studentData.institutionId"
+                                    class="w-full border-2 border-border bg-card px-3 py-2 font-pixel text-[10px] disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    <option v-for="course in cursos" :key="course" :value="course">
-                                        {{ course }}
+                                    <option disabled value="">Selecione um curso</option>
+                                    <option
+                                        v-for="course in availableCourses"
+                                        :key="course.id"
+                                        :value="course.id"
+                                    >
+                                        {{ course.name }}
                                     </option>
                                 </select>
+                                <p
+                                    v-if="studentErrors.courseId"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ studentErrors.courseId }}
+                                </p>
                             </div>
                         </div>
                     </template>
@@ -492,10 +690,17 @@ function goBack(): void {
                                 <label class="font-pixel text-[9px] block mb-2"> E-MAIL </label>
 
                                 <PixelInput
-                                    v-model="studentForm.email"
+                                    v-model="studentData.email"
                                     placeholder="voce@email.com"
                                     type="email"
                                 />
+                                <p
+                                    v-if="studentErrors.email"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ studentErrors.email }}
+                                </p>
                             </div>
 
                             <div>
@@ -503,7 +708,7 @@ function goBack(): void {
 
                                 <div class="relative">
                                     <PixelInput
-                                        v-model="studentForm.password"
+                                        v-model="studentData.password"
                                         :type="showPassword ? 'text' : 'password'"
                                         class="pr-10"
                                         placeholder="••••••••"
@@ -519,6 +724,13 @@ function goBack(): void {
                                         <PhEye v-else :size="18" weight="bold" />
                                     </button>
                                 </div>
+                                <p
+                                    v-if="studentErrors.password"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ studentErrors.password }}
+                                </p>
                             </div>
 
                             <div>
@@ -528,7 +740,7 @@ function goBack(): void {
 
                                 <div class="relative">
                                     <PixelInput
-                                        v-model="studentForm.confirmPassword"
+                                        v-model="studentData.confirmPassword"
                                         :type="showConfirmPassword ? 'text' : 'password'"
                                         class="pr-10"
                                         placeholder="••••••••"
@@ -548,6 +760,13 @@ function goBack(): void {
                                         <PhEye v-else :size="18" weight="bold" />
                                     </button>
                                 </div>
+                                <p
+                                    v-if="studentErrors.confirmPassword"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ studentErrors.confirmPassword }}
+                                </p>
 
                                 <p
                                     v-if="passwordsMatch !== null"
@@ -562,13 +781,17 @@ function goBack(): void {
                 </div>
 
                 <div class="flex justify-between gap-3 mt-7">
-                    <PixelButton :disabled="step === 0" variant="ghost" @click="goToPreviousStep">
+                    <PixelButton
+                        :disabled="step === 0 || isSubmitting"
+                        variant="ghost"
+                        @click="goToPreviousStep"
+                    >
                         <PhArrowLeft :size="16" weight="bold" />
 
                         VOLTAR
                     </PixelButton>
 
-                    <PixelButton @click="goToNextStep">
+                    <PixelButton :disabled="isSubmitting" @click="goToNextStep">
                         {{ step === studentSteps.length - 1 ? 'FINALIZAR' : 'PRÓXIMA' }}
 
                         <PhArrowRight :size="16" weight="bold" />

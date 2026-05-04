@@ -43,3 +43,19 @@ export type CourseResponse = {
     createdAt: string;
     updatedAt: string;
 };
+
+export type StudentResponse = {
+    id: string;
+    name: string;
+    email: string;
+    avatar: string;
+    cpf: string;
+    rg: string;
+    zipCode: string | null;
+    address: string | null;
+    balance: number;
+    institutionId: string;
+    courseId: string;
+    createdAt: string;
+    updatedAt: string;
+};

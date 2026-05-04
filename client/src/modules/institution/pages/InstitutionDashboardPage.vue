@@ -1,36 +1,37 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import {
-    deleteInstitution,
-    getInstitution,
-    updateInstitution,
-    getTeachers,
-    registerTeacher,
-    getCompanies,
-    registerCompany,
-    updateTeacher,
-    deleteTeacher,
-    getCourses,
     createCourse as createCourseApi,
     deleteCourse,
+    deleteInstitution,
+    deleteTeacher,
+    getCompanies,
+    getCourses,
+    getInstitution,
+    getStudents,
+    getTeachers,
+    registerCompany,
+    registerTeacher,
+    updateInstitution,
+    updateTeacher,
 } from '@/modules/institution/services/institution.service';
 import type {
     CompanyResponse,
     CourseResponse,
     InstitutionProfile,
+    StudentResponse,
     TeacherResponse,
 } from '@/modules/institution/services/institution.types';
-import { registerTeacherSchema } from '@/modules/schemas/register-teacher.schema';
-import { registerCourseSchema } from '@/modules/schemas/register-course.schema';
 import { registerCompanyAdminSchema } from '@/modules/schemas/register-company-admin.schema';
-import { updateTeacherSchema } from '@/modules/schemas/update-teacher.schema';
+import { registerCourseSchema } from '@/modules/schemas/register-course.schema';
+import { registerTeacherSchema } from '@/modules/schemas/register-teacher.schema';
 import { updateInstitutionSchema } from '@/modules/schemas/update-institution.schema';
-import { useForm } from '@/shared/composables/useForm';
-import { alunos as alunosBase } from '@/shared/data/mockData';
+import { updateTeacherSchema } from '@/modules/schemas/update-teacher.schema';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
+import { useForm } from '@/shared/composables/useForm';
 import { useThemeStore } from '@/shared/stores/theme.store';
 import {
     PhArrowLeft,
@@ -225,6 +226,7 @@ async function handleDeleteTeacher(id: string) {
 }
 
 const companies = ref<CompanyResponse[]>([]);
+const allStudents = ref<StudentResponse[]>([]);
 
 const {
     fields: companyData,
@@ -253,6 +255,11 @@ async function submitCompany(e: Event) {
     } finally {
         companyIsSubmitting.value = false;
     }
+}
+
+async function loadStudents() {
+    const response = await getStudents();
+    allStudents.value = response.data;
 }
 
 function formatDate(value: string) {
@@ -339,20 +346,30 @@ async function handleDeleteInstitution() {
 const courseFilter = ref('all');
 const studentSearch = ref('');
 
+const institutionCourses = computed(() => {
+    if (!authStore.user?.id) return [];
+    return courses.value.filter((course) => course.institutionId === authStore.user?.id);
+});
+
+const courseNameById = computed(() => {
+    const entries = courses.value.map((course) => [course.id, course.name] as const);
+    return Object.fromEntries(entries) as Record<string, string>;
+});
+
+const studentsForInstitution = computed(() => {
+    if (!authStore.user?.id) return [];
+    return allStudents.value.filter((student) => student.institutionId === authStore.user?.id);
+});
+
+const enrolledStudentsCount = computed(() => studentsForInstitution.value.length);
+
 const filteredStudents = computed(() => {
-    const selectedCourse = courses.value.find((c) => c.id === courseFilter.value);
-    return alunosBase.filter((a) => {
-        const matchCourse =
-            courseFilter.value === 'all' ||
-            selectedCourse == null ||
-            a.course
-                .split(' ')
-                .some(
-                    (word) =>
-                        word.length > 3 &&
-                        selectedCourse.name.toLowerCase().includes(word.toLowerCase())
-                );
-        const matchSearch = a.name.toLowerCase().includes(studentSearch.value.toLowerCase());
+    return studentsForInstitution.value.filter((student) => {
+        const matchCourse = courseFilter.value === 'all' || student.courseId === courseFilter.value;
+        const normalizedSearch = studentSearch.value.toLowerCase();
+        const matchSearch =
+            student.name.toLowerCase().includes(normalizedSearch) ||
+            student.email.toLowerCase().includes(normalizedSearch);
         return matchCourse && matchSearch;
     });
 });
@@ -366,7 +383,13 @@ const tabs = [
 ];
 
 onMounted(async () => {
-    await Promise.all([loadCourses(), loadTeachers(), loadCompanies(), loadInstitutionProfile()]);
+    await Promise.all([
+        loadCourses(),
+        loadStudents(),
+        loadTeachers(),
+        loadCompanies(),
+        loadInstitutionProfile(),
+    ]);
 });
 </script>
 
@@ -423,7 +446,7 @@ onMounted(async () => {
                         <div class="font-pixel text-[9px] text-muted-foreground">
                             ALUNOS MATRICULADOS
                         </div>
-                        <div class="font-pixel text-2xl">{{ alunosBase.length }}</div>
+                        <div class="font-pixel text-2xl">{{ enrolledStudentsCount }}</div>
                     </div>
                 </PixelCard>
             </section>
@@ -1084,7 +1107,7 @@ onMounted(async () => {
                             TODOS
                         </button>
                         <button
-                            v-for="c in courses"
+                            v-for="c in institutionCourses"
                             :key="c.id"
                             class="border-2 border-border font-pixel text-[9px] px-2 py-1"
                             :class="
@@ -1112,7 +1135,7 @@ onMounted(async () => {
                     <div
                         class="bg-hud text-hud-foreground px-4 py-2 font-pixel text-[10px] grid grid-cols-[2fr_1fr_auto_auto] gap-2"
                     >
-                        <span>NOME</span><span>CURSO</span><span>LV</span><span>MOEDAS</span>
+                        <span>NOME</span><span>CURSO</span><span>AVATAR</span><span>MOEDAS</span>
                     </div>
                     <div
                         v-if="filteredStudents.length === 0"
@@ -1127,10 +1150,10 @@ onMounted(async () => {
                     >
                         <div class="font-pixel text-[10px] truncate">{{ a.name }}</div>
                         <div class="font-sans text-xs text-muted-foreground truncate">
-                            {{ a.course }}
+                            {{ courseNameById[a.courseId] ?? 'Curso não identificado' }}
                         </div>
-                        <PixelBadge tone="blue">{{ a.level }}</PixelBadge>
-                        <div class="font-pixel text-xs">{{ a.coins }}</div>
+                        <PixelBadge tone="blue">{{ a.avatar }}</PixelBadge>
+                        <div class="font-pixel text-xs">{{ a.balance }}</div>
                     </div>
                 </PixelCard>
             </div>

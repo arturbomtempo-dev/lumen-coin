@@ -3,6 +3,7 @@ import type {
     CompanyResponse,
     CourseResponse,
     InstitutionProfile,
+    StudentResponse,
     TeacherResponse,
 } from './institution.types';
 
@@ -70,6 +71,10 @@ export function updateTeacher(id: string, dto: UpdateTeacherDto) {
 
 export function deleteTeacher(id: string) {
     return api.delete(`/teachers/${id}`);
+}
+
+export function getStudents() {
+    return api.get<StudentResponse[]>('/students');
 }
 
 export type RegisterCourseDto = {

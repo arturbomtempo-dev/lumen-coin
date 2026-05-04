@@ -1,5 +1,15 @@
 import { api } from '@/shared/services/api';
 
+export type AvatarType =
+    | 'MARIO'
+    | 'LUIGI'
+    | 'PEACH'
+    | 'TOAD'
+    | 'YOSHI'
+    | 'BOWSER'
+    | 'COMPANY'
+    | 'INSTITUTION';
+
 export type LoginDto = {
     email: string;
     password: string;
@@ -8,12 +18,14 @@ export type LoginDto = {
 export type RegisterStudentDto = {
     name: string;
     email: string;
+    password: string;
+    avatar: AvatarType;
     cpf: string;
     rg: string;
-    address: string;
+    zipCode?: string;
+    address?: string;
     institutionId: string;
-    course: string;
-    password: string;
+    courseId: string;
 };
 
 export type RegisterCompanyDto = {
@@ -40,12 +52,33 @@ export type AuthResponse = {
     role: string;
 };
 
+export type InstitutionOption = {
+    id: string;
+    name: string;
+};
+
+export type CourseOption = {
+    id: string;
+    name: string;
+    shift: 'DAYTIME' | 'MORNING' | 'AFTERNOON' | 'NIGHT';
+    periods: number;
+    institutionId: string;
+};
+
 export function loginRequest(dto: LoginDto) {
     return api.post<AuthResponse>('/auth/login', dto, { skipGlobalErrorToast: true });
 }
 
 export function registerStudentRequest(dto: RegisterStudentDto) {
-    return api.post('/auth/register/student', dto);
+    return api.post('/students', dto);
+}
+
+export function getPublicInstitutions() {
+    return api.get<InstitutionOption[]>('/institutions');
+}
+
+export function getPublicCourses() {
+    return api.get<CourseOption[]>('/courses');
 }
 
 export function registerCompanyRequest(dto: RegisterCompanyDto) {
