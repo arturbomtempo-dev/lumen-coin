@@ -32,6 +32,11 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/modules/auth/pages/RegisterCompanyPage.vue'),
     },
     {
+        path: '/design-system',
+        name: 'design-system',
+        component: () => import('@/modules/home/pages/DesignSystemPage.vue'),
+    },
+    {
         path: '/app/aluno',
         component: () => import('@/shared/layouts/StudentLayout.vue'),
         meta: { requiresAuth: true },
