@@ -7,6 +7,7 @@ import { toast } from 'vue-sonner';
 declare module 'axios' {
     interface AxiosRequestConfig {
         skipGlobalErrorToast?: boolean;
+        skipAuthRedirect?: boolean;
     }
 }
 
@@ -95,7 +96,7 @@ api.interceptors.response.use(
             toast.error(getApiErrorMessage(axiosError));
         }
 
-        if (error.response?.status === 401) {
+        if (error.response?.status === 401 && !axiosError.config?.skipAuthRedirect) {
             router.push('/login');
         }
 

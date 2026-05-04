@@ -68,5 +68,8 @@ export type MeResponse = {
 };
 
 export function meRequest() {
-    return api.get<MeResponse>('/auth/me');
+    return api.get<MeResponse>('/auth/me', {
+        skipGlobalErrorToast: true,
+        skipAuthRedirect: true,
+    });
 }

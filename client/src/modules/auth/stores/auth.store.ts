@@ -40,12 +40,14 @@ export const useAuthStore = defineStore('auth', () => {
         } finally {
             isAuthenticated.value = false;
             user.value = null;
+            isLoading.value = false;
         }
     }
 
     function setUser(authUser: AuthUser) {
         user.value = authUser;
         isAuthenticated.value = true;
+        isLoading.value = false;
     }
 
     return {
