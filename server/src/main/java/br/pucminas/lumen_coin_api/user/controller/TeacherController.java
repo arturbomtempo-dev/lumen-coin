@@ -53,13 +53,13 @@ public class TeacherController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('INSTITUTION','TEACHER')")
-    public ResponseEntity<Void> softDelete(
+    public ResponseEntity<Void> delete(
             @PathVariable UUID id,
             @AuthenticationPrincipal UserPrincipal principal) {
         if (principal.getRole() == UserRole.TEACHER) {
             throw new TeacherSelfDeleteNotAllowedException();
         }
-        teacherService.softDelete(id);
+        teacherService.delete(id);
         return ResponseEntity.ok().build();
     }
 }

@@ -115,8 +115,7 @@ public class InstitutionServiceImpl implements InstitutionService {
                 .orElseThrow(() -> new UserNotFoundException(id));
 
         List<Teacher> teachers = teacherRepository.findByInstitutionId(id);
-        teachers.forEach(t -> t.setActive(false));
-        teacherRepository.saveAll(teachers);
+        teacherRepository.deleteAll(teachers);
 
         institutionRepository.delete(institution);
     }

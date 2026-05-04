@@ -16,5 +16,5 @@ public interface TeacherService {
 
     TeacherResponse update(UUID id, UpdateTeacherRequest request);
 
-    void softDelete(UUID id);
+    void delete(UUID id);
 }

@@ -104,10 +104,9 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional
-    public void softDelete(UUID id) {
+    public void delete(UUID id) {
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        teacher.setActive(false);
-        teacherRepository.save(teacher);
+        teacherRepository.delete(teacher);
     }
 }

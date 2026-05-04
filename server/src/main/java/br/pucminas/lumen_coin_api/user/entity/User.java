@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
@@ -17,7 +16,6 @@ import java.util.UUID;
 @Table(name = "tb_users", indexes = @Index(name = "idx_users_email", columnList = "email"))
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
-@SQLRestriction("active = true")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -48,9 +46,6 @@ public abstract class User {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
-
-    @Column(name = "active", nullable = false)
-    private boolean active = true;
 
     public abstract UserRole getRole();
 }
