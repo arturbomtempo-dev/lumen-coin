@@ -5,6 +5,7 @@ import br.pucminas.lumen_coin_api.course.exception.CourseNotFoundException;
 import br.pucminas.lumen_coin_api.user.exception.CnpjAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.CpfAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
+import br.pucminas.lumen_coin_api.user.exception.StudentInstitutionCourseMismatchException;
 import br.pucminas.lumen_coin_api.user.exception.TeacherSelfDeleteNotAllowedException;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -57,6 +58,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleCpfConflict(
             CpfAlreadyInUseException ex, HttpServletRequest request) {
         return build(HttpStatus.CONFLICT, "Conflict", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(StudentInstitutionCourseMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleStudentInstitutionCourseMismatch(
+            StudentInstitutionCourseMismatchException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Bad Request", ex.getMessage(), request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

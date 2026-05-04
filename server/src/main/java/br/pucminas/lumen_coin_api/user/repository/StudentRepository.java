@@ -11,5 +11,7 @@ import java.util.UUID;
 public interface StudentRepository extends JpaRepository<Student, UUID> {
     boolean existsByCpf(String cpf);
 
+    List<Student> findByInstitutionId(UUID institutionId);
+
     List<Student> findByCourseId(UUID courseId);
 }

@@ -21,5 +21,7 @@ public record RegisterStudentRequest(
 
                 @Size(max = 300, message = "Address must not exceed 300 characters") String address,
 
+                @NotNull(message = "Institution ID is required") java.util.UUID institutionId,
+
                 @NotNull(message = "Course ID is required") java.util.UUID courseId) {
 }

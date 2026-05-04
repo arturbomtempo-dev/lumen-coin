@@ -1,5 +1,6 @@
 package br.pucminas.lumen_coin_api.user.service.impl;
 
+import br.pucminas.lumen_coin_api.course.entity.Course;
 import br.pucminas.lumen_coin_api.course.exception.CourseNotFoundException;
 import br.pucminas.lumen_coin_api.course.repository.CourseRepository;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterStudentRequest;
@@ -8,8 +9,10 @@ import br.pucminas.lumen_coin_api.user.dto.response.StudentResponse;
 import br.pucminas.lumen_coin_api.user.entity.Student;
 import br.pucminas.lumen_coin_api.user.exception.CpfAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
+import br.pucminas.lumen_coin_api.user.exception.StudentInstitutionCourseMismatchException;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
 import br.pucminas.lumen_coin_api.user.mapper.UserMapper;
+import br.pucminas.lumen_coin_api.user.repository.InstitutionRepository;
 import br.pucminas.lumen_coin_api.user.repository.StudentRepository;
 import br.pucminas.lumen_coin_api.user.repository.UserRepository;
 import br.pucminas.lumen_coin_api.user.service.StudentService;
@@ -26,6 +29,7 @@ import java.util.UUID;
 public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
     private final UserRepository userRepository;
+    private final InstitutionRepository institutionRepository;
     private final CourseRepository courseRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
@@ -50,9 +54,18 @@ public class StudentServiceImpl implements StudentService {
         student.setZipCode(request.zipCode());
         student.setAddress(request.address());
 
-        if (!courseRepository.existsById(request.courseId())) {
-            throw new CourseNotFoundException(request.courseId());
+        if (!institutionRepository.existsById(request.institutionId())) {
+            throw new UserNotFoundException(request.institutionId());
         }
+
+        Course course = courseRepository.findById(request.courseId())
+                .orElseThrow(() -> new CourseNotFoundException(request.courseId()));
+
+        if (!course.getInstitutionId().equals(request.institutionId())) {
+            throw new StudentInstitutionCourseMismatchException(request.institutionId(), request.courseId());
+        }
+
+        student.setInstitutionId(request.institutionId());
         student.setCourseId(request.courseId());
 
         return mapper.toResponse(studentRepository.save(student));
@@ -112,11 +125,29 @@ public class StudentServiceImpl implements StudentService {
         if (request.address() != null)
             student.setAddress(request.address());
 
-        if (request.courseId() != null) {
-            if (!courseRepository.existsById(request.courseId())) {
-                throw new CourseNotFoundException(request.courseId());
+        if (request.institutionId() != null) {
+            if (!institutionRepository.existsById(request.institutionId())) {
+                throw new UserNotFoundException(request.institutionId());
             }
-            student.setCourseId(request.courseId());
+            student.setInstitutionId(request.institutionId());
+        }
+
+        if (request.courseId() != null) {
+            Course requestCourse = courseRepository.findById(request.courseId())
+                    .orElseThrow(() -> new CourseNotFoundException(request.courseId()));
+            student.setCourseId(requestCourse.getId());
+        }
+
+        UUID targetInstitutionId = student.getInstitutionId();
+        UUID targetCourseId = student.getCourseId();
+
+        if (targetCourseId != null) {
+            Course targetCourse = courseRepository.findById(targetCourseId)
+                    .orElseThrow(() -> new CourseNotFoundException(targetCourseId));
+
+            if (targetInstitutionId == null || !targetCourse.getInstitutionId().equals(targetInstitutionId)) {
+                throw new StudentInstitutionCourseMismatchException(targetInstitutionId, targetCourseId);
+            }
         }
 
         return mapper.toResponse(studentRepository.save(student));

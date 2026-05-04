@@ -21,5 +21,7 @@ public record UpdateStudentRequest(
 
         @Size(max = 300, message = "Address must not exceed 300 characters") String address,
 
+        java.util.UUID institutionId,
+
         java.util.UUID courseId) {
 }

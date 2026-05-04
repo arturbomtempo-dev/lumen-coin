@@ -123,12 +123,14 @@ public class InstitutionServiceImpl implements InstitutionService {
         List<Teacher> teachers = teacherRepository.findByInstitutionId(id);
         teacherRepository.deleteAll(teachers);
 
-        List<Course> courses = courseRepository.findByInstitutionId(id);
-        courses.forEach(course -> {
-            List<Student> enrolled = studentRepository.findByCourseId(course.getId());
-            enrolled.forEach(s -> s.setCourseId(null));
-            studentRepository.saveAll(enrolled);
+        List<Student> students = studentRepository.findByInstitutionId(id);
+        students.forEach(student -> {
+            student.setInstitutionId(null);
+            student.setCourseId(null);
         });
+        studentRepository.saveAll(students);
+
+        List<Course> courses = courseRepository.findByInstitutionId(id);
         courseRepository.deleteAll(courses);
 
         institutionRepository.delete(institution);

@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import br.pucminas.lumen_coin_api.user.enums.UserRole;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "tb_students", indexes = @Index(name = "idx_students_cpf", columnList = "cpf"))
 @DiscriminatorValue("STUDENT")
@@ -29,8 +31,11 @@ public class Student extends User {
     @Column(name = "balance", nullable = false)
     private int balance = 0;
 
+    @Column(name = "institution_id")
+    private UUID institutionId;
+
     @Column(name = "course_id")
-    private java.util.UUID courseId;
+    private UUID courseId;
 
     @Override
     public UserRole getRole() {
