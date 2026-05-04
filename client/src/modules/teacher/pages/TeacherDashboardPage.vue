@@ -22,14 +22,18 @@ import {
     PhMoon,
     PhPaperPlaneTilt,
     PhReceipt,
+    PhSignOut,
     PhSun,
     PhUsers,
 } from '@phosphor-icons/vue';
 import { computed, ref } from 'vue';
-import { RouterLink } from 'vue-router';
+import { useAuthStore } from '@/modules/auth/stores/auth.store';
+import { RouterLink, useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
 
 const themeStore = useThemeStore();
+const authStore = useAuthStore();
+const router = useRouter();
 
 const LIMITE = 1000;
 const transactions = ref<Transaction[]>([...initialTransactions]);
@@ -92,6 +96,11 @@ function submit(e: Event) {
     reason.value = '';
     amount.value = 50;
 }
+
+async function handleLogout() {
+    await authStore.logout();
+    router.push('/login');
+}
 </script>
 
 <template>
@@ -109,14 +118,28 @@ function submit(e: Event) {
                         ><CoinIcon :size="14" /> {{ available }}/{{ LIMITE }}</span
                     >
                 </div>
-                <button
-                    class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))]"
-                    @click="themeStore.toggle()"
-                >
-                    <PhSun v-if="themeStore.theme === 'night'" weight="fill" class="pixel-icon" />
-                    <PhMoon v-else weight="fill" class="pixel-icon" />
-                    {{ themeStore.theme === 'night' ? 'DIA' : 'NOITE' }}
-                </button>
+                <div class="flex items-center gap-2">
+                    <button
+                        class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))]"
+                        @click="themeStore.toggle()"
+                    >
+                        <PhSun
+                            v-if="themeStore.theme === 'night'"
+                            weight="fill"
+                            class="pixel-icon"
+                        />
+                        <PhMoon v-else weight="fill" class="pixel-icon" />
+                        {{ themeStore.theme === 'night' ? 'DIA' : 'NOITE' }}
+                    </button>
+                    <button
+                        class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))]"
+                        aria-label="Sair"
+                        @click="handleLogout"
+                    >
+                        <PhSignOut weight="bold" class="pixel-icon" />
+                        SAIR
+                    </button>
+                </div>
             </div>
         </header>
 

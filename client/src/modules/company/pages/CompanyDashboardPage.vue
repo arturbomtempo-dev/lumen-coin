@@ -22,6 +22,7 @@ import {
     PhGameController,
     PhMoon,
     PhPlus,
+    PhSignOut,
     PhStorefront,
     PhSun,
     PhTicket,
@@ -141,6 +142,11 @@ async function handleDeleteAccount() {
     }
 }
 
+async function handleLogout() {
+    await authStore.logout();
+    router.push('/login');
+}
+
 const tabs = [
     { id: 'benefits' as Tab, label: 'VANTAGENS', icon: PhStorefront },
     { id: 'account' as Tab, label: 'MINHA CONTA', icon: PhUser },
@@ -163,14 +169,28 @@ onMounted(() => {
                 <div class="hidden sm:block font-pixel text-[10px]">
                     {{ authStore.user?.name?.toUpperCase() ?? 'EMPRESA' }} · ADMIN
                 </div>
-                <button
-                    class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))]"
-                    @click="themeStore.toggle()"
-                >
-                    <PhSun v-if="themeStore.theme === 'night'" weight="fill" class="pixel-icon" />
-                    <PhMoon v-else weight="fill" class="pixel-icon" />
-                    {{ themeStore.theme === 'night' ? 'DIA' : 'NOITE' }}
-                </button>
+                <div class="flex items-center gap-2">
+                    <button
+                        class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))]"
+                        @click="themeStore.toggle()"
+                    >
+                        <PhSun
+                            v-if="themeStore.theme === 'night'"
+                            weight="fill"
+                            class="pixel-icon"
+                        />
+                        <PhMoon v-else weight="fill" class="pixel-icon" />
+                        {{ themeStore.theme === 'night' ? 'DIA' : 'NOITE' }}
+                    </button>
+                    <button
+                        class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))]"
+                        aria-label="Sair"
+                        @click="handleLogout"
+                    >
+                        <PhSignOut weight="bold" class="pixel-icon" />
+                        SAIR
+                    </button>
+                </div>
             </div>
         </header>
 

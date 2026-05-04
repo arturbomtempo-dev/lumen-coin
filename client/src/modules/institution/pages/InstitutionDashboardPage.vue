@@ -43,6 +43,7 @@ import {
     PhMoon,
     PhPencilSimple,
     PhPlus,
+    PhSignOut,
     PhStudent,
     PhSun,
     PhTrash,
@@ -343,6 +344,11 @@ async function handleDeleteInstitution() {
     }
 }
 
+async function handleLogout() {
+    await authStore.logout();
+    router.push('/login');
+}
+
 const courseFilter = ref('all');
 const studentSearch = ref('');
 
@@ -406,14 +412,28 @@ onMounted(async () => {
                     <PhBuildings weight="fill" class="pixel-icon text-info" :size="18" />
                     INSTITUIÇÃO · {{ INSTITUICAO_NOME.toUpperCase() }}
                 </div>
-                <button
-                    class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))]"
-                    @click="themeStore.toggle()"
-                >
-                    <PhSun v-if="themeStore.theme === 'night'" weight="fill" class="pixel-icon" />
-                    <PhMoon v-else weight="fill" class="pixel-icon" />
-                    {{ themeStore.theme === 'night' ? 'DIA' : 'NOITE' }}
-                </button>
+                <div class="flex items-center gap-2">
+                    <button
+                        class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))]"
+                        @click="themeStore.toggle()"
+                    >
+                        <PhSun
+                            v-if="themeStore.theme === 'night'"
+                            weight="fill"
+                            class="pixel-icon"
+                        />
+                        <PhMoon v-else weight="fill" class="pixel-icon" />
+                        {{ themeStore.theme === 'night' ? 'DIA' : 'NOITE' }}
+                    </button>
+                    <button
+                        class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))]"
+                        aria-label="Sair"
+                        @click="handleLogout"
+                    >
+                        <PhSignOut weight="bold" class="pixel-icon" />
+                        SAIR
+                    </button>
+                </div>
             </div>
         </header>
 

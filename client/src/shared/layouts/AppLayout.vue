@@ -93,7 +93,7 @@ async function handleLogout() {
                 <p class="text-xs truncate mb-3 px-1 text-muted">
                     {{ auth.user?.email }}
                 </p>
-                <button class="nav-link w-full text-left" @click="handleLogout">Sign Out</button>
+                <button class="nav-link w-full text-left" @click="handleLogout">Sair</button>
             </div>
         </aside>
 
@@ -114,6 +114,7 @@ async function handleLogout() {
                     ☰
                 </button>
                 <span class="font-semibold capitalize">{{ auth.user?.role }} Area</span>
+                <button class="nav-link ml-auto px-3 py-2" @click="handleLogout">Sair</button>
             </header>
 
             <main class="flex-1 p-4 sm:p-6">

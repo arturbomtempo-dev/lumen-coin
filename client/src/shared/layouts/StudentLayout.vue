@@ -8,16 +8,20 @@ import {
     PhHouse,
     PhMoon,
     PhReceipt,
+    PhSignOut,
     PhSun,
     PhUser,
 } from '@phosphor-icons/vue';
 import { storeToRefs } from 'pinia';
-import { RouterLink, useRoute } from 'vue-router';
+import { useAuthStore } from '@/modules/auth/stores/auth.store';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 
 const themeStore = useThemeStore();
 const studentStore = useStudentStore();
+const authStore = useAuthStore();
 const { balance, level, name, unreadCount } = storeToRefs(studentStore);
 const route = useRoute();
+const router = useRouter();
 
 const navItems = [
     { to: '/app/aluno', icon: PhHouse, label: 'INÍCIO', badge: 0 },
@@ -25,6 +29,11 @@ const navItems = [
     { to: '/app/aluno/perfil', icon: PhUser, label: 'PERFIL', badge: 0 },
     { to: '/app/aluno/notificacoes', icon: PhBell, label: 'AVISOS', badge: unreadCount },
 ];
+
+async function handleLogout() {
+    await authStore.logout();
+    router.push('/login');
+}
 </script>
 
 <template>
@@ -54,15 +63,29 @@ const navItems = [
                     </span>
                 </div>
 
-                <button
-                    class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
-                    aria-label="Alternar tema"
-                    @click="themeStore.toggle"
-                >
-                    <PhSun v-if="themeStore.theme === 'night'" weight="fill" class="pixel-icon" />
-                    <PhMoon v-else weight="fill" class="pixel-icon" />
-                    {{ themeStore.theme === 'night' ? 'DIA' : 'NOITE' }}
-                </button>
+                <div class="flex items-center gap-2">
+                    <button
+                        class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                        aria-label="Alternar tema"
+                        @click="themeStore.toggle"
+                    >
+                        <PhSun
+                            v-if="themeStore.theme === 'night'"
+                            weight="fill"
+                            class="pixel-icon"
+                        />
+                        <PhMoon v-else weight="fill" class="pixel-icon" />
+                        {{ themeStore.theme === 'night' ? 'DIA' : 'NOITE' }}
+                    </button>
+                    <button
+                        class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                        aria-label="Sair"
+                        @click="handleLogout"
+                    >
+                        <PhSignOut weight="bold" class="pixel-icon" />
+                        SAIR
+                    </button>
+                </div>
             </div>
         </header>
 
