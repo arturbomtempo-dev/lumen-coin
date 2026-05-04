@@ -277,263 +277,157 @@ onMounted(async () => {
             </h1>
         </div>
 
-        <PixelCard class="p-6">
-            <div class="grid lg:grid-cols-[auto_1fr] gap-6">
-                <div class="border-2 border-border bg-hud p-3 flex items-center justify-center">
-                    <MarioAvatar :character="selectedCharacter" :size="112" />
+        <PixelCard class="p-6 space-y-6">
+
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+
+                <div class="flex items-center gap-4">
+                    <div class="border-2 border-border bg-hud p-2">
+                        <MarioAvatar :character="selectedCharacter" :size="64" />
+                    </div>
+
+                    <div>
+                        <div class="font-pixel text-xl">
+                            {{ (studentProfile?.name ?? authStore.user?.name ?? 'ALUNO').toUpperCase() }}
+                        </div>
+                        <div class="font-sans text-sm text-muted-foreground mt-1">
+                            Perfil de aluno
+                        </div>
+                    </div>
                 </div>
-                <div class="space-y-5">
-                    <div class="flex items-start justify-between gap-3 flex-wrap">
-                        <div>
-                            <div class="font-pixel text-2xl">
-                                {{ (studentProfile?.name ?? authStore.user?.name ?? 'ALUNO').toUpperCase() }}
-                            </div>
-                            <div class="font-sans text-sm text-muted-foreground mt-1">
-                                Perfil de aluno
-                            </div>
-                        </div>
-                        <div class="flex gap-2">
-                            <PixelButton
-                                v-if="!isEditingProfile"
-                                variant="secondary"
-                                @click="startProfileEdit"
-                            >
-                                <PhPencilSimple weight="bold" /> EDITAR
-                            </PixelButton>
-                            <PixelButton
-                                v-else
-                                variant="ghost"
-                                @click="cancelProfileEdit"
-                            >
-                                <PhX weight="bold" /> CANCELAR
-                            </PixelButton>
-                        </div>
-                    </div>
 
-                    <div class="grid md:grid-cols-2 gap-3">
-                        <div class="border-2 border-border bg-card p-3">
-                            <div class="font-pixel text-[8px] text-muted-foreground">MOEDAS</div>
-                            <div class="font-pixel text-sm mt-1 flex items-center gap-1">
-                                <CoinIcon :size="12" />
-                                {{ (studentProfile?.balance ?? 0).toLocaleString('pt-BR') }}
-                            </div>
-                        </div>
-                        <div class="border-2 border-border bg-card p-3">
-                            <div class="font-pixel text-[8px] text-muted-foreground">EMAIL</div>
-                            <div class="font-sans text-sm mt-1 break-all">
-                                {{ studentProfile?.email ?? authStore.user?.email ?? '-' }}
-                            </div>
-                        </div>
-                    </div>
+                <div class="flex gap-2">
+                    <PixelButton
+                        v-if="!isEditingProfile"
+                        variant="secondary"
+                        size="sm"
+                        @click="startProfileEdit"
+                    >
+                        <PhPencilSimple weight="bold" /> EDITAR
+                    </PixelButton>
 
-                    <div v-if="!isEditingProfile" class="grid md:grid-cols-2 gap-3">
-                        <div class="border-2 border-border bg-card p-3 space-y-1">
-                            <div class="font-pixel text-[8px] text-muted-foreground">CPF</div>
-                            <div class="font-sans text-sm">{{ studentProfile?.cpf ?? '-' }}</div>
-                        </div>
-                        <div class="border-2 border-border bg-card p-3 space-y-1">
-                            <div class="font-pixel text-[8px] text-muted-foreground">RG</div>
-                            <div class="font-sans text-sm">{{ studentProfile?.rg ?? '-' }}</div>
-                        </div>
-                        <div class="border-2 border-border bg-card p-3 space-y-1">
-                            <div class="font-pixel text-[8px] text-muted-foreground">CEP</div>
-                            <div class="font-sans text-sm">{{ studentProfile?.zipCode ?? '-' }}</div>
-                        </div>
-                        <div class="border-2 border-border bg-card p-3 space-y-1">
-                            <div class="font-pixel text-[8px] text-muted-foreground">CURSO</div>
-                            <div class="font-sans text-sm">{{ courseName }}</div>
-                        </div>
-                        <div class="border-2 border-border bg-card p-3 space-y-1 md:col-span-2">
-                            <div class="font-pixel text-[8px] text-muted-foreground">INSTITUIÇÃO</div>
-                            <div class="font-sans text-sm">{{ institutionName }}</div>
-                        </div>
-                        <div class="border-2 border-border bg-card p-3 space-y-1 md:col-span-2">
-                            <div class="font-pixel text-[8px] text-muted-foreground">ENDEREÇO</div>
-                            <div class="font-sans text-sm">{{ studentProfile?.address ?? '-' }}</div>
-                        </div>
-                    </div>
-
-                    <form v-else class="space-y-4" @submit.prevent="submitProfileUpdate">
-                        <div class="grid md:grid-cols-2 gap-3">
-                            <div>
-                                <label class="font-pixel text-[9px] block mb-2">NOME</label>
-                                <PixelInput v-model="profileData.name" />
-                                <p
-                                    v-if="profileErrors.name"
-                                    class="font-sans text-xs mt-1"
-                                    style="color: hsl(var(--destructive))"
-                                >
-                                    {{ profileErrors.name }}
-                                </p>
-                            </div>
-                            <div>
-                                <label class="font-pixel text-[9px] block mb-2">E-MAIL</label>
-                                <PixelInput v-model="profileData.email" type="email" />
-                                <p
-                                    v-if="profileErrors.email"
-                                    class="font-sans text-xs mt-1"
-                                    style="color: hsl(var(--destructive))"
-                                >
-                                    {{ profileErrors.email }}
-                                </p>
-                            </div>
-                            <div>
-                                <label class="font-pixel text-[9px] block mb-2">SENHA</label>
-                                <PixelInput
-                                    v-model="profileData.password"
-                                    type="password"
-                                    placeholder="Preencha apenas se quiser alterar"
-                                />
-                                <p
-                                    v-if="profileErrors.password"
-                                    class="font-sans text-xs mt-1"
-                                    style="color: hsl(var(--destructive))"
-                                >
-                                    {{ profileErrors.password }}
-                                </p>
-                            </div>
-                            <div>
-                                <label class="font-pixel text-[9px] block mb-2">CPF</label>
-                                <PixelInput v-model="profileData.cpf" />
-                                <p
-                                    v-if="profileErrors.cpf"
-                                    class="font-sans text-xs mt-1"
-                                    style="color: hsl(var(--destructive))"
-                                >
-                                    {{ profileErrors.cpf }}
-                                </p>
-                            </div>
-                            <div>
-                                <label class="font-pixel text-[9px] block mb-2">RG</label>
-                                <PixelInput v-model="profileData.rg" />
-                                <p
-                                    v-if="profileErrors.rg"
-                                    class="font-sans text-xs mt-1"
-                                    style="color: hsl(var(--destructive))"
-                                >
-                                    {{ profileErrors.rg }}
-                                </p>
-                            </div>
-                            <div>
-                                <label class="font-pixel text-[9px] block mb-2">CEP</label>
-                                <PixelInput v-model="profileData.zipCode" />
-                                <p
-                                    v-if="profileErrors.zipCode"
-                                    class="font-sans text-xs mt-1"
-                                    style="color: hsl(var(--destructive))"
-                                >
-                                    {{ profileErrors.zipCode }}
-                                </p>
-                            </div>
-                            <div>
-                                <label class="font-pixel text-[9px] block mb-2">INSTITUIÇÃO</label>
-                                <select
-                                    v-model="profileData.institutionId"
-                                    class="w-full bg-input border-2 border-border px-3 py-2 font-display text-base focus:outline-none"
-                                >
-                                    <option value="">Selecione uma instituição</option>
-                                    <option
-                                        v-for="institution in institutions"
-                                        :key="institution.id"
-                                        :value="institution.id"
-                                    >
-                                        {{ institution.name }}
-                                    </option>
-                                </select>
-                                <p
-                                    v-if="profileErrors.institutionId"
-                                    class="font-sans text-xs mt-1"
-                                    style="color: hsl(var(--destructive))"
-                                >
-                                    {{ profileErrors.institutionId }}
-                                </p>
-                            </div>
-                            <div>
-                                <label class="font-pixel text-[9px] block mb-2">CURSO</label>
-                                <select
-                                    v-model="profileData.courseId"
-                                    class="w-full bg-input border-2 border-border px-3 py-2 font-display text-base focus:outline-none"
-                                >
-                                    <option value="">Selecione um curso</option>
-                                    <option
-                                        v-for="course in availableCourses"
-                                        :key="course.id"
-                                        :value="course.id"
-                                    >
-                                        {{ course.name }}
-                                    </option>
-                                </select>
-                                <p
-                                    v-if="profileErrors.courseId"
-                                    class="font-sans text-xs mt-1"
-                                    style="color: hsl(var(--destructive))"
-                                >
-                                    {{ profileErrors.courseId }}
-                                </p>
-                            </div>
-                            <div class="md:col-span-2">
-                                <label class="font-pixel text-[9px] block mb-2">ENDEREÇO</label>
-                                <PixelInput v-model="profileData.address" />
-                                <p
-                                    v-if="profileErrors.address"
-                                    class="font-sans text-xs mt-1"
-                                    style="color: hsl(var(--destructive))"
-                                >
-                                    {{ profileErrors.address }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="flex gap-2 flex-wrap">
-                            <PixelButton
-                                type="submit"
-                                variant="success"
-                                :disabled="profileIsSubmitting"
-                            >
-                                <PhFloppyDisk weight="bold" /> SALVAR ALTERAÇÕES
-                            </PixelButton>
-                            <PixelButton type="button" variant="ghost" @click="cancelProfileEdit">
-                                <PhX weight="bold" /> CANCELAR
-                            </PixelButton>
-                        </div>
-                    </form>
+                    <PixelButton
+                        v-else
+                        variant="ghost"
+                        size="sm"
+                        @click="cancelProfileEdit"
+                    >
+                        <PhX weight="bold" /> CANCELAR
+                    </PixelButton>
                 </div>
             </div>
-        </PixelCard>
 
-        <PixelCard class="p-6">
-            <div class="flex items-center justify-between mb-4">
-                <div class="font-pixel text-sm flex items-center gap-2">
-                    <PhPalette weight="fill" class="pixel-icon text-accent" /> TROCAR AVATAR
-                </div>
-                <PixelBadge tone="teal">{{ studentCharacters.length }} AVATARES</PixelBadge>
-            </div>
-            <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                <button
-                    v-for="c in studentCharacters"
-                    :key="c.id"
-                    class="border-2 border-border p-2 transition-all"
-                    :class="
-                        selectedCharacter === c.id
-                            ? 'bg-primary text-primary-foreground -translate-y-0.5 shadow-[4px_4px_0_0_hsl(var(--border))]'
-                            : 'bg-card hover:-translate-y-0.5'
-                    "
-                    :disabled="isUpdatingAvatar"
-                    @click="selectAvatar(c.id as Exclude<MarioCharacter, 'institution' | 'company'>)"
-                >
-                    <div class="flex justify-center bg-hud border-2 border-border p-1">
-                        <MarioAvatar :character="c.id" :size="40" />
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="font-pixel text-sm flex items-center gap-2">
+                        <PhPalette weight="fill" class="pixel-icon text-accent" />
+                        AVATAR
                     </div>
-                    <div class="font-pixel text-[8px] mt-2">{{ c.name.toUpperCase() }}</div>
-                </button>
+                    <PixelBadge tone="teal">
+                        {{ studentCharacters.length }}
+                    </PixelBadge>
+                </div>
+
+                <div class="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                    <button
+                        v-for="c in studentCharacters"
+                        :key="c.id"
+                        class="border-2 border-border p-1 transition-all text-center"
+                        :class="
+                            selectedCharacter === c.id
+                                ? 'bg-primary text-primary-foreground -translate-y-0.5 shadow-[3px_3px_0_0_hsl(var(--border))]'
+                                : 'bg-card hover:-translate-y-0.5'
+                        "
+                        :disabled="isUpdatingAvatar"
+                        @click="selectAvatar(c.id as Exclude<MarioCharacter, 'institution' | 'company'>)"
+                    >
+                        <div class="flex justify-center bg-hud border-2 border-border p-1">
+                            <MarioAvatar :character="c.id" :size="32" />
+                        </div>
+
+                        <div class="font-pixel text-[7px] mt-1 leading-none">
+                            {{ c.name.toUpperCase() }}
+                        </div>
+                    </button>
+                </div>
             </div>
+
+            <div class="grid md:grid-cols-2 gap-3">
+                <div class="border-2 border-border bg-card p-3">
+                    <div class="font-pixel text-[8px] text-muted-foreground">MOEDAS</div>
+                    <div class="font-pixel text-sm mt-1 flex items-center gap-1">
+                        <CoinIcon :size="12" />
+                        {{ (studentProfile?.balance ?? 0).toLocaleString('pt-BR') }}
+                    </div>
+                </div>
+
+                <div class="border-2 border-border bg-card p-3">
+                    <div class="font-pixel text-[8px] text-muted-foreground">EMAIL</div>
+                    <div class="font-sans text-sm mt-1 break-all">
+                        {{ studentProfile?.email ?? authStore.user?.email ?? '-' }}
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="!isEditingProfile" class="grid md:grid-cols-2 gap-3">
+                <div class="border-2 border-border bg-card p-3">
+                    <div class="font-pixel text-[8px] text-muted-foreground">CPF</div>
+                    <div class="font-sans text-sm">{{ studentProfile?.cpf ?? '-' }}</div>
+                </div>
+
+                <div class="border-2 border-border bg-card p-3">
+                    <div class="font-pixel text-[8px] text-muted-foreground">RG</div>
+                    <div class="font-sans text-sm">{{ studentProfile?.rg ?? '-' }}</div>
+                </div>
+
+                <div class="border-2 border-border bg-card p-3">
+                    <div class="font-pixel text-[8px] text-muted-foreground">CEP</div>
+                    <div class="font-sans text-sm">{{ studentProfile?.zipCode ?? '-' }}</div>
+                </div>
+
+                <div class="border-2 border-border bg-card p-3">
+                    <div class="font-pixel text-[8px] text-muted-foreground">CURSO</div>
+                    <div class="font-sans text-sm">{{ courseName }}</div>
+                </div>
+
+                <div class="border-2 border-border bg-card p-3 md:col-span-2">
+                    <div class="font-pixel text-[8px] text-muted-foreground">INSTITUIÇÃO</div>
+                    <div class="font-sans text-sm">{{ institutionName }}</div>
+                </div>
+
+                <div class="border-2 border-border bg-card p-3 md:col-span-2">
+                    <div class="font-pixel text-[8px] text-muted-foreground">ENDEREÇO</div>
+                    <div class="font-sans text-sm">{{ studentProfile?.address ?? '-' }}</div>
+                </div>
+            </div>
+
+            <form v-else class="space-y-4" @submit.prevent="submitProfileUpdate">
+                <div class="grid md:grid-cols-2 gap-3">
+                    <PixelInput v-model="profileData.name" placeholder="NOME" />
+                    <PixelInput v-model="profileData.email" type="email" placeholder="EMAIL" />
+                    <PixelInput v-model="profileData.password" type="password" placeholder="SENHA" />
+                    <PixelInput v-model="profileData.cpf" placeholder="CPF" />
+                    <PixelInput v-model="profileData.rg" placeholder="RG" />
+                    <PixelInput v-model="profileData.zipCode" placeholder="CEP" />
+                </div>
+
+                <div class="flex gap-2">
+                    <PixelButton type="submit" variant="success">
+                        <PhFloppyDisk weight="bold" /> SALVAR
+                    </PixelButton>
+
+                    <PixelButton type="button" variant="ghost" @click="cancelProfileEdit">
+                        CANCELAR
+                    </PixelButton>
+                </div>
+            </form>
         </PixelCard>
 
         <PixelCard class="p-6">
             <div class="font-pixel text-sm mb-3 text-destructive">EXCLUIR CONTA</div>
+
             <p class="font-sans text-sm text-muted-foreground mb-4">
-                Esta ação é permanente. Ao excluir sua conta, todas as moedas e conquistas serão
-                perdidas.
+                Esta ação é permanente. Ao excluir sua conta, todas as moedas e conquistas serão perdidas.
             </p>
 
             <div v-if="!showDeleteConfirmation">
@@ -549,10 +443,12 @@ onMounted(async () => {
                         Tem certeza de que deseja excluir sua conta agora?
                     </p>
                 </div>
+
                 <div class="flex gap-2 flex-wrap">
                     <PixelButton variant="ghost" @click="cancelDeleteAccount">
                         <PhX weight="bold" /> CANCELAR
                     </PixelButton>
+
                     <PixelButton
                         variant="danger"
                         :disabled="isDeletingAccount"
