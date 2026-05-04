@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
-import { deleteCompany, getCompany, updateCompany } from '@/modules/company/services/company.service';
+import {
+    deleteCompany,
+    getCompany,
+    updateCompany,
+} from '@/modules/company/services/company.service';
 import { updateCompanySchema } from '@/modules/schemas/update-company.schema';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
@@ -229,7 +233,9 @@ onMounted(() => {
                                     <PixelInput v-model="benefitForm.emoji" :max-length="2" />
                                 </div>
                                 <div>
-                                    <label class="font-pixel text-[10px] block mb-2">CATEGORIA</label>
+                                    <label class="font-pixel text-[10px] block mb-2"
+                                        >CATEGORIA</label
+                                    >
                                     <select
                                         v-model="benefitForm.category"
                                         class="w-full bg-input border-2 border-border px-3 py-2 font-display text-lg focus:outline-none"
@@ -250,7 +256,9 @@ onMounted(() => {
                         </div>
                         <div class="space-y-4">
                             <div>
-                                <label class="font-pixel text-[10px] block mb-2">CÓDIGO DO CUPOM</label>
+                                <label class="font-pixel text-[10px] block mb-2"
+                                    >CÓDIGO DO CUPOM</label
+                                >
                                 <PixelInput
                                     v-model="couponCode"
                                     placeholder="LUMEN-XXXXX-XXX"
@@ -278,9 +286,15 @@ onMounted(() => {
                                 <PhXCircle v-else weight="fill" class="pixel-icon" :size="24" />
                                 <div>
                                     <div class="font-pixel text-xs">
-                                        {{ validationResult.valid ? 'CUPOM VÁLIDO' : 'CUPOM INVÁLIDO' }}
+                                        {{
+                                            validationResult.valid
+                                                ? 'CUPOM VÁLIDO'
+                                                : 'CUPOM INVÁLIDO'
+                                        }}
                                     </div>
-                                    <div class="font-sans text-sm mt-0.5">{{ validationResult.msg }}</div>
+                                    <div class="font-sans text-sm mt-0.5">
+                                        {{ validationResult.msg }}
+                                    </div>
                                 </div>
                             </div>
                             <div
@@ -327,7 +341,9 @@ onMounted(() => {
                             <div class="p-4">
                                 <div class="flex items-start justify-between gap-2">
                                     <div class="font-pixel text-xs">{{ v.name.toUpperCase() }}</div>
-                                    <PixelBadge tone="gold">{{ v.category.toUpperCase() }}</PixelBadge>
+                                    <PixelBadge tone="gold">{{
+                                        v.category.toUpperCase()
+                                    }}</PixelBadge>
                                 </div>
                                 <p class="font-sans text-xs text-foreground/75 mt-2">
                                     {{ v.description }}
@@ -369,7 +385,9 @@ onMounted(() => {
                         </h2>
                         <form class="space-y-4" @submit="handleUpdateProfile">
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2">NOME DA EMPRESA</label>
+                                <label class="font-pixel text-[9px] block mb-2"
+                                    >NOME DA EMPRESA</label
+                                >
                                 <PixelInput v-model="profileData.name" />
                                 <p
                                     v-if="profileErrors.name"

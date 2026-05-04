@@ -43,7 +43,8 @@ const filteredBenefits = computed(() => {
                 v.company.toLowerCase().includes(q)
         );
     }
-    if (selectedCategory.value !== 'todas') list = list.filter((v) => v.category === selectedCategory.value);
+    if (selectedCategory.value !== 'todas')
+        list = list.filter((v) => v.category === selectedCategory.value);
     if (onlyAffordable.value) list = list.filter((v) => balance.value >= v.cost);
     if (sortOrder.value === 'menor') list = list.sort((a, b) => a.cost - b.cost);
     else if (sortOrder.value === 'maior') list = list.sort((a, b) => b.cost - a.cost);
@@ -123,10 +124,14 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                         class="border-2 border-border p-3"
                         :class="achievement.unlocked ? 'bg-card' : 'bg-muted opacity-50'"
                     >
-                        <PixelBadge :tone="achievement.tone as 'gold' | 'blue' | 'green' | 'red' | 'teal'"
-                            >{{ achievement.unlocked ? '✓' : '?' }} {{ achievement.name.toUpperCase() }}</PixelBadge
+                        <PixelBadge
+                            :tone="achievement.tone as 'gold' | 'blue' | 'green' | 'red' | 'teal'"
+                            >{{ achievement.unlocked ? '✓' : '?' }}
+                            {{ achievement.name.toUpperCase() }}</PixelBadge
                         >
-                        <p class="font-sans text-xs text-foreground/75 mt-2">{{ achievement.description }}</p>
+                        <p class="font-sans text-xs text-foreground/75 mt-2">
+                            {{ achievement.description }}
+                        </p>
                     </div>
                 </div>
             </PixelCard>
@@ -142,7 +147,7 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                     </h2>
                 </div>
                 <div class="font-pixel text-[10px] text-muted-foreground">
-                {{ filteredBenefits.length }} DE {{ initialBenefits.length }} VANTAGENS
+                    {{ filteredBenefits.length }} DE {{ initialBenefits.length }} VANTAGENS
                 </div>
             </div>
 
@@ -329,11 +334,16 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                     </p>
                     <p class="font-sans text-sm text-muted-foreground mt-3">
                         Um cupom será gerado no seu extrato. Saldo após resgate:
-                        <strong>{{ (balance - pendingRedemption.cost).toLocaleString('pt-BR') }}</strong
+                        <strong>{{
+                            (balance - pendingRedemption.cost).toLocaleString('pt-BR')
+                        }}</strong
                         >.
                     </p>
                     <div class="mt-5 flex gap-3">
-                        <PixelButton variant="ghost" class="flex-1" @click="pendingRedemption = null"
+                        <PixelButton
+                            variant="ghost"
+                            class="flex-1"
+                            @click="pendingRedemption = null"
                             >CANCELAR</PixelButton
                         >
                         <PixelButton variant="success" class="flex-1" @click="confirmRedemption"
@@ -379,7 +389,10 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                         Apresente este código no estabelecimento parceiro.
                     </p>
                     <div class="mt-5">
-                        <PixelButton variant="primary" class="w-full" @click="generatedCoupon = null"
+                        <PixelButton
+                            variant="primary"
+                            class="w-full"
+                            @click="generatedCoupon = null"
                             >FECHAR</PixelButton
                         >
                     </div>

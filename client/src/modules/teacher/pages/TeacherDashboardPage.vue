@@ -50,7 +50,8 @@ const available = computed(() => LIMITE - sent.value);
 const filteredStudents = computed(() =>
     alunos.filter((a) => {
         if (classFilter.value !== 'all' && a.className !== classFilter.value) return false;
-        if (searchQuery.value && !a.name.toLowerCase().includes(searchQuery.value.toLowerCase())) return false;
+        if (searchQuery.value && !a.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+            return false;
         return true;
     })
 );
@@ -280,7 +281,11 @@ function submit(e: Event) {
                             class="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
                             :size="16"
                         />
-                        <PixelInput v-model="searchQuery" placeholder="Buscar aluno..." class="pl-8" />
+                        <PixelInput
+                            v-model="searchQuery"
+                            placeholder="Buscar aluno..."
+                            class="pl-8"
+                        />
                     </div>
                 </div>
 
@@ -303,7 +308,10 @@ function submit(e: Event) {
                         </div>
                         <ul class="divide-y-2 divide-border">
                             <li
-                                v-if="filteredStudents.filter((a) => a.className === t.id).length === 0"
+                                v-if="
+                                    filteredStudents.filter((a) => a.className === t.id).length ===
+                                    0
+                                "
                                 class="p-3 font-sans text-sm text-muted-foreground text-center"
                             >
                                 Sem alunos nesse filtro.

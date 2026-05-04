@@ -497,7 +497,11 @@ onMounted(async () => {
                             Nenhum professor cadastrado.
                         </p>
 
-                        <div v-for="t in teachers" :key="t.id" class="border-2 border-border bg-card p-3">
+                        <div
+                            v-for="t in teachers"
+                            :key="t.id"
+                            class="border-2 border-border bg-card p-3"
+                        >
                             <!-- View mode -->
                             <template v-if="editingTeacherId !== t.id">
                                 <div class="flex items-start justify-between gap-2">
@@ -550,7 +554,9 @@ onMounted(async () => {
                                         </p>
                                     </div>
                                     <div>
-                                        <label class="font-pixel text-[9px] block mb-1">E-MAIL</label>
+                                        <label class="font-pixel text-[9px] block mb-1"
+                                            >E-MAIL</label
+                                        >
                                         <PixelInput v-model="editTeacherData.email" type="email" />
                                         <p
                                             v-if="editTeacherErrors.email"
@@ -561,7 +567,9 @@ onMounted(async () => {
                                         </p>
                                     </div>
                                     <div>
-                                        <label class="font-pixel text-[9px] block mb-1">DEPARTAMENTO</label>
+                                        <label class="font-pixel text-[9px] block mb-1"
+                                            >DEPARTAMENTO</label
+                                        >
                                         <PixelInput v-model="editTeacherData.department" />
                                         <p
                                             v-if="editTeacherErrors.department"
@@ -730,7 +738,11 @@ onMounted(async () => {
                             {{ c.name }}
                         </button>
                     </div>
-                    <PixelInput v-model="studentSearch" placeholder="Buscar aluno..." class="w-64" />
+                    <PixelInput
+                        v-model="studentSearch"
+                        placeholder="Buscar aluno..."
+                        class="w-64"
+                    />
                 </div>
 
                 <div class="font-pixel text-[9px] text-muted-foreground">

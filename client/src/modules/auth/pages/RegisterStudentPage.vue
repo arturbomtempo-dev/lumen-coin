@@ -388,7 +388,7 @@ function goBack(): void {
                                 <label class="font-pixel text-[9px] block mb-2"> TELEFONE </label>
 
                                 <PixelInput
-                                        :model-value="studentForm.phone"
+                                    :model-value="studentForm.phone"
                                     maxlength="15"
                                     placeholder="(00) 00000-0000"
                                     @input="handlePhoneInput"
@@ -431,7 +431,10 @@ function goBack(): void {
                             <div>
                                 <label class="font-pixel text-[9px] block mb-2"> BAIRRO </label>
 
-                                <PixelInput v-model="studentForm.neighborhood" placeholder="Bairro" />
+                                <PixelInput
+                                    v-model="studentForm.neighborhood"
+                                    placeholder="Bairro"
+                                />
                             </div>
 
                             <div class="col-span-2">

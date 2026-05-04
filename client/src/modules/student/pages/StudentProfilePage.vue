@@ -80,7 +80,7 @@ const { name, level, xp, balance, character } = storeToRefs(store);
                     <div class="flex justify-center bg-hud border-2 border-border p-1">
                         <MarioAvatar :character="c.id" :size="40" />
                     </div>
-                        <div class="font-pixel text-[8px] mt-2">{{ c.name.toUpperCase() }}</div>
+                    <div class="font-pixel text-[8px] mt-2">{{ c.name.toUpperCase() }}</div>
                 </button>
             </div>
         </PixelCard>
@@ -94,10 +94,14 @@ const { name, level, xp, balance, character } = storeToRefs(store);
                     class="border-2 border-border p-3"
                     :class="achievement.unlocked ? 'bg-card' : 'bg-muted opacity-60'"
                 >
-                    <PixelBadge :tone="achievement.tone as 'gold' | 'blue' | 'green' | 'red' | 'teal'"
-                        >{{ achievement.unlocked ? '✓' : '?' }} {{ achievement.name.toUpperCase() }}</PixelBadge
+                    <PixelBadge
+                        :tone="achievement.tone as 'gold' | 'blue' | 'green' | 'red' | 'teal'"
+                        >{{ achievement.unlocked ? '✓' : '?' }}
+                        {{ achievement.name.toUpperCase() }}</PixelBadge
                     >
-                    <p class="font-sans text-xs text-foreground/75 mt-2">{{ achievement.description }}</p>
+                    <p class="font-sans text-xs text-foreground/75 mt-2">
+                        {{ achievement.description }}
+                    </p>
                 </div>
             </div>
         </PixelCard>

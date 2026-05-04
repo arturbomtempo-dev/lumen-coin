@@ -373,7 +373,10 @@ function goBack(): void {
                             <div>
                                 <label class="font-pixel text-[9px] block mb-2"> BAIRRO </label>
 
-                                <PixelInput v-model="institutionForm.neighborhood" placeholder="Bairro" />
+                                <PixelInput
+                                    v-model="institutionForm.neighborhood"
+                                    placeholder="Bairro"
+                                />
                             </div>
                         </div>
                     </template>

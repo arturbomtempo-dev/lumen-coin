@@ -83,7 +83,11 @@ async function handleSubmit(e: Event) {
 
                 <div>
                     <label class="font-pixel text-[9px] block mb-2">E-MAIL</label>
-                    <PixelInput v-model="fields.email" type="email" placeholder="contato@empresa.com" />
+                    <PixelInput
+                        v-model="fields.email"
+                        type="email"
+                        placeholder="contato@empresa.com"
+                    />
                     <p
                         v-if="errors.email"
                         class="font-sans text-xs mt-1"
@@ -163,7 +167,12 @@ async function handleSubmit(e: Event) {
                     </p>
                 </div>
 
-                <PixelButton type="submit" variant="success" class="w-full" :disabled="isSubmitting">
+                <PixelButton
+                    type="submit"
+                    variant="success"
+                    class="w-full"
+                    :disabled="isSubmitting"
+                >
                     CADASTRAR EMPRESA
                 </PixelButton>
             </form>
