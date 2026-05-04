@@ -43,6 +43,14 @@ export const useStudentStore = defineStore('student', () => {
         character.value = c;
     }
 
+    function setName(value: string) {
+        name.value = value;
+    }
+
+    function setBalance(value: number) {
+        balance.value = value;
+    }
+
     function spend(amount: number, benefitName: string): string {
         const code = generateCouponCode();
         balance.value = Math.max(0, balance.value - amount);
@@ -99,6 +107,8 @@ export const useStudentStore = defineStore('student', () => {
         transactions,
         coupons,
         unreadCount,
+        setName,
+        setBalance,
         setCharacter,
         spend,
         receive,

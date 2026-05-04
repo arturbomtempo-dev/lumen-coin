@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { meRequest, logoutRequest, type MeResponse } from '../services/auth.service';
+import { logoutRequest, meRequest } from '../services/auth.service';
 
 export type UserRole = 'student' | 'teacher' | 'company' | 'institution';
 
