@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { PhArrowLeft, PhGraduationCap, PhStorefront } from '@phosphor-icons/vue';
+import { PhArrowLeft, PhGraduationCap, PhStorefront, PhBank } from '@phosphor-icons/vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 
 const router = useRouter();
@@ -35,12 +35,15 @@ const router = useRouter();
                         <div
                             class="w-14 h-14 border-2 border-border bg-hud flex items-center justify-center mb-4"
                         >
-                            <PhGraduationCap weight="fill" :size="32" class="text-primary" />
+                            <PhGraduationCap
+                                weight="fill"
+                                :size="32"
+                                class="text-primary"
+                            />
                         </div>
                         <div class="font-pixel text-sm mb-2">ALUNO</div>
                         <p class="font-sans text-xs text-muted-foreground">
-                            Estudante de instituição parceira. Acumule moedas e troque por
-                            vantagens.
+                            Estudante de instituição parceira. Acumule moedas e troque por vantagens.
                         </p>
                     </button>
 
@@ -52,11 +55,34 @@ const router = useRouter();
                         <div
                             class="w-14 h-14 border-2 border-border bg-hud flex items-center justify-center mb-4"
                         >
-                            <PhStorefront weight="fill" :size="32" class="text-accent" />
+                            <PhStorefront
+                                weight="fill"
+                                :size="32"
+                                class="text-accent"
+                            />
                         </div>
                         <div class="font-pixel text-sm mb-2">EMPRESA PARCEIRA</div>
                         <p class="font-sans text-xs text-muted-foreground">
                             Empresa que oferece vantagens e benefícios aos estudantes da rede.
+                        </p>
+                    </button>
+                    <button
+                        class="border-2 border-border bg-card p-6 text-left transition-all hover:-translate-y-1 hover:shadow-[4px_4px_0_0_hsl(var(--border))] active:translate-y-0"
+                        type="button"
+                        @click="router.push({ name: 'register-institution' })"
+                    >
+                        <div
+                            class="w-14 h-14 border-2 border-border bg-hud flex items-center justify-center mb-4"
+                        >
+                            <PhBank
+                                weight="fill"
+                                :size="32"
+                                class="text-blue-500"
+                            />
+                        </div>
+                        <div class="font-pixel text-sm mb-2">INSTITUIÇÃO</div>
+                        <p class="font-sans text-xs text-muted-foreground">
+                            Instituição de ensino que gerencia cursos e professores.
                         </p>
                     </button>
                 </div>

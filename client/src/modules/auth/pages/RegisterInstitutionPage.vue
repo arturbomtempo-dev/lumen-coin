@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import { registerInstitutionRequest } from '@/modules/auth/services/auth.service';
+import { registerInstitutionSchema } from '@/modules/schemas/register-institution.schema';
+import { useForm } from '@/shared/composables/useForm';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { toast } from 'vue-sonner';
 
 import {
     PhArrowLeft,
@@ -21,20 +25,6 @@ import PixelInput from '@/shared/components/PixelInput.vue';
 
 import { type MarioCharacter } from '@/shared/data/characters';
 
-interface InstitutionForm {
-    name: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-    cnpj: string;
-    phone: string;
-    zipCode: string;
-    street: string;
-    number: string;
-    neighborhood: string;
-    city: string;
-}
-
 interface InstitutionStep {
     label: string;
     icon: object;
@@ -47,6 +37,28 @@ const step = ref<number>(0);
 const showPassword = ref<boolean>(false);
 
 const showConfirmPassword = ref<boolean>(false);
+
+const {
+    fields: institutionForm,
+    errors: institutionErrors,
+    isSubmitting,
+    validate,
+    clearErrors,
+} = useForm(registerInstitutionSchema);
+
+institutionForm.value = {
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    cnpj: '',
+    phone: '',
+    zipCode: '',
+    street: '',
+    number: '',
+    neighborhood: '',
+    city: '',
+};
 
 const character = ref<MarioCharacter>('institution');
 
@@ -68,20 +80,6 @@ const institutionSteps = ref<InstitutionStep[]>([
         icon: PhIdentificationCard,
     },
 ]);
-
-const institutionForm = ref<InstitutionForm>({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    cnpj: '',
-    phone: '',
-    zipCode: '',
-    street: '',
-    number: '',
-    neighborhood: '',
-    city: '',
-});
 
 const progress = computed<number>(() => {
     return ((step.value + 1) / institutionSteps.value.length) * 100;
@@ -165,6 +163,7 @@ function handlePhoneInput(event: Event): void {
 
 function goToNextStep(): void {
     if (step.value >= institutionSteps.value.length - 1) {
+        void submitInstitution();
         return;
     }
 
@@ -181,6 +180,47 @@ function goToPreviousStep(): void {
 
 function goBack(): void {
     router.back();
+}
+
+function getAddress(): string {
+    const parts = [
+        institutionForm.value.street.trim(),
+        institutionForm.value.number.trim(),
+        institutionForm.value.neighborhood.trim(),
+        institutionForm.value.city.trim(),
+    ].filter((value) => value.length > 0);
+
+    return parts.join(', ').slice(0, 300);
+}
+
+async function submitInstitution(): Promise<void> {
+    if (!validate()) {
+        return;
+    }
+
+    isSubmitting.value = true;
+
+    try {
+        await registerInstitutionRequest({
+            name: institutionForm.value.name.trim(),
+            email: institutionForm.value.email.trim(),
+            password: institutionForm.value.password,
+            cnpj: institutionForm.value.cnpj.replace(/\D/g, ''),
+            zipCode: institutionForm.value.zipCode.replace(/\D/g, ''),
+            address: getAddress(),
+        });
+
+        toast.success('Instituição cadastrada com sucesso!', {
+            description: 'Faça login para acessar o portal.',
+        });
+
+        clearErrors();
+
+        router.push({ name: 'login' });
+    } catch {
+    } finally {
+        isSubmitting.value = false;
+    }
 }
 </script>
 
@@ -306,6 +346,13 @@ function goBack(): void {
                                     v-model="institutionForm.name"
                                     placeholder="Digite o nome"
                                 />
+                                <p
+                                    v-if="institutionErrors.name"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ institutionErrors.name }}
+                                </p>
                             </div>
 
                             <div class="grid grid-cols-2 gap-3">
@@ -313,11 +360,18 @@ function goBack(): void {
                                     <label class="font-pixel text-[9px] block mb-2"> CNPJ </label>
 
                                     <PixelInput
-                                        :model-value="institutionForm.zipCode"
+                                        :model-value="institutionForm.cnpj"
                                         maxlength="18"
                                         placeholder="00.000.000/0000-00"
                                         @input="handleCnpjInput"
                                     />
+                                    <p
+                                        v-if="institutionErrors.cnpj"
+                                        class="font-sans text-xs mt-1"
+                                        style="color: hsl(var(--destructive))"
+                                    >
+                                        {{ institutionErrors.cnpj }}
+                                    </p>
                                 </div>
 
                                 <div>
@@ -331,6 +385,13 @@ function goBack(): void {
                                         placeholder="(00) 00000-0000"
                                         @input="handlePhoneInput"
                                     />
+                                    <p
+                                        v-if="institutionErrors.phone"
+                                        class="font-sans text-xs mt-1"
+                                        style="color: hsl(var(--destructive))"
+                                    >
+                                        {{ institutionErrors.phone }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -347,12 +408,26 @@ function goBack(): void {
                                     placeholder="00000-000"
                                     @input="handleCepInput"
                                 />
+                                <p
+                                    v-if="institutionErrors.zipCode"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ institutionErrors.zipCode }}
+                                </p>
                             </div>
 
                             <div>
                                 <label class="font-pixel text-[9px] block mb-2"> CIDADE </label>
 
                                 <PixelInput v-model="institutionForm.city" placeholder="Cidade" />
+                                <p
+                                    v-if="institutionErrors.city"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ institutionErrors.city }}
+                                </p>
                             </div>
 
                             <div class="col-span-2">
@@ -362,12 +437,26 @@ function goBack(): void {
                                     v-model="institutionForm.street"
                                     placeholder="Rua da instituição"
                                 />
+                                <p
+                                    v-if="institutionErrors.street"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ institutionErrors.street }}
+                                </p>
                             </div>
 
                             <div>
                                 <label class="font-pixel text-[9px] block mb-2"> NÚMERO </label>
 
                                 <PixelInput v-model="institutionForm.number" placeholder="123" />
+                                <p
+                                    v-if="institutionErrors.number"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ institutionErrors.number }}
+                                </p>
                             </div>
 
                             <div>
@@ -377,6 +466,13 @@ function goBack(): void {
                                     v-model="institutionForm.neighborhood"
                                     placeholder="Bairro"
                                 />
+                                <p
+                                    v-if="institutionErrors.neighborhood"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ institutionErrors.neighborhood }}
+                                </p>
                             </div>
                         </div>
                     </template>
@@ -391,6 +487,13 @@ function goBack(): void {
                                     placeholder="instituicao@email.com"
                                     type="email"
                                 />
+                                <p
+                                    v-if="institutionErrors.email"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ institutionErrors.email }}
+                                </p>
                             </div>
 
                             <div>
@@ -414,6 +517,13 @@ function goBack(): void {
                                         <PhEye v-else :size="18" weight="bold" />
                                     </button>
                                 </div>
+                                <p
+                                    v-if="institutionErrors.password"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ institutionErrors.password }}
+                                </p>
                             </div>
 
                             <div>
@@ -445,11 +555,19 @@ function goBack(): void {
                                 </div>
 
                                 <p
-                                    v-if="passwordsMatch !== null"
+                                    v-if="institutionErrors.confirmPassword || passwordsMatch !== null"
                                     class="font-pixel text-[8px] mt-2"
-                                    :class="passwordsMatch ? 'text-success' : 'text-destructive'"
+                                    :class="
+                                        institutionErrors.confirmPassword || passwordsMatch === false
+                                            ? 'text-destructive'
+                                            : 'text-success'
+                                    "
                                 >
-                                    {{ passwordsMatch ? 'SENHAS COINCIDEM' : 'SENHAS DIFERENTES' }}
+                                    {{
+                                        institutionErrors.confirmPassword || passwordsMatch === false
+                                            ? institutionErrors.confirmPassword ?? 'SENHAS DIFERENTES'
+                                            : 'SENHAS COINCIDEM'
+                                    }}
                                 </p>
                             </div>
                         </div>
@@ -463,7 +581,7 @@ function goBack(): void {
                         VOLTAR
                     </PixelButton>
 
-                    <PixelButton @click="goToNextStep">
+                    <PixelButton :disabled="isSubmitting" @click="goToNextStep">
                         {{ step === institutionSteps.length - 1 ? 'FINALIZAR' : 'PRÓXIMA' }}
 
                         <PhArrowRight :size="16" weight="bold" />

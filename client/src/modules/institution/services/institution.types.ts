@@ -19,3 +19,15 @@ export type CompanyResponse = {
     createdAt: string;
     updatedAt: string;
 };
+
+export type InstitutionProfile = {
+    id: string;
+    name: string;
+    email: string;
+    avatar: string;
+    cnpj: string;
+    zipCode: string;
+    address: string;
+    createdAt: string;
+    updatedAt: string;
+};
