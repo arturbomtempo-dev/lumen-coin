@@ -201,7 +201,7 @@ const themeStore = useThemeStore();
                     começar a jogar.
                 </p>
                 <div id="perfis" class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mt-10">
-                    <PixelCard class="p-6">
+                    <PixelCard class="p-6 flex flex-col">
                         <div class="flex items-center gap-3 mb-4">
                             <div
                                 class="border-2 border-border bg-primary text-primary-foreground p-2"
@@ -213,11 +213,12 @@ const themeStore = useThemeStore();
                                 <div class="font-pixel text-sm">INSTITUIÇÃO</div>
                             </div>
                         </div>
-                        <p class="font-sans text-sm text-foreground/80">
+                        <div class="flex-1 flex flex-col justify-center">
+                            <p class="font-sans text-sm text-foreground/80">
                             O castelo do reino. Cria cursos, cadastra professores e acompanha alunos
                             matriculados.
-                        </p>
-                        <ul class="mt-4 space-y-2 font-sans text-sm">
+                            </p>
+                            <ul class="mt-4 space-y-2 font-sans text-sm">
                             <li class="flex items-start gap-2">
                                 <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
                                 <span class="text-foreground/85"
@@ -248,8 +249,9 @@ const themeStore = useThemeStore();
                                     >Pode remover professores e cursos quando necessário.</span
                                 >
                             </li>
-                        </ul>
-                        <div class="mt-5">
+                            </ul>
+                        </div>
+                        <div class="mt-auto pt-5">
                             <RouterLink to="/app/instituicao"
                                 ><PixelButton variant="primary" class="w-full"
                                     ><PhBuildings weight="fill" class="pixel-icon" /> ENTRAR COMO
@@ -259,7 +261,7 @@ const themeStore = useThemeStore();
                         </div>
                     </PixelCard>
 
-                    <PixelCard class="p-6">
+                    <PixelCard class="p-6 flex flex-col">
                         <div class="flex items-center gap-3 mb-4">
                             <div class="border-2 border-border bg-info text-info-foreground p-2">
                                 <PhStudent weight="fill" class="pixel-icon" :size="24" />
@@ -269,11 +271,12 @@ const themeStore = useThemeStore();
                                 <div class="font-pixel text-sm">ALUNO</div>
                             </div>
                         </div>
-                        <p class="font-sans text-sm text-foreground/80">
+                        <div class="flex-1 flex flex-col justify-center">
+                            <p class="font-sans text-sm text-foreground/80">
                             O herói da jornada. Recebe moedas pelo bom desempenho e troca por
                             recompensas no marketplace.
-                        </p>
-                        <ul class="mt-4 space-y-2 font-sans text-sm">
+                            </p>
+                            <ul class="mt-4 space-y-2 font-sans text-sm">
                             <li class="flex items-start gap-2">
                                 <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
                                 <span class="text-foreground/85"
@@ -313,8 +316,9 @@ const themeStore = useThemeStore();
                                     >Saldo nunca expira; conquistas e nível ficam no perfil.</span
                                 >
                             </li>
-                        </ul>
-                        <div class="mt-5">
+                            </ul>
+                        </div>
+                        <div class="mt-auto pt-5">
                             <RouterLink to="/app/aluno"
                                 ><PixelButton variant="info" class="w-full"
                                     ><PhLightning weight="fill" class="pixel-icon" /> ENTRAR COMO
@@ -324,7 +328,7 @@ const themeStore = useThemeStore();
                         </div>
                     </PixelCard>
 
-                    <PixelCard class="p-6">
+                    <PixelCard class="p-6 flex flex-col">
                         <div class="flex items-center gap-3 mb-4">
                             <div
                                 class="border-2 border-border bg-secondary text-secondary-foreground p-2"
@@ -336,11 +340,12 @@ const themeStore = useThemeStore();
                                 <div class="font-pixel text-sm">PROFESSOR</div>
                             </div>
                         </div>
-                        <p class="font-sans text-sm text-foreground/80">
+                        <div class="flex-1 flex flex-col justify-center">
+                            <p class="font-sans text-sm text-foreground/80">
                             O mestre do arcade. Reconhece bons alunos com moedas e mantém o
                             histórico transparente.
-                        </p>
-                        <ul class="mt-4 space-y-2 font-sans text-sm">
+                            </p>
+                            <ul class="mt-4 space-y-2 font-sans text-sm">
                             <li class="flex items-start gap-2">
                                 <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
                                 <span class="text-foreground/85"
@@ -380,8 +385,9 @@ const themeStore = useThemeStore();
                                     >Histórico completo de envios fica disponível no painel.</span
                                 >
                             </li>
-                        </ul>
-                        <div class="mt-5">
+                            </ul>
+                        </div>
+                        <div class="mt-auto pt-5">
                             <RouterLink to="/app/professor"
                                 ><PixelButton variant="primary" class="w-full"
                                     ><PhChartBar weight="fill" class="pixel-icon" /> ENTRAR COMO
@@ -391,7 +397,7 @@ const themeStore = useThemeStore();
                         </div>
                     </PixelCard>
 
-                    <PixelCard class="p-6">
+                    <PixelCard class="p-6 flex flex-col">
                         <div class="flex items-center gap-3 mb-4">
                             <div
                                 class="border-2 border-border bg-accent text-accent-foreground p-2"
@@ -403,11 +409,12 @@ const themeStore = useThemeStore();
                                 <div class="font-pixel text-sm">EMPRESA PARCEIRA</div>
                             </div>
                         </div>
-                        <p class="font-sans text-sm text-foreground/80">
+                        <div class="flex-1 flex flex-col justify-center">
+                            <p class="font-sans text-sm text-foreground/80">
                             A loja do reino. Cria vantagens e valida cupons gerados pelos alunos no
                             resgate.
-                        </p>
-                        <ul class="mt-4 space-y-2 font-sans text-sm">
+                            </p>
+                            <ul class="mt-4 space-y-2 font-sans text-sm">
                             <li class="flex items-start gap-2">
                                 <span class="text-primary font-pixel text-[10px] mt-0.5">►</span>
                                 <span class="text-foreground/85"
@@ -448,8 +455,9 @@ const themeStore = useThemeStore();
                                     oferecida.</span
                                 >
                             </li>
-                        </ul>
-                        <div class="mt-5">
+                            </ul>
+                        </div>
+                        <div class="mt-auto pt-5">
                             <RouterLink to="/app/empresa"
                                 ><PixelButton variant="success" class="w-full"
                                     ><PhTicket weight="fill" class="pixel-icon" /> ENTRAR COMO
