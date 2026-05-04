@@ -1,37 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { RouterLink } from 'vue-router';
+import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import {
-    PhArrowLeft,
-    PhGameController,
-    PhSun,
-    PhMoon,
-    PhBuildings,
-    PhBookOpen,
-    PhGraduationCap,
-    PhStudent,
-    PhBriefcase,
-    PhPlus,
-    PhTrash,
-    PhPencilSimple,
-    PhX,
-} from '@phosphor-icons/vue';
-import PixelCard from '@/shared/components/PixelCard.vue';
-import PixelButton from '@/shared/components/PixelButton.vue';
-import PixelInput from '@/shared/components/PixelInput.vue';
-import PixelBadge from '@/shared/components/PixelBadge.vue';
-import {
-    institutionCourses,
-    alunos as alunosBase,
-    cursoToId,
-    type Course,
-} from '@/shared/data/mockData';
-import { useThemeStore } from '@/shared/stores/theme.store';
-import { useForm } from '@/shared/composables/useForm';
-import { registerTeacherSchema } from '@/modules/schemas/register-teacher.schema';
-import { registerCompanyAdminSchema } from '@/modules/schemas/register-company-admin.schema';
-import { updateTeacherSchema } from '@/modules/schemas/update-teacher.schema';
-import {
+    deleteInstitution,
+    getInstitution,
+    updateInstitution,
     getTeachers,
     registerTeacher,
     getCompanies,
@@ -40,12 +12,48 @@ import {
     deleteTeacher,
 } from '@/modules/institution/services/institution.service';
 import type {
-    TeacherResponse,
     CompanyResponse,
+    InstitutionProfile,
+    TeacherResponse,
 } from '@/modules/institution/services/institution.types';
+import { registerTeacherSchema } from '@/modules/schemas/register-teacher.schema';
+import { registerCompanyAdminSchema } from '@/modules/schemas/register-company-admin.schema';
+import { updateTeacherSchema } from '@/modules/schemas/update-teacher.schema';
+import { updateInstitutionSchema } from '@/modules/schemas/update-institution.schema';
+import { useForm } from '@/shared/composables/useForm';
+import {
+    institutionCourses,
+    alunos as alunosBase,
+    cursoToId,
+    type Course,
+} from '@/shared/data/mockData';
+import PixelBadge from '@/shared/components/PixelBadge.vue';
+import PixelButton from '@/shared/components/PixelButton.vue';
+import PixelCard from '@/shared/components/PixelCard.vue';
+import PixelInput from '@/shared/components/PixelInput.vue';
+import { useThemeStore } from '@/shared/stores/theme.store';
+import {
+    PhArrowLeft,
+    PhBookOpen,
+    PhBriefcase,
+    PhBuildings,
+    PhGameController,
+    PhGraduationCap,
+    PhMoon,
+    PhPencilSimple,
+    PhPlus,
+    PhStudent,
+    PhSun,
+    PhTrash,
+    PhUser,
+    PhX,
+} from '@phosphor-icons/vue';
+import { computed, onMounted, ref } from 'vue';
+import { RouterLink, useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
 
 const themeStore = useThemeStore();
+const router = useRouter();
 
 const INSTITUICAO_NOME = 'UNIFEI · Mushroom Academy';
 
@@ -58,8 +66,28 @@ const TEACHER_AVATARS = [
     { value: 'BOWSER', label: 'Bowser' },
 ];
 
-type Tab = 'courses' | 'teachers' | 'companies' | 'students';
+type Tab = 'courses' | 'teachers' | 'companies' | 'students' | 'profile';
 const tab = ref<Tab>('courses');
+
+const authStore = useAuthStore();
+
+const institutionProfile = ref<InstitutionProfile | null>(null);
+
+const {
+    fields: profileData,
+    errors: profileErrors,
+    isSubmitting: profileIsSubmitting,
+    validate: validateProfile,
+    clearErrors: clearProfileErrors,
+} = useForm(updateInstitutionSchema);
+
+profileData.value = {
+    name: '',
+    email: '',
+    cnpj: '',
+    zipCode: '',
+    address: '',
+};
 
 const courses = ref<Course[]>([...institutionCourses]);
 
@@ -195,6 +223,88 @@ async function submitCompany(e: Event) {
     }
 }
 
+function formatDate(value: string) {
+    return new Intl.DateTimeFormat('pt-BR', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+    }).format(new Date(value));
+}
+
+async function loadInstitutionProfile() {
+    if (!authStore.user?.id) return;
+
+    try {
+        const response = await getInstitution(authStore.user.id);
+        institutionProfile.value = response.data;
+        profileData.value = {
+            name: response.data.name,
+            email: response.data.email,
+            cnpj: response.data.cnpj,
+            zipCode: response.data.zipCode,
+            address: response.data.address,
+        };
+    } catch {
+    }
+}
+
+async function handleUpdateInstitutionProfile(e: Event) {
+    e.preventDefault();
+
+    if (!validateProfile() || !authStore.user?.id) return;
+
+    profileIsSubmitting.value = true;
+
+    try {
+        const response = await updateInstitution(authStore.user.id, {
+            name: profileData.value.name.trim(),
+            email: profileData.value.email.trim(),
+            cnpj: profileData.value.cnpj.replace(/\D/g, ''),
+            zipCode: profileData.value.zipCode.replace(/\D/g, ''),
+            address: profileData.value.address.trim(),
+        });
+
+        institutionProfile.value = response.data;
+        profileData.value = {
+            name: response.data.name,
+            email: response.data.email,
+            cnpj: response.data.cnpj,
+            zipCode: response.data.zipCode,
+            address: response.data.address,
+        };
+
+        authStore.setUser({
+            id: response.data.id,
+            name: response.data.name,
+            email: response.data.email,
+            role: authStore.user?.role ?? 'institution',
+        });
+
+        clearProfileErrors();
+        toast.success('Perfil da instituição atualizado com sucesso!');
+    } catch {
+    } finally {
+        profileIsSubmitting.value = false;
+    }
+}
+
+const isDeletingAccount = ref(false);
+
+async function handleDeleteInstitution() {
+    if (!authStore.user?.id) return;
+
+    isDeletingAccount.value = true;
+
+    try {
+        await deleteInstitution(authStore.user.id);
+        await authStore.logout();
+        toast.success('Conta da instituição excluída.');
+        await router.push({ name: 'home' });
+    } catch {
+    } finally {
+        isDeletingAccount.value = false;
+    }
+}
+
 const courseFilter = ref('all');
 const studentSearch = ref('');
 
@@ -212,10 +322,11 @@ const tabs = [
     { id: 'teachers' as Tab, label: 'PROFESSORES', icon: PhGraduationCap },
     { id: 'companies' as Tab, label: 'EMPRESAS', icon: PhBriefcase },
     { id: 'students' as Tab, label: 'ALUNOS', icon: PhStudent },
+    { id: 'profile' as Tab, label: 'PERFIL', icon: PhUser },
 ];
 
 onMounted(async () => {
-    await Promise.all([loadTeachers(), loadCompanies()]);
+    await Promise.all([loadTeachers(), loadCompanies(), loadInstitutionProfile()]);
 });
 </script>
 
@@ -705,6 +816,142 @@ onMounted(async () => {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </PixelCard>
+            </div>
+
+            <div v-if="tab === 'profile'" class="grid lg:grid-cols-[1fr_0.9fr] gap-6 items-start">
+                <PixelCard class="p-5">
+                    <h2 class="font-pixel text-sm mb-4 flex items-center gap-2">
+                        <PhPencilSimple weight="bold" /> EDITAR PERFIL
+                    </h2>
+                    <form class="space-y-3" @submit="handleUpdateInstitutionProfile">
+                        <div>
+                            <label class="font-pixel text-[9px] block mb-1">NOME DA INSTITUIÇÃO</label>
+                            <PixelInput v-model="profileData.name" placeholder="Nome da instituição" />
+                            <p
+                                v-if="profileErrors.name"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ profileErrors.name }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="font-pixel text-[9px] block mb-1">E-MAIL</label>
+                            <PixelInput v-model="profileData.email" type="email" placeholder="contato@instituicao.com" />
+                            <p
+                                v-if="profileErrors.email"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ profileErrors.email }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="font-pixel text-[9px] block mb-1">CNPJ</label>
+                            <PixelInput v-model="profileData.cnpj" maxlength="18" placeholder="00.000.000/0000-00" />
+                            <p
+                                v-if="profileErrors.cnpj"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ profileErrors.cnpj }}
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="font-pixel text-[9px] block mb-1">CEP</label>
+                                <PixelInput v-model="profileData.zipCode" maxlength="9" placeholder="00000-000" />
+                                <p
+                                    v-if="profileErrors.zipCode"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ profileErrors.zipCode }}
+                                </p>
+                            </div>
+
+                            <div>
+                                <label class="font-pixel text-[9px] block mb-1">ENDEREÇO COMPLETO</label>
+                                <PixelInput v-model="profileData.address" placeholder="Rua, número, bairro, cidade" />
+                                <p
+                                    v-if="profileErrors.address"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ profileErrors.address }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <PixelButton type="submit" variant="success" class="w-full" :disabled="profileIsSubmitting">
+                            <PhPencilSimple weight="bold" /> SALVAR ALTERAÇÕES
+                        </PixelButton>
+                    </form>
+                </PixelCard>
+
+                <PixelCard class="p-5 space-y-4">
+                    <h2 class="font-pixel text-sm flex items-center gap-2">
+                        <PhBuildings weight="fill" class="pixel-icon" /> DADOS DA CONTA
+                    </h2>
+
+                    <div class="border-2 border-border bg-card p-4 space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-14 h-14 border-2 border-border bg-hud flex items-center justify-center shadow-[3px_3px_0_0_hsl(var(--border))]"
+                            >
+                                <PhBuildings weight="fill" :size="28" class="text-primary" />
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-pixel text-xs truncate">
+                                    {{ institutionProfile?.name ?? authStore.user?.name ?? 'INSTITUIÇÃO' }}
+                                </div>
+                                <div class="font-sans text-xs text-muted-foreground truncate mt-1">
+                                    {{ institutionProfile?.email ?? authStore.user?.email ?? '-' }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2">
+                            <PixelBadge tone="blue">CNPJ: {{ institutionProfile?.cnpj ?? '-' }}</PixelBadge>
+                            <PixelBadge tone="green">CEP: {{ institutionProfile?.zipCode ?? '-' }}</PixelBadge>
+                        </div>
+
+                        <div class="space-y-2 text-sm font-sans">
+                            <p>
+                                <span class="font-pixel text-[9px]">ENDEREÇO:</span>
+                                {{ institutionProfile?.address ?? '-' }}
+                            </p>
+                            <p>
+                                <span class="font-pixel text-[9px]">CRIADO EM:</span>
+                                {{ institutionProfile ? formatDate(institutionProfile.createdAt) : '-' }}
+                            </p>
+                            <p>
+                                <span class="font-pixel text-[9px]">ATUALIZADO EM:</span>
+                                {{ institutionProfile ? formatDate(institutionProfile.updatedAt) : '-' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="border-2 border-border bg-card p-4 space-y-3">
+                        <div class="font-pixel text-[10px] text-destructive">EXCLUIR CONTA</div>
+                        <p class="font-sans text-sm text-muted-foreground">
+                            Esta ação remove permanentemente a conta da instituição e todos os dados
+                            vinculados ao acesso.
+                        </p>
+                        <PixelButton
+                            type="button"
+                            variant="danger"
+                            class="w-full"
+                            :disabled="isDeletingAccount"
+                            @click="handleDeleteInstitution"
+                        >
+                            <PhTrash weight="bold" /> EXCLUIR CONTA
+                        </PixelButton>
                     </div>
                 </PixelCard>
             </div>

@@ -1,5 +1,9 @@
 import { api } from '@/shared/services/api';
-import type { TeacherResponse, CompanyResponse } from './institution.types';
+import type {
+    CompanyResponse,
+    InstitutionProfile,
+    TeacherResponse,
+} from './institution.types';
 
 export type RegisterTeacherDto = {
     name: string;
@@ -17,6 +21,14 @@ export type RegisterCompanyDto = {
     cnpj: string;
 };
 
+export type UpdateInstitutionDto = {
+    name: string;
+    email: string;
+    cnpj: string;
+    zipCode: string;
+    address: string;
+};
+
 export function getTeachers() {
     return api.get<TeacherResponse[]>('/teachers');
 }
@@ -31,6 +43,18 @@ export function getCompanies() {
 
 export function registerCompany(dto: RegisterCompanyDto) {
     return api.post<CompanyResponse>('/companies', dto);
+}
+
+export function getInstitution(id: string) {
+    return api.get<InstitutionProfile>(`/institutions/${id}`);
+}
+
+export function updateInstitution(id: string, dto: UpdateInstitutionDto) {
+    return api.put<InstitutionProfile>(`/institutions/${id}`, dto);
+}
+
+export function deleteInstitution(id: string) {
+    return api.delete(`/institutions/${id}`);
 }
 
 export type UpdateTeacherDto = {

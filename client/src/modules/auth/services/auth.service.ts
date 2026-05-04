@@ -23,6 +23,15 @@ export type RegisterCompanyDto = {
     cnpj: string;
 };
 
+export type RegisterInstitutionDto = {
+    name: string;
+    email: string;
+    password: string;
+    cnpj: string;
+    zipCode: string;
+    address: string;
+};
+
 export type AuthResponse = {
     id: string;
     name: string;
@@ -41,6 +50,10 @@ export function registerStudentRequest(dto: RegisterStudentDto) {
 
 export function registerCompanyRequest(dto: RegisterCompanyDto) {
     return api.post('/companies', dto);
+}
+
+export function registerInstitutionRequest(dto: RegisterInstitutionDto) {
+    return api.post('/institutions', dto);
 }
 
 export function logoutRequest() {
