@@ -69,10 +69,9 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        // Public: login + register students, institutions, companies
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/logout").permitAll()
                         .requestMatchers(HttpMethod.POST, "/students", "/institutions", "/companies").permitAll()
-                        // Everything else requires authentication
+                        .requestMatchers(HttpMethod.GET, "/institutions", "/institutions/*").permitAll()
                         .anyRequest().authenticated())
                 .build();
     }
