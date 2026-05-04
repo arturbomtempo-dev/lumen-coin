@@ -35,15 +35,12 @@ const router = useRouter();
                         <div
                             class="w-14 h-14 border-2 border-border bg-hud flex items-center justify-center mb-4"
                         >
-                            <PhGraduationCap
-                                weight="fill"
-                                :size="32"
-                                class="text-primary"
-                            />
+                            <PhGraduationCap weight="fill" :size="32" class="text-primary" />
                         </div>
                         <div class="font-pixel text-sm mb-2">ALUNO</div>
                         <p class="font-sans text-xs text-muted-foreground">
-                            Estudante de instituição parceira. Acumule moedas e troque por vantagens.
+                            Estudante de instituição parceira. Acumule moedas e troque por
+                            vantagens.
                         </p>
                     </button>
 
@@ -55,11 +52,7 @@ const router = useRouter();
                         <div
                             class="w-14 h-14 border-2 border-border bg-hud flex items-center justify-center mb-4"
                         >
-                            <PhStorefront
-                                weight="fill"
-                                :size="32"
-                                class="text-accent"
-                            />
+                            <PhStorefront weight="fill" :size="32" class="text-accent" />
                         </div>
                         <div class="font-pixel text-sm mb-2">EMPRESA PARCEIRA</div>
                         <p class="font-sans text-xs text-muted-foreground">
@@ -74,11 +67,7 @@ const router = useRouter();
                         <div
                             class="w-14 h-14 border-2 border-border bg-hud flex items-center justify-center mb-4"
                         >
-                            <PhBank
-                                weight="fill"
-                                :size="32"
-                                class="text-blue-500"
-                            />
+                            <PhBank weight="fill" :size="32" class="text-blue-500" />
                         </div>
                         <div class="font-pixel text-sm mb-2">INSTITUIÇÃO</div>
                         <p class="font-sans text-xs text-muted-foreground">

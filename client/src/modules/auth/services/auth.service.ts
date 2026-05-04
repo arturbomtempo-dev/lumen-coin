@@ -41,7 +41,7 @@ export type AuthResponse = {
 };
 
 export function loginRequest(dto: LoginDto) {
-    return api.post<AuthResponse>('/auth/login', dto);
+    return api.post<AuthResponse>('/auth/login', dto, { skipGlobalErrorToast: true });
 }
 
 export function registerStudentRequest(dto: RegisterStudentDto) {

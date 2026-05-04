@@ -555,17 +555,22 @@ async function submitInstitution(): Promise<void> {
                                 </div>
 
                                 <p
-                                    v-if="institutionErrors.confirmPassword || passwordsMatch !== null"
+                                    v-if="
+                                        institutionErrors.confirmPassword || passwordsMatch !== null
+                                    "
                                     class="font-pixel text-[8px] mt-2"
                                     :class="
-                                        institutionErrors.confirmPassword || passwordsMatch === false
+                                        institutionErrors.confirmPassword ||
+                                        passwordsMatch === false
                                             ? 'text-destructive'
                                             : 'text-success'
                                     "
                                 >
                                     {{
-                                        institutionErrors.confirmPassword || passwordsMatch === false
-                                            ? institutionErrors.confirmPassword ?? 'SENHAS DIFERENTES'
+                                        institutionErrors.confirmPassword ||
+                                        passwordsMatch === false
+                                            ? (institutionErrors.confirmPassword ??
+                                              'SENHAS DIFERENTES')
                                             : 'SENHAS COINCIDEM'
                                     }}
                                 </p>

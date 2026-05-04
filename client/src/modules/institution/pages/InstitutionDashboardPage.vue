@@ -275,8 +275,7 @@ async function loadInstitutionProfile() {
             zipCode: response.data.zipCode,
             address: response.data.address,
         };
-    } catch {
-    }
+    } catch {}
 }
 
 async function handleUpdateInstitutionProfile(e: Event) {
@@ -348,7 +347,11 @@ const filteredStudents = computed(() => {
             selectedCourse == null ||
             a.course
                 .split(' ')
-                .some((word) => word.length > 3 && selectedCourse.name.toLowerCase().includes(word.toLowerCase()));
+                .some(
+                    (word) =>
+                        word.length > 3 &&
+                        selectedCourse.name.toLowerCase().includes(word.toLowerCase())
+                );
         const matchSearch = a.name.toLowerCase().includes(studentSearch.value.toLowerCase());
         return matchCourse && matchSearch;
     });
@@ -470,11 +473,7 @@ onMounted(async () => {
                                 class="w-full bg-input text-foreground border-2 border-border px-3 py-2 font-display text-base focus:outline-none"
                             >
                                 <option value="" disabled>Selecione um turno</option>
-                                <option
-                                    v-for="s in SHIFT_OPTIONS"
-                                    :key="s.value"
-                                    :value="s.value"
-                                >
+                                <option v-for="s in SHIFT_OPTIONS" :key="s.value" :value="s.value">
                                     {{ s.label }}
                                 </option>
                             </select>
@@ -487,7 +486,9 @@ onMounted(async () => {
                             </p>
                         </div>
                         <div>
-                            <label class="font-pixel text-[9px] block mb-1">NÚMERO DE PERÍODOS</label>
+                            <label class="font-pixel text-[9px] block mb-1"
+                                >NÚMERO DE PERÍODOS</label
+                            >
                             <PixelInput
                                 :model-value="courseData.periods"
                                 type="number"
@@ -535,7 +536,11 @@ onMounted(async () => {
                                         {{ SHIFT_LABELS[c.shift] }} · {{ c.periods }} período(s)
                                     </div>
                                 </div>
-                                <PixelButton variant="danger" size="sm" @click="handleDeleteCourse(c.id)">
+                                <PixelButton
+                                    variant="danger"
+                                    size="sm"
+                                    @click="handleDeleteCourse(c.id)"
+                                >
                                     <PhTrash weight="bold" /> EXCLUIR
                                 </PixelButton>
                             </div>
@@ -891,8 +896,13 @@ onMounted(async () => {
                     </h2>
                     <form class="space-y-3" @submit="handleUpdateInstitutionProfile">
                         <div>
-                            <label class="font-pixel text-[9px] block mb-1">NOME DA INSTITUIÇÃO</label>
-                            <PixelInput v-model="profileData.name" placeholder="Nome da instituição" />
+                            <label class="font-pixel text-[9px] block mb-1"
+                                >NOME DA INSTITUIÇÃO</label
+                            >
+                            <PixelInput
+                                v-model="profileData.name"
+                                placeholder="Nome da instituição"
+                            />
                             <p
                                 v-if="profileErrors.name"
                                 class="font-sans text-xs mt-1"
@@ -904,7 +914,11 @@ onMounted(async () => {
 
                         <div>
                             <label class="font-pixel text-[9px] block mb-1">E-MAIL</label>
-                            <PixelInput v-model="profileData.email" type="email" placeholder="contato@instituicao.com" />
+                            <PixelInput
+                                v-model="profileData.email"
+                                type="email"
+                                placeholder="contato@instituicao.com"
+                            />
                             <p
                                 v-if="profileErrors.email"
                                 class="font-sans text-xs mt-1"
@@ -916,7 +930,11 @@ onMounted(async () => {
 
                         <div>
                             <label class="font-pixel text-[9px] block mb-1">CNPJ</label>
-                            <PixelInput v-model="profileData.cnpj" maxlength="18" placeholder="00.000.000/0000-00" />
+                            <PixelInput
+                                v-model="profileData.cnpj"
+                                maxlength="18"
+                                placeholder="00.000.000/0000-00"
+                            />
                             <p
                                 v-if="profileErrors.cnpj"
                                 class="font-sans text-xs mt-1"
@@ -929,7 +947,11 @@ onMounted(async () => {
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="font-pixel text-[9px] block mb-1">CEP</label>
-                                <PixelInput v-model="profileData.zipCode" maxlength="9" placeholder="00000-000" />
+                                <PixelInput
+                                    v-model="profileData.zipCode"
+                                    maxlength="9"
+                                    placeholder="00000-000"
+                                />
                                 <p
                                     v-if="profileErrors.zipCode"
                                     class="font-sans text-xs mt-1"
@@ -940,8 +962,13 @@ onMounted(async () => {
                             </div>
 
                             <div>
-                                <label class="font-pixel text-[9px] block mb-1">ENDEREÇO COMPLETO</label>
-                                <PixelInput v-model="profileData.address" placeholder="Rua, número, bairro, cidade" />
+                                <label class="font-pixel text-[9px] block mb-1"
+                                    >ENDEREÇO COMPLETO</label
+                                >
+                                <PixelInput
+                                    v-model="profileData.address"
+                                    placeholder="Rua, número, bairro, cidade"
+                                />
                                 <p
                                     v-if="profileErrors.address"
                                     class="font-sans text-xs mt-1"
@@ -952,7 +979,12 @@ onMounted(async () => {
                             </div>
                         </div>
 
-                        <PixelButton type="submit" variant="success" class="w-full" :disabled="profileIsSubmitting">
+                        <PixelButton
+                            type="submit"
+                            variant="success"
+                            class="w-full"
+                            :disabled="profileIsSubmitting"
+                        >
                             <PhPencilSimple weight="bold" /> SALVAR ALTERAÇÕES
                         </PixelButton>
                     </form>
@@ -972,7 +1004,11 @@ onMounted(async () => {
                             </div>
                             <div class="min-w-0">
                                 <div class="font-pixel text-xs truncate">
-                                    {{ institutionProfile?.name ?? authStore.user?.name ?? 'INSTITUIÇÃO' }}
+                                    {{
+                                        institutionProfile?.name ??
+                                        authStore.user?.name ??
+                                        'INSTITUIÇÃO'
+                                    }}
                                 </div>
                                 <div class="font-sans text-xs text-muted-foreground truncate mt-1">
                                     {{ institutionProfile?.email ?? authStore.user?.email ?? '-' }}
@@ -981,8 +1017,12 @@ onMounted(async () => {
                         </div>
 
                         <div class="flex flex-wrap gap-2">
-                            <PixelBadge tone="blue">CNPJ: {{ institutionProfile?.cnpj ?? '-' }}</PixelBadge>
-                            <PixelBadge tone="green">CEP: {{ institutionProfile?.zipCode ?? '-' }}</PixelBadge>
+                            <PixelBadge tone="blue"
+                                >CNPJ: {{ institutionProfile?.cnpj ?? '-' }}</PixelBadge
+                            >
+                            <PixelBadge tone="green"
+                                >CEP: {{ institutionProfile?.zipCode ?? '-' }}</PixelBadge
+                            >
                         </div>
 
                         <div class="space-y-2 text-sm font-sans">
@@ -992,11 +1032,19 @@ onMounted(async () => {
                             </p>
                             <p>
                                 <span class="font-pixel text-[9px]">CRIADO EM:</span>
-                                {{ institutionProfile ? formatDate(institutionProfile.createdAt) : '-' }}
+                                {{
+                                    institutionProfile
+                                        ? formatDate(institutionProfile.createdAt)
+                                        : '-'
+                                }}
                             </p>
                             <p>
                                 <span class="font-pixel text-[9px]">ATUALIZADO EM:</span>
-                                {{ institutionProfile ? formatDate(institutionProfile.updatedAt) : '-' }}
+                                {{
+                                    institutionProfile
+                                        ? formatDate(institutionProfile.updatedAt)
+                                        : '-'
+                                }}
                             </p>
                         </div>
                     </div>

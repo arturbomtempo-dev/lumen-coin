@@ -291,3 +291,69 @@ html.theme-transition * {
 .animate-pop {
     animation: pixel-pop 0.28s steps(6, end);
 }
+
+[data-sonner-toaster] {
+    --border-radius: 0px;
+    font-family: 'VT323', system-ui, sans-serif;
+}
+
+[data-sonner-toast][data-styled='true'] {
+    border-width: 2px;
+    box-shadow: 3px 3px 0 0 hsl(var(--border));
+}
+
+[data-sonner-toast][data-styled='true'] [data-title] {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    line-height: 1.35;
+}
+
+[data-sonner-toast][data-styled='true'] [data-description] {
+    color: hsl(var(--muted-foreground));
+    font-family: 'VT323', system-ui, sans-serif;
+    font-size: 18px;
+}
+
+[data-sonner-toaster][data-sonner-theme='light'] {
+    --normal-bg: hsl(var(--background));
+    --normal-border: hsl(var(--border));
+    --normal-text: hsl(var(--foreground));
+
+    --success-bg: hsl(var(--background));
+    --success-border: hsl(var(--success-shadow));
+    --success-text: hsl(var(--success));
+
+    --info-bg: hsl(var(--background));
+    --info-border: hsl(var(--info-shadow));
+    --info-text: hsl(var(--info));
+
+    --warning-bg: hsl(var(--background));
+    --warning-border: hsl(var(--primary-shadow));
+    --warning-text: hsl(var(--primary-shadow));
+
+    --error-bg: hsl(var(--background));
+    --error-border: hsl(var(--destructive));
+    --error-text: hsl(var(--destructive));
+}
+
+[data-sonner-toaster][data-sonner-theme='dark'] {
+    --normal-bg: hsl(var(--background));
+    --normal-border: hsl(var(--border));
+    --normal-text: hsl(var(--foreground));
+
+    --success-bg: hsl(var(--background));
+    --success-border: hsl(var(--success));
+    --success-text: hsl(var(--success));
+
+    --info-bg: hsl(var(--background));
+    --info-border: hsl(var(--info));
+    --info-text: hsl(var(--info));
+
+    --warning-bg: hsl(var(--background));
+    --warning-border: hsl(var(--primary));
+    --warning-text: hsl(var(--primary));
+
+    --error-bg: hsl(var(--background));
+    --error-border: hsl(var(--destructive));
+    --error-text: hsl(var(--destructive));
+}
