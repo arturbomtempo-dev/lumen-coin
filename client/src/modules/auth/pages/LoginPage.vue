@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
 import { PhArrowLeft, PhSparkle, PhEye, PhEyeSlash } from '@phosphor-icons/vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
@@ -8,30 +8,60 @@ import PixelInput from '@/shared/components/PixelInput.vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import Cloud from './_components/Cloud.vue';
+import { useAuthStore } from '@/modules/auth/stores/auth.store';
+import { loginRequest } from '@/modules/auth/services/auth.service';
+import type { UserRole } from '@/modules/auth/stores/auth.store';
+
+const router = useRouter();
+const authStore = useAuthStore();
 
 const email = ref('');
 const senha = ref('');
 const showPwd = ref(false);
+const isSubmitting = ref(false);
 
+const ROLE_ROUTES: Record<string, string> = {
+    STUDENT: 'student-dashboard',
+    TEACHER: 'teacher-dashboard',
+    INSTITUTION: 'institution-dashboard',
+    COMPANY: 'company-dashboard',
+};
+
+async function handleLogin(e: Event) {
+    e.preventDefault();
+    if (!email.value || !senha.value) return;
+    isSubmitting.value = true;
+    try {
+        const { data } = await loginRequest({ email: email.value, password: senha.value });
+        authStore.setUser({
+            id: data.id,
+            name: data.name,
+            email: data.email,
+            role: data.role.toLowerCase() as UserRole,
+        });
+        router.push({ name: ROLE_ROUTES[data.role] ?? 'home' });
+    } finally {
+        isSubmitting.value = false;
+    }
+}
 </script>
 
 <template>
     <div class="min-h-screen flex flex-col">
-
         <main class="flex-1 relative overflow-hidden bg-login-bg transition-colors duration-300">
             <div class="absolute inset-0 bg-info/10" />
             <!-- Clouds -->
-               <div class="absolute top-10 left-8">
-                 <Cloud />
-                </div>
+            <div class="absolute top-10 left-8">
+                <Cloud />
+            </div>
 
-                <div class="absolute top-24 right-16 opacity-80">
-                    <Cloud />
-                </div>
+            <div class="absolute top-24 right-16 opacity-80">
+                <Cloud />
+            </div>
 
-                <div class="absolute top-40 left-1/3 opacity-70">
-                    <Cloud />
-                </div>
+            <div class="absolute top-40 left-1/3 opacity-70">
+                <Cloud />
+            </div>
             <!-- Hills -->
             <div
                 class="absolute bottom-24 left-0 right-0 h-32 opacity-30"
@@ -56,44 +86,44 @@ const showPwd = ref(false);
                     ?
                 </div>
             </div>
-            
+
             <!-- Pipe -->
             <div class="absolute bottom-24 left-10 hidden md:block">
                 <div class="w-20 h-8 bg-success border-4 border-border" />
                 <div class="w-16 h-16 bg-success border-4 border-t-0 border-border ml-2" />
             </div>
             <!-- Mario -->
-             <div class="absolute bottom-24 right-1/4 block animate-bob z-0">
+            <div class="absolute bottom-24 right-1/4 block animate-bob z-0">
                 <MarioAvatar character="mario" :size="72" />
             </div>
-            
 
-            <div class="relative min-h-screen container z-10  py-10 flex items-center justify-center">
+            <div
+                class="relative min-h-screen container z-10 py-10 flex items-center justify-center"
+            >
                 <PixelCard class="w-full max-w-md p-6 md:p-8 space-y-5 crt-scanlines">
                     <!-- VOLTAR -->
-        <RouterLink to="/"
-          class="mb-5 flex items-center gap-3 font-pixel text-[9px] cursor-pointer transition-all"
-        >
-          <div
-            class="w-7 h-7 border-2 border-black bg-amber-300 flex items-center justify-center shadow-[2px_2px_0px_black] translate-y-0 hover:translate-y-0.5 hover:translate-x-0.5 hover:shadow-none transition-transform"
-          >
-            <PhArrowLeft :size="14" weight="bold" />
-          </div>
+                    <RouterLink
+                        to="/"
+                        class="mb-5 flex items-center gap-3 font-pixel text-[9px] cursor-pointer transition-all"
+                    >
+                        <div
+                            class="w-7 h-7 border-2 border-black bg-amber-300 flex items-center justify-center shadow-[2px_2px_0px_black] translate-y-0 hover:translate-y-0.5 hover:translate-x-0.5 hover:shadow-none transition-transform"
+                        >
+                            <PhArrowLeft :size="14" weight="bold" />
+                        </div>
 
-          <span class="hover:text-primary">VOLTAR À TELA INICIAL</span>
-        </RouterLink>
+                        <span class="hover:text-primary">VOLTAR À TELA INICIAL</span>
+                    </RouterLink>
                     <div class="flex items-center gap-3 mb-5">
-                        
                         <div>
-                            
                             <h1 class="font-pixel text-lg">ENTRAR</h1>
                         </div>
-                        <div class="ml-auto animate-bob"><CoinIcon :size="28" class="animate-bob" /></div>
+                        <div class="ml-auto animate-bob">
+                            <CoinIcon :size="28" class="animate-bob" />
+                        </div>
                     </div>
 
-                   
-
-                    <form class="space-y-4">
+                    <form class="space-y-4" @submit="handleLogin">
                         <div>
                             <label class="font-pixel text-[10px] block mb-2">E-MAIL</label>
                             <PixelInput
@@ -131,8 +161,14 @@ const showPwd = ref(false);
                             <a href="#" class="hover:text-primary">ESQUECI A SENHA</a>
                         </div>
 
-                        <PixelButton variant="primary" class="w-full cursor-pointer" type="submit">
-                            <PhSparkle weight="fill" class="pixel-icon cursor-pointer" /> PRESS START
+                        <PixelButton
+                            variant="primary"
+                            class="w-full cursor-pointer"
+                            type="submit"
+                            :disabled="isSubmitting"
+                        >
+                            <PhSparkle weight="fill" class="pixel-icon cursor-pointer" /> PRESS
+                            START
                         </PixelButton>
                     </form>
 
@@ -145,12 +181,8 @@ const showPwd = ref(false);
                     </div>
 
                     <RouterLink to="/signup">
-                        <PixelButton variant="success" class="w-full"
-                            >CRIAR PERSONAGEM</PixelButton
-                        >
+                        <PixelButton variant="success" class="w-full">CRIAR PERSONAGEM</PixelButton>
                     </RouterLink>
-
-                    
                 </PixelCard>
             </div>
         </main>

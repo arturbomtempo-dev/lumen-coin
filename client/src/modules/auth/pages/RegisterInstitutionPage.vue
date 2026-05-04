@@ -88,17 +88,11 @@ const progress = computed<number>(() => {
 });
 
 const passwordsMatch = computed<boolean | null>(() => {
-    if (
-        !institutionForm.value.senha ||
-        !institutionForm.value.confirmarSenha
-    ) {
+    if (!institutionForm.value.senha || !institutionForm.value.confirmarSenha) {
         return null;
     }
 
-    return (
-        institutionForm.value.senha ===
-        institutionForm.value.confirmarSenha
-    );
+    return institutionForm.value.senha === institutionForm.value.confirmarSenha;
 });
 
 function formatCnpj(value: string): string {
@@ -115,15 +109,10 @@ function formatPhone(value: string): string {
     const numericValue = value.replace(/\D/g, '').slice(0, 11);
 
     if (numericValue.length <= 10) {
-        return numericValue
-            .replace(/^(\d{2})(\d)/, '($1) $2')
-            .replace(/(\d{4})(\d)/, '$1-$2');
+        return numericValue.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d)/, '$1-$2');
     }
 
-    return numericValue.replace(
-        /^(\d{2})(\d{5})(\d{4})$/,
-        '($1) $2-$3',
-    );
+    return numericValue.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
 }
 
 function formatCep(value: string): string {
@@ -207,10 +196,7 @@ function goBack(): void {
                     <div
                         class="w-7 h-7 border-2 border-border bg-primary flex items-center justify-center shadow-[2px_2px_0px_hsl(var(--border))]"
                     >
-                        <PhArrowLeft
-                            :size="14"
-                            weight="bold"
-                        />
+                        <PhArrowLeft :size="14" weight="bold" />
                     </div>
 
                     <span>VOLTAR À TELA INICIAL</span>
@@ -221,10 +207,7 @@ function goBack(): void {
                         <div
                             class="bg-hud border-2 border-border p-2 shadow-[4px_4px_0px_hsl(var(--border))]"
                         >
-                            <MarioAvatar
-                                :character="character"
-                                :size="56"
-                            />
+                            <MarioAvatar :character="character" :size="56" />
                         </div>
 
                         <div>
@@ -277,18 +260,9 @@ function goBack(): void {
                                       : 'bg-card'
                             "
                         >
-                            <PhCheckCircle
-                                v-if="index < step"
-                                :size="18"
-                                weight="fill"
-                            />
+                            <PhCheckCircle v-if="index < step" :size="18" weight="fill" />
 
-                            <component
-                                :is="item.icon"
-                                v-else
-                                :size="18"
-                                weight="fill"
-                            />
+                            <component :is="item.icon" v-else :size="18" weight="fill" />
                         </div>
 
                         <p class="font-pixel text-[7px] leading-3">
@@ -300,9 +274,7 @@ function goBack(): void {
                 <div class="space-y-4">
                     <template v-if="step === 0">
                         <div>
-                            <p class="font-pixel text-[10px] mb-4">
-                                AVATAR DA INSTITUIÇÃO
-                            </p>
+                            <p class="font-pixel text-[10px] mb-4">AVATAR DA INSTITUIÇÃO</p>
 
                             <button
                                 class="w-full border-2 border-border p-4 text-center bg-primary text-primary-foreground shadow-[4px_4px_0px_hsl(var(--border))] -translate-y-0.5 transition-all"
@@ -311,15 +283,10 @@ function goBack(): void {
                                 <div
                                     class="bg-hud border-2 border-border p-3 flex justify-center mb-3"
                                 >
-                                    <MarioAvatar
-                                        :character="character"
-                                        :size="70"
-                                    />
+                                    <MarioAvatar :character="character" :size="70" />
                                 </div>
 
-                                <p class="font-pixel text-[10px] mb-1">
-                                    INSTITUIÇÃO
-                                </p>
+                                <p class="font-pixel text-[10px] mb-1">INSTITUIÇÃO</p>
 
                                 <p class="font-sans text-[11px] opacity-90">
                                     Avatar oficial da instituição
@@ -343,9 +310,7 @@ function goBack(): void {
 
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label class="font-pixel text-[9px] block mb-2">
-                                        CNPJ
-                                    </label>
+                                    <label class="font-pixel text-[9px] block mb-2"> CNPJ </label>
 
                                     <PixelInput
                                         :model-value="institutionForm.cnpj"
@@ -374,9 +339,7 @@ function goBack(): void {
                     <template v-if="step === 2">
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                              <label class="font-pixel text-[9px] block mb-2">
-                                  CEP
-                              </label>
+                                <label class="font-pixel text-[9px] block mb-2"> CEP </label>
 
                                 <PixelInput
                                     :model-value="institutionForm.cep"
@@ -387,20 +350,13 @@ function goBack(): void {
                             </div>
 
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2">
-                                    CIDADE
-                                </label>
+                                <label class="font-pixel text-[9px] block mb-2"> CIDADE </label>
 
-                                <PixelInput
-                                    v-model="institutionForm.cidade"
-                                    placeholder="Cidade"
-                                />
+                                <PixelInput v-model="institutionForm.cidade" placeholder="Cidade" />
                             </div>
 
                             <div class="col-span-2">
-                                <label class="font-pixel text-[9px] block mb-2">
-                                    RUA
-                                </label>
+                                <label class="font-pixel text-[9px] block mb-2"> RUA </label>
 
                                 <PixelInput
                                     v-model="institutionForm.rua"
@@ -409,25 +365,15 @@ function goBack(): void {
                             </div>
 
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2">
-                                    NÚMERO
-                                </label>
+                                <label class="font-pixel text-[9px] block mb-2"> NÚMERO </label>
 
-                                <PixelInput
-                                    v-model="institutionForm.numero"
-                                    placeholder="123"
-                                />
+                                <PixelInput v-model="institutionForm.numero" placeholder="123" />
                             </div>
 
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2">
-                                    BAIRRO
-                                </label>
+                                <label class="font-pixel text-[9px] block mb-2"> BAIRRO </label>
 
-                                <PixelInput
-                                    v-model="institutionForm.bairro"
-                                    placeholder="Bairro"
-                                />
+                                <PixelInput v-model="institutionForm.bairro" placeholder="Bairro" />
                             </div>
                         </div>
                     </template>
@@ -435,9 +381,7 @@ function goBack(): void {
                     <template v-if="step === 3">
                         <div class="space-y-4">
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2">
-                                    E-MAIL
-                                </label>
+                                <label class="font-pixel text-[9px] block mb-2"> E-MAIL </label>
 
                                 <PixelInput
                                     v-model="institutionForm.email"
@@ -447,9 +391,7 @@ function goBack(): void {
                             </div>
 
                             <div>
-                                <label class="font-pixel text-[10px] block mb-2">
-                                    SENHA
-                                </label>
+                                <label class="font-pixel text-[10px] block mb-2"> SENHA </label>
 
                                 <div class="relative">
                                     <PixelInput
@@ -464,17 +406,9 @@ function goBack(): void {
                                         type="button"
                                         @click="showPassword = !showPassword"
                                     >
-                                        <PhEyeSlash
-                                            v-if="showPassword"
-                                            :size="18"
-                                            weight="bold"
-                                        />
+                                        <PhEyeSlash v-if="showPassword" :size="18" weight="bold" />
 
-                                        <PhEye
-                                            v-else
-                                            :size="18"
-                                            weight="bold"
-                                        />
+                                        <PhEye v-else :size="18" weight="bold" />
                                     </button>
                                 </div>
                             </div>
@@ -487,11 +421,7 @@ function goBack(): void {
                                 <div class="relative">
                                     <PixelInput
                                         v-model="institutionForm.confirmarSenha"
-                                        :type="
-                                            showConfirmPassword
-                                                ? 'text'
-                                                : 'password'
-                                        "
+                                        :type="showConfirmPassword ? 'text' : 'password'"
                                         class="pr-10"
                                         placeholder="••••••••"
                                     />
@@ -499,10 +429,7 @@ function goBack(): void {
                                     <button
                                         class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                                         type="button"
-                                        @click="
-                                            showConfirmPassword =
-                                                !showConfirmPassword
-                                        "
+                                        @click="showConfirmPassword = !showConfirmPassword"
                                     >
                                         <PhEyeSlash
                                             v-if="showConfirmPassword"
@@ -510,28 +437,16 @@ function goBack(): void {
                                             weight="bold"
                                         />
 
-                                        <PhEye
-                                            v-else
-                                            :size="18"
-                                            weight="bold"
-                                        />
+                                        <PhEye v-else :size="18" weight="bold" />
                                     </button>
                                 </div>
 
                                 <p
                                     v-if="passwordsMatch !== null"
                                     class="font-pixel text-[8px] mt-2"
-                                    :class="
-                                        passwordsMatch
-                                            ? 'text-success'
-                                            : 'text-destructive'
-                                    "
+                                    :class="passwordsMatch ? 'text-success' : 'text-destructive'"
                                 >
-                                    {{
-                                        passwordsMatch
-                                            ? 'SENHAS COINCIDEM'
-                                            : 'SENHAS DIFERENTES'
-                                    }}
+                                    {{ passwordsMatch ? 'SENHAS COINCIDEM' : 'SENHAS DIFERENTES' }}
                                 </p>
                             </div>
                         </div>
@@ -539,30 +454,16 @@ function goBack(): void {
                 </div>
 
                 <div class="flex justify-between gap-3 mt-7">
-                    <PixelButton
-                        :disabled="step === 0"
-                        variant="ghost"
-                        @click="goToPreviousStep"
-                    >
-                        <PhArrowLeft
-                            :size="16"
-                            weight="bold"
-                        />
+                    <PixelButton :disabled="step === 0" variant="ghost" @click="goToPreviousStep">
+                        <PhArrowLeft :size="16" weight="bold" />
 
                         VOLTAR
                     </PixelButton>
 
                     <PixelButton @click="goToNextStep">
-                        {{
-                            step === institutionSteps.length - 1
-                                ? 'FINALIZAR'
-                                : 'PRÓXIMA'
-                        }}
+                        {{ step === institutionSteps.length - 1 ? 'FINALIZAR' : 'PRÓXIMA' }}
 
-                        <PhArrowRight
-                            :size="16"
-                            weight="bold"
-                        />
+                        <PhArrowRight :size="16" weight="bold" />
                     </PixelButton>
                 </div>
             </PixelCard>
