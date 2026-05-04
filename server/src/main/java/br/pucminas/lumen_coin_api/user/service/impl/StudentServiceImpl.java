@@ -109,10 +109,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    public void softDelete(UUID id) {
+    public void delete(UUID id) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        student.setActive(false);
-        studentRepository.save(student);
+        studentRepository.delete(student);
     }
 }

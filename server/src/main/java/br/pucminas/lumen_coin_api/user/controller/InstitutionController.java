@@ -46,8 +46,8 @@ public class InstitutionController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('INSTITUTION')")
-    public ResponseEntity<Void> softDelete(@PathVariable UUID id) {
-        institutionService.softDelete(id);
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        institutionService.delete(id);
         return ResponseEntity.ok().build();
     }
 }

@@ -16,5 +16,5 @@ public interface InstitutionService {
 
     InstitutionResponse update(UUID id, UpdateInstitutionRequest request);
 
-    void softDelete(UUID id);
+    void delete(UUID id);
 }

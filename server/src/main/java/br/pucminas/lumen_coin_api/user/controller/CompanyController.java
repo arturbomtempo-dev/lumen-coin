@@ -46,8 +46,8 @@ public class CompanyController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('COMPANY')")
-    public ResponseEntity<Void> softDelete(@PathVariable UUID id) {
-        companyService.softDelete(id);
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        companyService.delete(id);
         return ResponseEntity.ok().build();
     }
 }

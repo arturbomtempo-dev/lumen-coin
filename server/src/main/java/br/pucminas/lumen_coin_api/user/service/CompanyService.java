@@ -16,5 +16,5 @@ public interface CompanyService {
 
     CompanyResponse update(UUID id, UpdateCompanyRequest request);
 
-    void softDelete(UUID id);
+    void delete(UUID id);
 }

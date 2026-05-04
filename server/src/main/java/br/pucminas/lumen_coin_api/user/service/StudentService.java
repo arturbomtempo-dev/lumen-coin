@@ -16,5 +16,5 @@ public interface StudentService {
 
     StudentResponse update(UUID id, UpdateStudentRequest request);
 
-    void softDelete(UUID id);
+    void delete(UUID id);
 }

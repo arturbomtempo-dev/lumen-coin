@@ -110,7 +110,7 @@ public class InstitutionServiceImpl implements InstitutionService {
 
     @Override
     @Transactional
-    public void softDelete(UUID id) {
+    public void delete(UUID id) {
         Institution institution = institutionRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
@@ -118,7 +118,6 @@ public class InstitutionServiceImpl implements InstitutionService {
         teachers.forEach(t -> t.setActive(false));
         teacherRepository.saveAll(teachers);
 
-        institution.setActive(false);
-        institutionRepository.save(institution);
+        institutionRepository.delete(institution);
     }
 }

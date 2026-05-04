@@ -100,10 +100,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public void softDelete(UUID id) {
+    public void delete(UUID id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        company.setActive(false);
-        companyRepository.save(company);
+        companyRepository.delete(company);
     }
 }
