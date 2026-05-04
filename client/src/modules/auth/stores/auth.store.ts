@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { meRequest, logoutRequest } from '../services/auth.service';
+import { meRequest, logoutRequest, type MeResponse } from '../services/auth.service';
 
 export type UserRole = 'student' | 'teacher' | 'company' | 'institution';
 
@@ -19,7 +19,12 @@ export const useAuthStore = defineStore('auth', () => {
     async function checkAuth() {
         try {
             const { data } = await meRequest();
-            user.value = data.user;
+            user.value = {
+                id: data.id,
+                name: data.name,
+                email: data.email,
+                role: data.role.toLowerCase() as UserRole,
+            };
             isAuthenticated.value = true;
         } catch {
             isAuthenticated.value = false;

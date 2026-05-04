@@ -20,6 +20,7 @@ export type RegisterCompanyDto = {
     name: string;
     email: string;
     password: string;
+    cnpj: string;
 };
 
 export type AuthResponse = {
@@ -39,13 +40,20 @@ export function registerStudentRequest(dto: RegisterStudentDto) {
 }
 
 export function registerCompanyRequest(dto: RegisterCompanyDto) {
-    return api.post('/auth/register/company', dto);
+    return api.post('/companies', dto);
 }
 
 export function logoutRequest() {
     return api.post('/auth/logout');
 }
 
+export type MeResponse = {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+};
+
 export function meRequest() {
-    return api.get('/auth/me');
+    return api.get<MeResponse>('/auth/me');
 }

@@ -2,6 +2,7 @@ package br.pucminas.lumen_coin_api.auth.service.impl;
 
 import br.pucminas.lumen_coin_api.auth.dto.request.LoginRequest;
 import br.pucminas.lumen_coin_api.auth.dto.response.AuthResponse;
+import br.pucminas.lumen_coin_api.auth.dto.response.MeResponse;
 import br.pucminas.lumen_coin_api.auth.service.AuthService;
 import br.pucminas.lumen_coin_api.security.JwtService;
 import br.pucminas.lumen_coin_api.security.UserPrincipal;
@@ -34,5 +35,15 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse logout(HttpServletResponse response) {
         response.addCookie(jwtService.buildClearCookie());
         return new AuthResponse("Logged out successfully");
+    }
+
+    @Override
+    public MeResponse me(UserPrincipal principal) {
+        return new MeResponse(
+                principal.getUserId().toString(),
+                principal.getName(),
+                principal.getEmail(),
+                principal.getRole().name()
+        );
     }
 }

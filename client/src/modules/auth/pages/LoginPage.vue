@@ -9,8 +9,9 @@ import CoinIcon from '@/shared/components/CoinIcon.vue';
 import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import Cloud from './_components/Cloud.vue';
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
-import { loginRequest } from '@/modules/auth/services/auth.service';
+import { loginRequest, meRequest } from '@/modules/auth/services/auth.service';
 import type { UserRole } from '@/modules/auth/stores/auth.store';
+import { toast } from 'vue-sonner';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -32,14 +33,18 @@ async function handleLogin(e: Event) {
     if (!email.value || !senha.value) return;
     isSubmitting.value = true;
     try {
-        const { data } = await loginRequest({ email: email.value, password: senha.value });
+        await loginRequest({ email: email.value, password: senha.value });
+        const { data } = await meRequest();
         authStore.setUser({
             id: data.id,
             name: data.name,
             email: data.email,
             role: data.role.toLowerCase() as UserRole,
         });
-        router.push({ name: ROLE_ROUTES[data.role] ?? 'home' });
+        router.push({ name: ROLE_ROUTES[data.role.toUpperCase()] ?? 'home' });
+    } catch (err) {
+        console.error('[login]', err);
+        toast.error('Não foi possível fazer login. Verifique suas credenciais.');
     } finally {
         isSubmitting.value = false;
     }

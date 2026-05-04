@@ -13,6 +13,8 @@ import {
     PhBriefcase,
     PhPlus,
     PhTrash,
+    PhPencilSimple,
+    PhX,
 } from '@phosphor-icons/vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
@@ -28,11 +30,14 @@ import { useThemeStore } from '@/shared/stores/theme.store';
 import { useForm } from '@/shared/composables/useForm';
 import { registerTeacherSchema } from '@/modules/schemas/register-teacher.schema';
 import { registerCompanyAdminSchema } from '@/modules/schemas/register-company-admin.schema';
+import { updateTeacherSchema } from '@/modules/schemas/update-teacher.schema';
 import {
     getTeachers,
     registerTeacher,
     getCompanies,
     registerCompany,
+    updateTeacher,
+    deleteTeacher,
 } from '@/modules/institution/services/institution.service';
 import type {
     TeacherResponse,
@@ -87,6 +92,16 @@ const {
     clearErrors: clearTeacherErrors,
 } = useForm(registerTeacherSchema);
 
+const editingTeacherId = ref<string | null>(null);
+
+const {
+    data: editTeacherData,
+    errors: editTeacherErrors,
+    isSubmitting: editTeacherIsSubmitting,
+    validate: validateEditTeacher,
+    clearErrors: clearEditTeacherErrors,
+} = useForm(updateTeacherSchema);
+
 async function loadTeachers() {
     const response = await getTeachers();
     teachers.value = response.data;
@@ -106,6 +121,47 @@ async function submitTeacher(e: Event) {
     } finally {
         teacherIsSubmitting.value = false;
     }
+}
+
+function startEditTeacher(teacher: TeacherResponse) {
+    editingTeacherId.value = teacher.id;
+    editTeacherData.value = {
+        name: teacher.name,
+        email: teacher.email,
+        department: teacher.department,
+    };
+    clearEditTeacherErrors();
+}
+
+function cancelEditTeacher() {
+    editingTeacherId.value = null;
+    clearEditTeacherErrors();
+}
+
+async function submitEditTeacher(e: Event) {
+    e.preventDefault();
+    if (!validateEditTeacher()) return;
+    editTeacherIsSubmitting.value = true;
+    try {
+        const id = editingTeacherId.value!;
+        const response = await updateTeacher(id, editTeacherData.value);
+        const idx = teachers.value.findIndex((t) => t.id === id);
+        if (idx !== -1) teachers.value[idx] = response.data;
+        editingTeacherId.value = null;
+        clearEditTeacherErrors();
+        toast.success('Professor atualizado!');
+    } catch {
+    } finally {
+        editTeacherIsSubmitting.value = false;
+    }
+}
+
+async function handleDeleteTeacher(id: string) {
+    try {
+        await deleteTeacher(id);
+        teachers.value = teachers.value.filter((t) => t.id !== id);
+        toast.success('Professor excluído!');
+    } catch {}
 }
 
 const companies = ref<CompanyResponse[]>([]);
@@ -440,23 +496,101 @@ onMounted(async () => {
                         >
                             Nenhum professor cadastrado.
                         </p>
-                        <div
-                            v-for="t in teachers"
-                            :key="t.id"
-                            class="border-2 border-border bg-card p-3"
-                        >
-                            <div class="min-w-0">
-                                <div class="font-pixel text-xs">{{ t.name }}</div>
-                                <div class="font-sans text-xs text-muted-foreground mt-0.5">
-                                    {{ t.email }} · {{ t.cpf }}
+
+                        <div v-for="t in teachers" :key="t.id" class="border-2 border-border bg-card p-3">
+                            <!-- View mode -->
+                            <template v-if="editingTeacherId !== t.id">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <div class="font-pixel text-xs">{{ t.name }}</div>
+                                        <div class="font-sans text-xs text-muted-foreground mt-0.5">
+                                            {{ t.email }} · {{ t.cpf }}
+                                        </div>
+                                        <div class="flex flex-wrap gap-1.5 mt-2">
+                                            <PixelBadge tone="blue">{{ t.avatar }}</PixelBadge>
+                                            <PixelBadge v-if="t.department" tone="teal">
+                                                {{ t.department }}
+                                            </PixelBadge>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-1.5 shrink-0">
+                                        <PixelButton
+                                            size="sm"
+                                            variant="ghost"
+                                            @click="startEditTeacher(t)"
+                                        >
+                                            <PhPencilSimple weight="bold" :size="13" />
+                                        </PixelButton>
+                                        <PixelButton
+                                            size="sm"
+                                            variant="danger"
+                                            @click="handleDeleteTeacher(t.id)"
+                                        >
+                                            <PhTrash weight="bold" :size="13" />
+                                        </PixelButton>
+                                    </div>
                                 </div>
-                                <div class="flex flex-wrap gap-1.5 mt-2">
-                                    <PixelBadge tone="blue">{{ t.avatar }}</PixelBadge>
-                                    <PixelBadge v-if="t.department" tone="teal">
-                                        {{ t.department }}
-                                    </PixelBadge>
-                                </div>
-                            </div>
+                            </template>
+
+                            <!-- Edit mode -->
+                            <template v-else>
+                                <form class="space-y-2" @submit="submitEditTeacher">
+                                    <div class="font-pixel text-[9px] text-primary mb-2">
+                                        EDITANDO: {{ t.name }}
+                                    </div>
+                                    <div>
+                                        <label class="font-pixel text-[9px] block mb-1">NOME</label>
+                                        <PixelInput v-model="editTeacherData.name" />
+                                        <p
+                                            v-if="editTeacherErrors.name"
+                                            class="font-sans text-xs mt-1"
+                                            style="color: hsl(var(--destructive))"
+                                        >
+                                            {{ editTeacherErrors.name }}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <label class="font-pixel text-[9px] block mb-1">E-MAIL</label>
+                                        <PixelInput v-model="editTeacherData.email" type="email" />
+                                        <p
+                                            v-if="editTeacherErrors.email"
+                                            class="font-sans text-xs mt-1"
+                                            style="color: hsl(var(--destructive))"
+                                        >
+                                            {{ editTeacherErrors.email }}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <label class="font-pixel text-[9px] block mb-1">DEPARTAMENTO</label>
+                                        <PixelInput v-model="editTeacherData.department" />
+                                        <p
+                                            v-if="editTeacherErrors.department"
+                                            class="font-sans text-xs mt-1"
+                                            style="color: hsl(var(--destructive))"
+                                        >
+                                            {{ editTeacherErrors.department }}
+                                        </p>
+                                    </div>
+                                    <div class="flex gap-2 pt-1">
+                                        <PixelButton
+                                            type="submit"
+                                            variant="success"
+                                            size="sm"
+                                            :disabled="editTeacherIsSubmitting"
+                                        >
+                                            SALVAR
+                                        </PixelButton>
+                                        <PixelButton
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            @click="cancelEditTeacher"
+                                        >
+                                            <PhX weight="bold" :size="13" /> CANCELAR
+                                        </PixelButton>
+                                    </div>
+                                </form>
+                            </template>
                         </div>
                     </div>
                 </PixelCard>

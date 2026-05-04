@@ -27,6 +27,11 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/modules/auth/pages/RegisterStudentPage.vue'),
     },
     {
+        path: '/signup/empresa',
+        name: 'register-company',
+        component: () => import('@/modules/auth/pages/RegisterCompanyPage.vue'),
+    },
+    {
         path: '/app/aluno',
         component: () => import('@/shared/layouts/StudentLayout.vue'),
         children: [
