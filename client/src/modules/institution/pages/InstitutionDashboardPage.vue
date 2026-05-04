@@ -10,23 +10,23 @@ import {
     registerCompany,
     updateTeacher,
     deleteTeacher,
+    getCourses,
+    createCourse as createCourseApi,
+    deleteCourse,
 } from '@/modules/institution/services/institution.service';
 import type {
     CompanyResponse,
+    CourseResponse,
     InstitutionProfile,
     TeacherResponse,
 } from '@/modules/institution/services/institution.types';
 import { registerTeacherSchema } from '@/modules/schemas/register-teacher.schema';
+import { registerCourseSchema } from '@/modules/schemas/register-course.schema';
 import { registerCompanyAdminSchema } from '@/modules/schemas/register-company-admin.schema';
 import { updateTeacherSchema } from '@/modules/schemas/update-teacher.schema';
 import { updateInstitutionSchema } from '@/modules/schemas/update-institution.schema';
 import { useForm } from '@/shared/composables/useForm';
-import {
-    institutionCourses,
-    alunos as alunosBase,
-    cursoToId,
-    type Course,
-} from '@/shared/data/mockData';
+import { alunos as alunosBase } from '@/shared/data/mockData';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
@@ -89,25 +89,57 @@ profileData.value = {
     address: '',
 };
 
-const courses = ref<Course[]>([...institutionCourses]);
+const courses = ref<CourseResponse[]>([]);
 
-const newCourse = ref({ name: '', period: '2025.1', duration: '8 semestres', workload: 3200 });
+const {
+    fields: courseData,
+    errors: courseErrors,
+    isSubmitting: courseIsSubmitting,
+    validate: validateCourse,
+    clearErrors: clearCourseErrors,
+} = useForm(registerCourseSchema);
 
-function createCourse(e: Event) {
-    e.preventDefault();
-    if (!newCourse.value.name) return;
-    const c: Course = {
-        id: 'cur-' + Date.now(),
-        ...newCourse.value,
-        workload: Number(newCourse.value.workload),
-    };
-    courses.value.unshift(c);
-    toast.success(`Curso "${c.name}" criado!`);
-    newCourse.value = { name: '', period: '2025.1', duration: '8 semestres', workload: 3200 };
+const SHIFT_LABELS: Record<string, string> = {
+    DAYTIME: 'Integral',
+    MORNING: 'Matutino',
+    AFTERNOON: 'Vespertino',
+    NIGHT: 'Noturno',
+};
+
+const SHIFT_OPTIONS = [
+    { value: 'DAYTIME', label: 'Integral' },
+    { value: 'MORNING', label: 'Matutino' },
+    { value: 'AFTERNOON', label: 'Vespertino' },
+    { value: 'NIGHT', label: 'Noturno' },
+];
+
+async function loadCourses() {
+    const response = await getCourses();
+    courses.value = response.data;
 }
 
-function removeCourse(id: string) {
-    courses.value = courses.value.filter((c) => c.id !== id);
+async function submitCourse(e: Event) {
+    e.preventDefault();
+    if (!validateCourse()) return;
+    courseIsSubmitting.value = true;
+    try {
+        const response = await createCourseApi(courseData.value);
+        courses.value.unshift(response.data);
+        toast.success(`Curso "${response.data.name}" criado!`);
+        courseData.value = {} as typeof courseData.value;
+        clearCourseErrors();
+    } catch {
+    } finally {
+        courseIsSubmitting.value = false;
+    }
+}
+
+async function handleDeleteCourse(id: string) {
+    try {
+        await deleteCourse(id);
+        courses.value = courses.value.filter((c) => c.id !== id);
+        toast.success('Curso excluído!');
+    } catch {}
 }
 
 const teachers = ref<TeacherResponse[]>([]);
@@ -308,14 +340,19 @@ async function handleDeleteInstitution() {
 const courseFilter = ref('all');
 const studentSearch = ref('');
 
-const filteredStudents = computed(() =>
-    alunosBase.filter((a) => {
-        const cid = cursoToId[a.course] ?? '';
-        const matchCurso = courseFilter.value === 'all' || cid === courseFilter.value;
-        const matchBusca = a.name.toLowerCase().includes(studentSearch.value.toLowerCase());
-        return matchCurso && matchBusca;
-    })
-);
+const filteredStudents = computed(() => {
+    const selectedCourse = courses.value.find((c) => c.id === courseFilter.value);
+    return alunosBase.filter((a) => {
+        const matchCourse =
+            courseFilter.value === 'all' ||
+            selectedCourse == null ||
+            a.course
+                .split(' ')
+                .some((word) => word.length > 3 && selectedCourse.name.toLowerCase().includes(word.toLowerCase()));
+        const matchSearch = a.name.toLowerCase().includes(studentSearch.value.toLowerCase());
+        return matchCourse && matchSearch;
+    });
+});
 
 const tabs = [
     { id: 'courses' as Tab, label: 'CURSOS', icon: PhBookOpen },
@@ -326,7 +363,7 @@ const tabs = [
 ];
 
 onMounted(async () => {
-    await Promise.all([loadTeachers(), loadCompanies(), loadInstitutionProfile()]);
+    await Promise.all([loadCourses(), loadTeachers(), loadCompanies(), loadInstitutionProfile()]);
 });
 </script>
 
@@ -411,30 +448,67 @@ onMounted(async () => {
                     <h2 class="font-pixel text-sm mb-4 flex items-center gap-2">
                         <PhPlus weight="bold" /> NOVO CURSO
                     </h2>
-                    <form class="space-y-3" @submit="createCourse">
+                    <form class="space-y-3" @submit="submitCourse">
                         <div>
                             <label class="font-pixel text-[9px] block mb-1">NOME DO CURSO</label>
                             <PixelInput
-                                v-model="newCourse.name"
+                                v-model="courseData.name"
                                 placeholder="Ex: Engenharia Civil"
-                                required
                             />
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="font-pixel text-[9px] block mb-1">PERÍODO</label>
-                                <PixelInput v-model="newCourse.period" />
-                            </div>
-                            <div>
-                                <label class="font-pixel text-[9px] block mb-1">DURAÇÃO</label>
-                                <PixelInput v-model="newCourse.duration" />
-                            </div>
+                            <p
+                                v-if="courseErrors.name"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ courseErrors.name }}
+                            </p>
                         </div>
                         <div>
-                            <label class="font-pixel text-[9px] block mb-1">CARGA HORÁRIA</label>
-                            <PixelInput v-model="newCourse.workload" type="number" />
+                            <label class="font-pixel text-[9px] block mb-1">TURNO</label>
+                            <select
+                                v-model="courseData.shift"
+                                class="w-full bg-input text-foreground border-2 border-border px-3 py-2 font-display text-base focus:outline-none"
+                            >
+                                <option value="" disabled>Selecione um turno</option>
+                                <option
+                                    v-for="s in SHIFT_OPTIONS"
+                                    :key="s.value"
+                                    :value="s.value"
+                                >
+                                    {{ s.label }}
+                                </option>
+                            </select>
+                            <p
+                                v-if="courseErrors.shift"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ courseErrors.shift }}
+                            </p>
                         </div>
-                        <PixelButton type="submit" variant="success" class="w-full">
+                        <div>
+                            <label class="font-pixel text-[9px] block mb-1">NÚMERO DE PERÍODOS</label>
+                            <PixelInput
+                                :model-value="courseData.periods"
+                                type="number"
+                                placeholder="Ex: 8"
+                                min="1"
+                                @update:model-value="(v) => (courseData.periods = +v)"
+                            />
+                            <p
+                                v-if="courseErrors.periods"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ courseErrors.periods }}
+                            </p>
+                        </div>
+                        <PixelButton
+                            type="submit"
+                            variant="success"
+                            class="w-full"
+                            :disabled="courseIsSubmitting"
+                        >
                             <PhPlus weight="bold" /> CRIAR CURSO
                         </PixelButton>
                     </form>
@@ -458,20 +532,10 @@ onMounted(async () => {
                                 <div class="min-w-0">
                                     <div class="font-pixel text-xs">{{ c.name }}</div>
                                     <div class="font-display text-sm text-muted-foreground mt-1">
-                                        {{ c.duration }} · {{ c.workload }}h · {{ c.period }}
-                                    </div>
-                                    <div class="flex gap-2 mt-2 flex-wrap">
-                                        <PixelBadge tone="green">
-                                            {{
-                                                alunosBase.filter(
-                                                    (a) => cursoToId[a.course] === c.id
-                                                ).length
-                                            }}
-                                            alunos
-                                        </PixelBadge>
+                                        {{ SHIFT_LABELS[c.shift] }} · {{ c.periods }} período(s)
                                     </div>
                                 </div>
-                                <PixelButton variant="danger" size="sm" @click="removeCourse(c.id)">
+                                <PixelButton variant="danger" size="sm" @click="handleDeleteCourse(c.id)">
                                     <PhTrash weight="bold" /> EXCLUIR
                                 </PixelButton>
                             </div>

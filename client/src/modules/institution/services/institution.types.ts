@@ -31,3 +31,15 @@ export type InstitutionProfile = {
     createdAt: string;
     updatedAt: string;
 };
+
+export type CourseShift = 'DAYTIME' | 'MORNING' | 'AFTERNOON' | 'NIGHT';
+
+export type CourseResponse = {
+    id: string;
+    name: string;
+    shift: CourseShift;
+    periods: number;
+    institutionId: string;
+    createdAt: string;
+    updatedAt: string;
+};

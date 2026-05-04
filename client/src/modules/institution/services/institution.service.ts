@@ -1,6 +1,7 @@
 import { api } from '@/shared/services/api';
 import type {
     CompanyResponse,
+    CourseResponse,
     InstitutionProfile,
     TeacherResponse,
 } from './institution.types';
@@ -69,4 +70,32 @@ export function updateTeacher(id: string, dto: UpdateTeacherDto) {
 
 export function deleteTeacher(id: string) {
     return api.delete(`/teachers/${id}`);
+}
+
+export type RegisterCourseDto = {
+    name: string;
+    shift: string;
+    periods: number;
+};
+
+export type UpdateCourseDto = {
+    name?: string;
+    shift?: string;
+    periods?: number;
+};
+
+export function getCourses() {
+    return api.get<CourseResponse[]>('/courses');
+}
+
+export function createCourse(dto: RegisterCourseDto) {
+    return api.post<CourseResponse>('/courses', dto);
+}
+
+export function updateCourse(id: string, dto: UpdateCourseDto) {
+    return api.put<CourseResponse>(`/courses/${id}`, dto);
+}
+
+export function deleteCourse(id: string) {
+    return api.delete(`/courses/${id}`);
 }
