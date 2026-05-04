@@ -1,32 +1,32 @@
-export type Role = 'aluno' | 'professor' | 'empresa' | 'instituicao';
+export type Role = 'student' | 'teacher' | 'company' | 'institution';
 
-export interface Transacao {
+export interface Transaction {
     id: string;
-    aluno: string;
-    professor: string;
-    valor: number;
-    motivo: string;
-    data: string;
+    student: string;
+    teacher: string;
+    amount: number;
+    reason: string;
+    date: string;
 }
 
-export interface Vantagem {
+export interface Benefit {
     id: string;
-    nome: string;
-    descricao: string;
-    custo: number;
-    empresa: string;
+    name: string;
+    description: string;
+    cost: number;
+    company: string;
     emoji: string;
-    categoria: string;
+    category: string;
 }
 
-export interface Notificacao {
+export interface AppNotification {
     id: string;
-    titulo: string;
-    mensagem: string;
-    professor?: string;
-    valor?: number;
-    data: string;
-    lida: boolean;
+    title: string;
+    message: string;
+    teacher?: string;
+    amount?: number;
+    date: string;
+    isRead: boolean;
 }
 
 export const instituicoes = [
@@ -48,296 +48,296 @@ export const cursos = [
 export const alunos = [
     {
         id: 'a1',
-        nome: 'Maria Luiza Souza',
-        curso: 'Eng. de Software',
-        nivel: 7,
-        moedas: 1280,
+        name: 'Maria Luiza Souza',
+        course: 'Eng. de Software',
+        level: 7,
+        coins: 1280,
         xp: 72,
-        turma: 'ES-301',
+        className: 'ES-301',
     },
     {
         id: 'a2',
-        nome: 'João Pedro Alves',
-        curso: 'Ciência da Computação',
-        nivel: 6,
-        moedas: 940,
+        name: 'João Pedro Alves',
+        course: 'Ciência da Computação',
+        level: 6,
+        coins: 940,
         xp: 45,
-        turma: 'CC-201',
+        className: 'CC-201',
     },
     {
         id: 'a3',
-        nome: 'Amina Kassab',
-        curso: 'Design Digital',
-        nivel: 8,
-        moedas: 1580,
+        name: 'Amina Kassab',
+        course: 'Design Digital',
+        level: 8,
+        coins: 1580,
         xp: 91,
-        turma: 'ES-301',
+        className: 'ES-301',
     },
     {
         id: 'a4',
-        nome: 'Rafael Costa',
-        curso: 'Eng. de Computação',
-        nivel: 5,
-        moedas: 620,
+        name: 'Rafael Costa',
+        course: 'Eng. de Computação',
+        level: 5,
+        coins: 620,
         xp: 33,
-        turma: 'EC-401',
+        className: 'EC-401',
     },
     {
         id: 'a5',
-        nome: 'Beatriz Nunes',
-        curso: 'Sistemas de Informação',
-        nivel: 7,
-        moedas: 1120,
+        name: 'Beatriz Nunes',
+        course: 'Sistemas de Informação',
+        level: 7,
+        coins: 1120,
         xp: 60,
-        turma: 'SI-202',
+        className: 'SI-202',
     },
     {
         id: 'a6',
-        nome: 'Lucas Ferreira',
-        curso: 'Eng. de Software',
-        nivel: 4,
-        moedas: 380,
+        name: 'Lucas Ferreira',
+        course: 'Eng. de Software',
+        level: 4,
+        coins: 380,
         xp: 21,
-        turma: 'ES-301',
+        className: 'ES-301',
     },
     {
         id: 'a7',
-        nome: 'Camila Rocha',
-        curso: 'Ciência da Computação',
-        nivel: 6,
-        moedas: 870,
+        name: 'Camila Rocha',
+        course: 'Ciência da Computação',
+        level: 6,
+        coins: 870,
         xp: 52,
-        turma: 'CC-201',
+        className: 'CC-201',
     },
     {
         id: 'a8',
-        nome: 'Diego Almeida',
-        curso: 'Sistemas de Informação',
-        nivel: 5,
-        moedas: 540,
+        name: 'Diego Almeida',
+        course: 'Sistemas de Informação',
+        level: 5,
+        coins: 540,
         xp: 28,
-        turma: 'SI-202',
+        className: 'SI-202',
     },
 ];
 
-export const turmasProfessor = [
+export const teacherClasses = [
     {
         id: 'ES-301',
-        nome: 'Engenharia de Software · 3º Período',
-        disciplina: 'Banco de Dados',
-        periodo: '2025.1',
+        name: 'Engenharia de Software · 3º Período',
+        subject: 'Banco de Dados',
+        period: '2025.1',
     },
     {
         id: 'CC-201',
-        nome: 'Ciência da Computação · 2º Período',
-        disciplina: 'Algoritmos II',
-        periodo: '2025.1',
+        name: 'Ciência da Computação · 2º Período',
+        subject: 'Algoritmos II',
+        period: '2025.1',
     },
     {
         id: 'SI-202',
-        nome: 'Sistemas de Informação · 2º Período',
-        disciplina: 'Engenharia de Requisitos',
-        periodo: '2025.1',
+        name: 'Sistemas de Informação · 2º Período',
+        subject: 'Engenharia de Requisitos',
+        period: '2025.1',
     },
 ];
 
-export const transacoesIniciais: Transacao[] = [
+export const initialTransactions: Transaction[] = [
     {
         id: 't1',
-        aluno: 'Maria Luiza Souza',
-        professor: 'Prof. Carlos M.',
-        valor: 150,
-        motivo: 'Liderança no projeto de ciências',
-        data: '2025-04-22',
+        student: 'Maria Luiza Souza',
+        teacher: 'Prof. Carlos M.',
+        amount: 150,
+        reason: 'Liderança no projeto de ciências',
+        date: '2025-04-22',
     },
     {
         id: 't2',
-        aluno: 'João Pedro Alves',
-        professor: 'Prof. Carlos M.',
-        valor: 80,
-        motivo: 'Entrega antecipada do trabalho final',
-        data: '2025-04-21',
+        student: 'João Pedro Alves',
+        teacher: 'Prof. Carlos M.',
+        amount: 80,
+        reason: 'Entrega antecipada do trabalho final',
+        date: '2025-04-21',
     },
     {
         id: 't3',
-        aluno: 'Amina Kassab',
-        professor: 'Prof. Carlos M.',
-        valor: 200,
-        motivo: 'Ajudou colegas com dúvidas de cálculo',
-        data: '2025-04-20',
+        student: 'Amina Kassab',
+        teacher: 'Prof. Carlos M.',
+        amount: 200,
+        reason: 'Ajudou colegas com dúvidas de cálculo',
+        date: '2025-04-20',
     },
     {
         id: 't4',
-        aluno: 'Rafael Costa',
-        professor: 'Prof. Carlos M.',
-        valor: 50,
-        motivo: 'Participação excepcional em aula',
-        data: '2025-04-19',
+        student: 'Rafael Costa',
+        teacher: 'Prof. Carlos M.',
+        amount: 50,
+        reason: 'Participação excepcional em aula',
+        date: '2025-04-19',
     },
 ];
 
-export const vantagensIniciais: Vantagem[] = [
+export const initialBenefits: Benefit[] = [
     {
         id: 'v1',
-        nome: 'Fatia de Pizza',
-        descricao: 'Um pedaço grande na cantina parceira',
-        custo: 200,
-        empresa: 'Byte Burger',
+        name: 'Fatia de Pizza',
+        description: 'Um pedaço grande na cantina parceira',
+        cost: 200,
+        company: 'Byte Burger',
         emoji: '🍕',
-        categoria: 'Comida',
+        category: 'Comida',
     },
     {
         id: 'v2',
-        nome: 'Camiseta Retrô',
-        descricao: 'Camiseta oficial edição 8-bit',
-        custo: 850,
-        empresa: 'Merch Store',
+        name: 'Camiseta Retrô',
+        description: 'Camiseta oficial edição 8-bit',
+        cost: 850,
+        company: 'Merch Store',
         emoji: '👕',
-        categoria: 'Vestuário',
+        category: 'Vestuário',
     },
     {
         id: 'v3',
-        nome: 'Headset Gamer',
-        descricao: 'Fone com iluminação neon',
-        custo: 1500,
-        empresa: 'Tech Lab',
+        name: 'Headset Gamer',
+        description: 'Fone com iluminação neon',
+        cost: 1500,
+        company: 'Tech Lab',
         emoji: '🎧',
-        categoria: 'Tecnologia',
+        category: 'Tecnologia',
     },
     {
         id: 'v4',
-        nome: 'Ingresso Arcade',
-        descricao: '50% OFF no Arcade World às sextas',
-        custo: 400,
-        empresa: 'Arcade World',
+        name: 'Ingresso Arcade',
+        description: '50% OFF no Arcade World às sextas',
+        cost: 400,
+        company: 'Arcade World',
         emoji: '🎮',
-        categoria: 'Lazer',
+        category: 'Lazer',
     },
     {
         id: 'v5',
-        nome: 'Combo Livraria',
-        descricao: '10% OFF em livros técnicos',
-        custo: 600,
-        empresa: 'Livraria Byte',
+        name: 'Combo Livraria',
+        description: '10% OFF em livros técnicos',
+        cost: 600,
+        company: 'Livraria Byte',
         emoji: '📚',
-        categoria: 'Educação',
+        category: 'Educação',
     },
     {
         id: 'v6',
-        nome: 'Café Especial',
-        descricao: 'Café grão a grão no parceiro',
-        custo: 120,
-        empresa: 'Cafeteria Pixel',
+        name: 'Café Especial',
+        description: 'Café grão a grão no parceiro',
+        cost: 120,
+        company: 'Cafeteria Pixel',
         emoji: '☕',
-        categoria: 'Comida',
+        category: 'Comida',
     },
 ];
 
-export const notificacoesIniciais: Notificacao[] = [
+export const initialNotifications: AppNotification[] = [
     {
         id: 'n1',
-        titulo: 'Missão Concluída!',
-        mensagem: 'Você recebeu moedas por liderança.',
-        professor: 'Prof. Carlos M.',
-        valor: 150,
-        data: 'Há 2h',
-        lida: false,
+        title: 'Missão Concluída!',
+        message: 'Você recebeu moedas por liderança.',
+        teacher: 'Prof. Carlos M.',
+        amount: 150,
+        date: 'Há 2h',
+        isRead: false,
     },
     {
         id: 'n2',
-        titulo: 'Reconhecimento Recebido',
-        mensagem: 'Participação excepcional em aula.',
-        professor: 'Profa. Helena R.',
-        valor: 50,
-        data: 'Ontem',
-        lida: false,
+        title: 'Reconhecimento Recebido',
+        message: 'Participação excepcional em aula.',
+        teacher: 'Profa. Helena R.',
+        amount: 50,
+        date: 'Ontem',
+        isRead: false,
     },
     {
         id: 'n3',
-        titulo: 'Recompensa Desbloqueada',
-        mensagem: 'Cupom do Byte Burger gerado.',
-        data: '2 dias',
-        lida: true,
+        title: 'Recompensa Desbloqueada',
+        message: 'Cupom do Byte Burger gerado.',
+        date: '2 dias',
+        isRead: true,
     },
 ];
 
-export const ranking = [...alunos].sort((a, b) => b.moedas - a.moedas);
+export const ranking = [...alunos].sort((a, b) => b.coins - a.coins);
 
-export interface Curso {
+export interface Course {
     id: string;
-    nome: string;
-    periodo: string;
-    duracao: string;
-    cargaHoraria: number;
+    name: string;
+    period: string;
+    duration: string;
+    workload: number;
 }
 
-export interface ProfessorInst {
+export interface InstitutionTeacher {
     id: string;
-    nome: string;
+    name: string;
     email: string;
-    titulacao: string;
-    cursoIds: string[];
+    degree: string;
+    courseIds: string[];
 }
 
-export const cursosInstituicao: Curso[] = [
+export const institutionCourses: Course[] = [
     {
         id: 'cur-es',
-        nome: 'Engenharia de Software',
-        periodo: '2025.1',
-        duracao: '8 semestres',
-        cargaHoraria: 3600,
+        name: 'Engenharia de Software',
+        period: '2025.1',
+        duration: '8 semestres',
+        workload: 3600,
     },
     {
         id: 'cur-cc',
-        nome: 'Ciência da Computação',
-        periodo: '2025.1',
-        duracao: '8 semestres',
-        cargaHoraria: 3400,
+        name: 'Ciência da Computação',
+        period: '2025.1',
+        duration: '8 semestres',
+        workload: 3400,
     },
     {
         id: 'cur-si',
-        nome: 'Sistemas de Informação',
-        periodo: '2025.1',
-        duracao: '8 semestres',
-        cargaHoraria: 3200,
+        name: 'Sistemas de Informação',
+        period: '2025.1',
+        duration: '8 semestres',
+        workload: 3200,
     },
     {
         id: 'cur-dd',
-        nome: 'Design Digital',
-        periodo: '2025.1',
-        duracao: '6 semestres',
-        cargaHoraria: 2400,
+        name: 'Design Digital',
+        period: '2025.1',
+        duration: '6 semestres',
+        workload: 2400,
     },
 ];
 
-export const professoresInstituicao: ProfessorInst[] = [
+export const institutionTeachers: InstitutionTeacher[] = [
     {
         id: 'p1',
-        nome: 'Prof. Carlos Mendes',
+        name: 'Prof. Carlos Mendes',
         email: 'carlos.m@unifei.edu.br',
-        titulacao: 'Doutor',
-        cursoIds: ['cur-es', 'cur-cc'],
+        degree: 'Doutor',
+        courseIds: ['cur-es', 'cur-cc'],
     },
     {
         id: 'p2',
-        nome: 'Profa. Helena Ribeiro',
+        name: 'Profa. Helena Ribeiro',
         email: 'helena.r@unifei.edu.br',
-        titulacao: 'Mestre',
-        cursoIds: ['cur-es'],
+        degree: 'Mestre',
+        courseIds: ['cur-es'],
     },
     {
         id: 'p3',
-        nome: 'Prof. André Silveira',
+        name: 'Prof. André Silveira',
         email: 'andre.s@unifei.edu.br',
-        titulacao: 'Doutor',
-        cursoIds: ['cur-cc', 'cur-si'],
+        degree: 'Doutor',
+        courseIds: ['cur-cc', 'cur-si'],
     },
     {
         id: 'p4',
-        nome: 'Profa. Júlia Tavares',
+        name: 'Profa. Júlia Tavares',
         email: 'julia.t@unifei.edu.br',
-        titulacao: 'Mestre',
-        cursoIds: ['cur-dd'],
+        degree: 'Mestre',
+        courseIds: ['cur-dd'],
     },
 ];
 
@@ -350,15 +350,27 @@ export const cursoToId: Record<string, string> = {
     'Eng. de Computação': 'cur-cc',
 };
 
-export const conquistas = [
+export const achievements = [
     {
         id: 'c1',
-        nome: 'Primeira Moeda',
-        desc: 'Recebeu sua primeira Lumen',
+        name: 'Primeira Moeda',
+        description: 'Recebeu sua primeira Lumen',
         tone: 'gold',
-        desbloqueado: true,
+        unlocked: true,
     },
-    { id: 'c2', nome: 'Maratonista', desc: '7 dias de sequência', tone: 'red', desbloqueado: true },
-    { id: 'c3', nome: 'Erudito', desc: 'Acumulou 1000 moedas', tone: 'blue', desbloqueado: true },
-    { id: 'c4', nome: 'Lendário', desc: 'Alcance nível 10', tone: 'teal', desbloqueado: false },
+    {
+        id: 'c2',
+        name: 'Maratonista',
+        description: '7 dias de sequência',
+        tone: 'red',
+        unlocked: true,
+    },
+    {
+        id: 'c3',
+        name: 'Erudito',
+        description: 'Acumulou 1000 moedas',
+        tone: 'blue',
+        unlocked: true,
+    },
+    { id: 'c4', name: 'Lendário', description: 'Alcance nível 10', tone: 'teal', unlocked: false },
 ];

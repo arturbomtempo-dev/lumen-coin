@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { PhUser, PhPalette } from '@phosphor-icons/vue';
-import PixelCard from '@/shared/components/PixelCard.vue';
+import { useStudentStore } from '@/modules/student/stores/student.store';
+import CoinIcon from '@/shared/components/CoinIcon.vue';
+import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
-import MarioAvatar from '@/shared/components/MarioAvatar.vue';
-import { MARIO_CHARACTERS } from '@/shared/data/characters';
+import PixelCard from '@/shared/components/PixelCard.vue';
 import XPBar from '@/shared/components/XPBar.vue';
-import CoinIcon from '@/shared/components/CoinIcon.vue';
-import { useStudentStore } from '@/modules/student/stores/student.store';
-import { conquistas } from '@/shared/data/mockData';
+import { MARIO_CHARACTERS } from '@/shared/data/characters';
+import { achievements } from '@/shared/data/mockData';
+import { PhPalette, PhUser } from '@phosphor-icons/vue';
+import { storeToRefs } from 'pinia';
 
 const store = useStudentStore();
-const { nome, nivel, xp, saldo, personagem } = storeToRefs(store);
+const { name, level, xp, balance, character } = storeToRefs(store);
 </script>
 
 <template>
@@ -26,22 +26,22 @@ const { nome, nivel, xp, saldo, personagem } = storeToRefs(store);
 
         <PixelCard class="p-6 grid md:grid-cols-[auto_1fr] gap-6">
             <div class="border-2 border-border bg-hud p-3 flex items-center justify-center">
-                <MarioAvatar :character="personagem" :size="112" />
+                <MarioAvatar :character="character" :size="112" />
             </div>
             <div>
-                <div class="font-pixel text-2xl">{{ nome.toUpperCase() }}</div>
+                <div class="font-pixel text-2xl">{{ name.toUpperCase() }}</div>
                 <div class="font-sans text-sm text-muted-foreground mt-1">
                     Eng. de Software · UNIFEI · Sala 204
                 </div>
                 <div class="mt-5 grid grid-cols-3 gap-3 max-w-md">
                     <div class="border-2 border-border bg-card p-3">
                         <div class="font-pixel text-[8px] text-muted-foreground">NÍVEL</div>
-                        <div class="font-pixel text-sm mt-1">LV {{ nivel }}</div>
+                        <div class="font-pixel text-sm mt-1">LV {{ level }}</div>
                     </div>
                     <div class="border-2 border-border bg-card p-3">
                         <div class="font-pixel text-[8px] text-muted-foreground">MOEDAS</div>
                         <div class="font-pixel text-sm mt-1 flex items-center gap-1">
-                            <CoinIcon :size="12" /> {{ saldo.toLocaleString('pt-BR') }}
+                            <CoinIcon :size="12" /> {{ balance.toLocaleString('pt-BR') }}
                         </div>
                     </div>
                     <div class="border-2 border-border bg-card p-3">
@@ -71,16 +71,16 @@ const { nome, nivel, xp, saldo, personagem } = storeToRefs(store);
                     :key="c.id"
                     class="border-2 border-border p-2 transition-all"
                     :class="
-                        personagem === c.id
+                        character === c.id
                             ? 'bg-primary text-primary-foreground -translate-y-0.5 shadow-[4px_4px_0_0_hsl(var(--border))]'
                             : 'bg-card hover:-translate-y-0.5'
                     "
-                    @click="store.setPersonagem(c.id)"
+                    @click="store.setCharacter(c.id)"
                 >
                     <div class="flex justify-center bg-hud border-2 border-border p-1">
                         <MarioAvatar :character="c.id" :size="40" />
                     </div>
-                    <div class="font-pixel text-[8px] mt-2">{{ c.nome.toUpperCase() }}</div>
+                        <div class="font-pixel text-[8px] mt-2">{{ c.name.toUpperCase() }}</div>
                 </button>
             </div>
         </PixelCard>
@@ -89,15 +89,15 @@ const { nome, nivel, xp, saldo, personagem } = storeToRefs(store);
             <div class="font-pixel text-sm mb-4">CONQUISTAS</div>
             <div class="grid sm:grid-cols-2 gap-3">
                 <div
-                    v-for="c in conquistas"
-                    :key="c.id"
+                    v-for="achievement in achievements"
+                    :key="achievement.id"
                     class="border-2 border-border p-3"
-                    :class="c.desbloqueado ? 'bg-card' : 'bg-muted opacity-60'"
+                    :class="achievement.unlocked ? 'bg-card' : 'bg-muted opacity-60'"
                 >
-                    <PixelBadge :tone="c.tone as any"
-                        >{{ c.desbloqueado ? '✓' : '?' }} {{ c.nome.toUpperCase() }}</PixelBadge
+                    <PixelBadge :tone="achievement.tone as 'gold' | 'blue' | 'green' | 'red' | 'teal'"
+                        >{{ achievement.unlocked ? '✓' : '?' }} {{ achievement.name.toUpperCase() }}</PixelBadge
                     >
-                    <p class="font-sans text-xs text-foreground/75 mt-2">{{ c.desc }}</p>
+                    <p class="font-sans text-xs text-foreground/75 mt-2">{{ achievement.description }}</p>
                 </div>
             </div>
         </PixelCard>

@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-import { PhArrowLeft, PhEye, PhEyeSlash, PhStorefront } from '@phosphor-icons/vue';
-import { toast } from 'vue-sonner';
-import { useForm } from '@/shared/composables/useForm';
-import { registerCompanySchema } from '@/modules/schemas/register-company.schema';
 import { registerCompanyRequest } from '@/modules/auth/services/auth.service';
+import { registerCompanySchema } from '@/modules/schemas/register-company.schema';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
+import { useForm } from '@/shared/composables/useForm';
+import { PhArrowLeft, PhEye, PhEyeSlash, PhStorefront } from '@phosphor-icons/vue';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { toast } from 'vue-sonner';
 
 const router = useRouter();
 
-const { data, errors, isSubmitting, validate, clearErrors } = useForm(registerCompanySchema);
+const { fields, errors, isSubmitting, validate, clearErrors } = useForm(registerCompanySchema);
 
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
@@ -23,10 +23,10 @@ async function handleSubmit(e: Event) {
     isSubmitting.value = true;
     try {
         await registerCompanyRequest({
-            name: data.value.name,
-            email: data.value.email,
-            password: data.value.password,
-            cnpj: data.value.cnpj,
+            name: fields.value.name,
+            email: fields.value.email,
+            password: fields.value.password,
+            cnpj: fields.value.cnpj,
         });
         toast.success('Empresa cadastrada com sucesso!', {
             description: 'Faça login para acessar o portal.',
@@ -71,7 +71,7 @@ async function handleSubmit(e: Event) {
             <form class="space-y-4" @submit="handleSubmit">
                 <div>
                     <label class="font-pixel text-[9px] block mb-2">NOME DA EMPRESA</label>
-                    <PixelInput v-model="data.name" placeholder="Ex: Byte Burger" />
+                    <PixelInput v-model="fields.name" placeholder="Ex: Byte Burger" />
                     <p
                         v-if="errors.name"
                         class="font-sans text-xs mt-1"
@@ -83,7 +83,7 @@ async function handleSubmit(e: Event) {
 
                 <div>
                     <label class="font-pixel text-[9px] block mb-2">E-MAIL</label>
-                    <PixelInput v-model="data.email" type="email" placeholder="contato@empresa.com" />
+                    <PixelInput v-model="fields.email" type="email" placeholder="contato@empresa.com" />
                     <p
                         v-if="errors.email"
                         class="font-sans text-xs mt-1"
@@ -96,7 +96,7 @@ async function handleSubmit(e: Event) {
                 <div>
                     <label class="font-pixel text-[9px] block mb-2">CNPJ</label>
                     <PixelInput
-                        v-model="data.cnpj"
+                        v-model="fields.cnpj"
                         placeholder="Somente 14 dígitos"
                         maxlength="14"
                     />
@@ -113,7 +113,7 @@ async function handleSubmit(e: Event) {
                     <label class="font-pixel text-[9px] block mb-2">SENHA</label>
                     <div class="relative">
                         <PixelInput
-                            v-model="data.password"
+                            v-model="fields.password"
                             :type="showPassword ? 'text' : 'password'"
                             class="pr-10"
                             placeholder="Mínimo 8 caracteres"
@@ -140,7 +140,7 @@ async function handleSubmit(e: Event) {
                     <label class="font-pixel text-[9px] block mb-2">CONFIRMAR SENHA</label>
                     <div class="relative">
                         <PixelInput
-                            v-model="data.confirmPassword"
+                            v-model="fields.confirmPassword"
                             :type="showConfirmPassword ? 'text' : 'password'"
                             class="pr-10"
                             placeholder="Repita a senha"

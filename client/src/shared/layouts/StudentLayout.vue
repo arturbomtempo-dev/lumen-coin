@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { RouterLink, useRoute } from 'vue-router';
-import {
-    PhGameController,
-    PhHouse,
-    PhReceipt,
-    PhUser,
-    PhBell,
-    PhSun,
-    PhMoon,
-} from '@phosphor-icons/vue';
+import { useStudentStore } from '@/modules/student/stores/student.store';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import { useThemeStore } from '@/shared/stores/theme.store';
-import { useStudentStore } from '@/modules/student/stores/student.store';
+import {
+    PhBell,
+    PhGameController,
+    PhHouse,
+    PhMoon,
+    PhReceipt,
+    PhSun,
+    PhUser,
+} from '@phosphor-icons/vue';
 import { storeToRefs } from 'pinia';
+import { RouterLink, useRoute } from 'vue-router';
 
 const themeStore = useThemeStore();
 const studentStore = useStudentStore();
-const { saldo, nivel, nome, unreadCount } = storeToRefs(studentStore);
+const { balance, level, name, unreadCount } = storeToRefs(studentStore);
 const route = useRoute();
 
 const navItems = [
@@ -41,21 +41,21 @@ const navItems = [
                     <div class="min-w-0">
                         <div class="font-pixel text-[10px] leading-tight">LUMEN COIN</div>
                         <div class="font-display text-xs opacity-70 -mt-0.5 truncate">
-                            {{ nome.toUpperCase() }}
+                            {{ name.toUpperCase() }}
                         </div>
                     </div>
                 </RouterLink>
 
                 <div class="hidden sm:flex items-center gap-4 font-pixel text-[10px]">
-                    <span>LV {{ nivel }}</span>
+                    <span>LV {{ level }}</span>
                     <span class="flex items-center gap-1">
                         <CoinIcon :size="14" />
-                        {{ saldo.toLocaleString('pt-BR') }}
+                        {{ balance.toLocaleString('pt-BR') }}
                     </span>
                 </div>
 
                 <button
-                    class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+                    class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                     aria-label="Alternar tema"
                     @click="themeStore.toggle"
                 >
@@ -66,7 +66,6 @@ const navItems = [
             </div>
         </header>
 
-        <!-- Main content -->
         <main class="flex-1 container py-6">
             <router-view />
         </main>
@@ -75,7 +74,7 @@ const navItems = [
         <nav class="sticky bottom-0 z-40 bg-hud text-hud-foreground border-t-4 border-border">
             <div class="container flex items-center justify-between py-2 gap-2">
                 <div class="hidden md:flex items-center gap-2 font-pixel text-[10px]">
-                    <CoinIcon :size="14" /> {{ saldo.toLocaleString('pt-BR') }} LUMEN
+                    <CoinIcon :size="14" /> {{ balance.toLocaleString('pt-BR') }} LUMEN
                 </div>
                 <ul
                     class="flex flex-1 md:flex-none items-center justify-around md:justify-end gap-1 md:gap-2"

@@ -5,14 +5,14 @@ export type MarioCharacter =
     | 'toad'
     | 'yoshi'
     | 'bowser'
-    | 'instituicao';
+    | 'institution';
 
-export const MARIO_CHARACTERS: { id: MarioCharacter; nome: string; classe: string }[] = [
-    { id: 'mario', nome: 'Mario', classe: 'Encanador Herói' },
-    { id: 'luigi', nome: 'Luigi', classe: 'Caçador de Estrelas' },
-    { id: 'peach', nome: 'Princesa Peach', classe: 'Líder do Reino' },
-    { id: 'toad', nome: 'Toad', classe: 'Mensageiro Veloz' },
-    { id: 'yoshi', nome: 'Yoshi', classe: 'Companheiro Saltador' },
-    { id: 'bowser', nome: 'Bowser', classe: 'Boss Final' },
-    { id: 'instituicao', nome: 'Instituição', classe: 'Entidade Educacional' },
+export const MARIO_CHARACTERS: { id: MarioCharacter; name: string; title: string }[] = [
+    { id: 'mario', name: 'Mario', title: 'Encanador Herói' },
+    { id: 'luigi', name: 'Luigi', title: 'Caçador de Estrelas' },
+    { id: 'peach', name: 'Princesa Peach', title: 'Líder do Reino' },
+    { id: 'toad', name: 'Toad', title: 'Mensageiro Veloz' },
+    { id: 'yoshi', name: 'Yoshi', title: 'Companheiro Saltador' },
+    { id: 'bowser', name: 'Bowser', title: 'Boss Final' },
+    { id: 'institution', name: 'Instituição', title: 'Entidade Educacional' },
 ];

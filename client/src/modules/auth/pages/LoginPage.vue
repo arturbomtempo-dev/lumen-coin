@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { RouterLink, useRouter } from 'vue-router';
-import { PhArrowLeft, PhSparkle, PhEye, PhEyeSlash } from '@phosphor-icons/vue';
+import { loginRequest, meRequest } from '@/modules/auth/services/auth.service';
+import type { UserRole } from '@/modules/auth/stores/auth.store';
+import { useAuthStore } from '@/modules/auth/stores/auth.store';
+import CoinIcon from '@/shared/components/CoinIcon.vue';
+import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
-import CoinIcon from '@/shared/components/CoinIcon.vue';
-import MarioAvatar from '@/shared/components/MarioAvatar.vue';
-import Cloud from './_components/Cloud.vue';
-import { useAuthStore } from '@/modules/auth/stores/auth.store';
-import { loginRequest, meRequest } from '@/modules/auth/services/auth.service';
-import type { UserRole } from '@/modules/auth/stores/auth.store';
+import { PhArrowLeft, PhEye, PhEyeSlash, PhSparkle } from '@phosphor-icons/vue';
+import { ref } from 'vue';
+import { RouterLink, useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
+import Cloud from './_components/Cloud.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
 
 const email = ref('');
-const senha = ref('');
+const password = ref('');
 const showPwd = ref(false);
 const isSubmitting = ref(false);
 
@@ -30,10 +30,10 @@ const ROLE_ROUTES: Record<string, string> = {
 
 async function handleLogin(e: Event) {
     e.preventDefault();
-    if (!email.value || !senha.value) return;
+    if (!email.value || !password.value) return;
     isSubmitting.value = true;
     try {
-        await loginRequest({ email: email.value, password: senha.value });
+        await loginRequest({ email: email.value, password: password.value });
         const { data } = await meRequest();
         authStore.setUser({
             id: data.id,
@@ -42,8 +42,7 @@ async function handleLogin(e: Event) {
             role: data.role.toLowerCase() as UserRole,
         });
         router.push({ name: ROLE_ROUTES[data.role.toUpperCase()] ?? 'home' });
-    } catch (err) {
-        console.error('[login]', err);
+    } catch {
         toast.error('Não foi possível fazer login. Verifique suas credenciais.');
     } finally {
         isSubmitting.value = false;
@@ -55,7 +54,6 @@ async function handleLogin(e: Event) {
     <div class="min-h-screen flex flex-col">
         <main class="flex-1 relative overflow-hidden bg-login-bg transition-colors duration-300">
             <div class="absolute inset-0 bg-info/10" />
-            <!-- Clouds -->
             <div class="absolute top-10 left-8">
                 <Cloud />
             </div>
@@ -67,7 +65,6 @@ async function handleLogin(e: Event) {
             <div class="absolute top-40 left-1/3 opacity-70">
                 <Cloud />
             </div>
-            <!-- Hills -->
             <div
                 class="absolute bottom-24 left-0 right-0 h-32 opacity-30"
                 :style="{
@@ -75,7 +72,6 @@ async function handleLogin(e: Event) {
                         'radial-gradient(circle at 15% 100%, hsl(var(--success)) 0 80px, transparent 81px), radial-gradient(circle at 65% 100%, hsl(var(--success)) 0 100px, transparent 101px)',
                 }"
             />
-            <!-- Brick floor -->
             <div
                 class="absolute bottom-0 left-0 right-0 h-24 border-t-4 border-border bg-secondary"
                 :style="{
@@ -83,7 +79,6 @@ async function handleLogin(e: Event) {
                         'repeating-linear-gradient(0deg, hsl(var(--secondary-shadow)) 0 2px, transparent 2px 24px), repeating-linear-gradient(90deg, hsl(var(--secondary-shadow)) 0 2px, transparent 2px 48px)',
                 }"
             />
-            <!-- Question block -->
             <div class="absolute bottom-32 right-10 hidden md:block">
                 <div
                     class="w-16 h-16 bg-primary border-4 border-border shadow-[4px_4px_0_0_hsl(var(--border))] flex items-center justify-center font-pixel text-2xl text-primary-foreground animate-bob"
@@ -92,12 +87,10 @@ async function handleLogin(e: Event) {
                 </div>
             </div>
 
-            <!-- Pipe -->
             <div class="absolute bottom-24 left-10 hidden md:block">
                 <div class="w-20 h-8 bg-success border-4 border-border" />
                 <div class="w-16 h-16 bg-success border-4 border-t-0 border-border ml-2" />
             </div>
-            <!-- Mario -->
             <div class="absolute bottom-24 right-1/4 block animate-bob z-0">
                 <MarioAvatar character="mario" :size="72" />
             </div>
@@ -106,13 +99,12 @@ async function handleLogin(e: Event) {
                 class="relative min-h-screen container z-10 py-10 flex items-center justify-center"
             >
                 <PixelCard class="w-full max-w-md p-6 md:p-8 space-y-5 crt-scanlines">
-                    <!-- VOLTAR -->
                     <RouterLink
                         to="/"
                         class="mb-5 flex items-center gap-3 font-pixel text-[9px] cursor-pointer transition-all"
                     >
                         <div
-                            class="w-7 h-7 border-2 border-black bg-amber-300 flex items-center justify-center shadow-[2px_2px_0px_black] translate-y-0 hover:translate-y-0.5 hover:translate-x-0.5 hover:shadow-none transition-transform"
+                            class="w-7 h-7 border-2 border-border bg-primary flex items-center justify-center shadow-[2px_2px_0px_hsl(var(--border))] translate-y-0 hover:translate-y-0.5 hover:translate-x-0.5 hover:shadow-none transition-transform"
                         >
                             <PhArrowLeft :size="14" weight="bold" />
                         </div>
@@ -142,7 +134,7 @@ async function handleLogin(e: Event) {
                             <label class="font-pixel text-[10px] block mb-2">SENHA</label>
                             <div class="relative">
                                 <PixelInput
-                                    v-model="senha"
+                                    v-model="password"
                                     :type="showPwd ? 'text' : 'password'"
                                     placeholder="••••••••"
                                     required

@@ -19,8 +19,8 @@ import { toast } from 'vue-sonner';
 
 import { useStudentStore } from '@/modules/student/stores/student.store';
 
-import { cursos, instituicoes } from '@/shared/data/mockData';
 import { MARIO_CHARACTERS, type MarioCharacter } from '@/shared/data/characters';
+import { cursos, instituicoes } from '@/shared/data/mockData';
 
 import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
@@ -28,21 +28,21 @@ import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 
 interface StudentForm {
-    nome: string;
+    name: string;
     email: string;
-    senha: string;
-    confirmarSenha: string;
+    password: string;
+    confirmPassword: string;
     cpf: string;
     rg: string;
-    telefone: string;
-    cep: string;
-    rua: string;
-    numero: string;
-    complemento: string;
-    bairro: string;
-    cidade: string;
-    instituicao: string;
-    curso: string;
+    phone: string;
+    zipCode: string;
+    street: string;
+    number: string;
+    complement: string;
+    neighborhood: string;
+    city: string;
+    institution: string;
+    course: string;
 }
 
 interface StudentStep {
@@ -86,21 +86,21 @@ const studentSteps = ref<StudentStep[]>([
 ]);
 
 const studentForm = ref<StudentForm>({
-    nome: '',
+    name: '',
     email: '',
-    senha: '',
-    confirmarSenha: '',
+    password: '',
+    confirmPassword: '',
     cpf: '',
     rg: '',
-    telefone: '',
-    cep: '',
-    rua: '',
-    numero: '',
-    complemento: '',
-    bairro: '',
-    cidade: '',
-    instituicao: instituicoes[0],
-    curso: cursos[0],
+    phone: '',
+    zipCode: '',
+    street: '',
+    number: '',
+    complement: '',
+    neighborhood: '',
+    city: '',
+    institution: instituicoes[0],
+    course: cursos[0],
 });
 
 const progress = computed<number>(() => {
@@ -108,15 +108,15 @@ const progress = computed<number>(() => {
 });
 
 const passwordsMatch = computed<boolean | null>(() => {
-    if (!studentForm.value.senha || !studentForm.value.confirmarSenha) {
+    if (!studentForm.value.password || !studentForm.value.confirmPassword) {
         return null;
     }
 
-    return studentForm.value.senha === studentForm.value.confirmarSenha;
+    return studentForm.value.password === studentForm.value.confirmPassword;
 });
 
 const studentCharacters = computed(() => {
-    return MARIO_CHARACTERS.filter((item) => item.id !== 'instituicao');
+    return MARIO_CHARACTERS.filter((item) => item.id !== 'institution');
 });
 
 function formatCpf(value: string): string {
@@ -168,13 +168,13 @@ function handleRgInput(event: Event): void {
 function handlePhoneInput(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
 
-    studentForm.value.telefone = formatPhone(inputElement.value);
+    studentForm.value.phone = formatPhone(inputElement.value);
 }
 
 function handleCepInput(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
 
-    studentForm.value.cep = formatCep(inputElement.value);
+    studentForm.value.zipCode = formatCep(inputElement.value);
 
     const numericCep = inputElement.value.replace(/\D/g, '');
 
@@ -193,9 +193,9 @@ async function fetchAddressByCep(cep: string): Promise<void> {
             return;
         }
 
-        studentForm.value.rua = addressData.logradouro ?? '';
-        studentForm.value.bairro = addressData.bairro ?? '';
-        studentForm.value.cidade = addressData.localidade ?? '';
+        studentForm.value.street = addressData.logradouro ?? '';
+        studentForm.value.neighborhood = addressData.bairro ?? '';
+        studentForm.value.city = addressData.localidade ?? '';
     } catch {
         return;
     }
@@ -208,9 +208,9 @@ function goToNextStep(): void {
         return;
     }
 
-    studentStore.setPersonagem(character.value);
+    studentStore.setCharacter(character.value);
 
-    toast.success(`Bem-vindo(a), ${studentForm.value.nome || 'Jogador'}!`, {
+    toast.success(`Bem-vindo(a), ${studentForm.value.name || 'Jogador'}!`, {
         description: 'PERSONAGEM CRIADO! +100 moedas bônus!',
     });
 
@@ -233,7 +233,7 @@ function goBack(): void {
 <template>
     <main class="min-h-screen overflow-hidden relative">
         <div class="min-h-screen flex items-center justify-center px-4 py-10 relative z-10">
-            <PixelCard class="w-full max-w-[700px] p-6 md:p-8">
+            <PixelCard class="w-full max-w-175 p-6 md:p-8">
                 <button
                     class="mb-5 flex items-center gap-3 font-pixel text-[9px] transition-all"
                     type="button"
@@ -340,7 +340,7 @@ function goBack(): void {
                                     </div>
 
                                     <p class="font-pixel text-[10px]">
-                                        {{ item.nome.toUpperCase() }}
+                                        {{ item.name.toUpperCase() }}
                                     </p>
                                 </button>
                             </div>
@@ -355,7 +355,7 @@ function goBack(): void {
                                 </label>
 
                                 <PixelInput
-                                    v-model="studentForm.nome"
+                                    v-model="studentForm.name"
                                     placeholder="Digite seu nome"
                                 />
                             </div>
@@ -388,7 +388,7 @@ function goBack(): void {
                                 <label class="font-pixel text-[9px] block mb-2"> TELEFONE </label>
 
                                 <PixelInput
-                                    :model-value="studentForm.telefone"
+                                        :model-value="studentForm.phone"
                                     maxlength="15"
                                     placeholder="(00) 00000-0000"
                                     @input="handlePhoneInput"
@@ -403,7 +403,7 @@ function goBack(): void {
                                 <label class="font-pixel text-[9px] block mb-2"> CEP </label>
 
                                 <PixelInput
-                                    :model-value="studentForm.cep"
+                                    :model-value="studentForm.zipCode"
                                     maxlength="9"
                                     placeholder="00000-000"
                                     @input="handleCepInput"
@@ -413,25 +413,25 @@ function goBack(): void {
                             <div>
                                 <label class="font-pixel text-[9px] block mb-2"> CIDADE </label>
 
-                                <PixelInput v-model="studentForm.cidade" placeholder="Cidade" />
+                                <PixelInput v-model="studentForm.city" placeholder="Cidade" />
                             </div>
 
                             <div class="col-span-2">
                                 <label class="font-pixel text-[9px] block mb-2"> RUA </label>
 
-                                <PixelInput v-model="studentForm.rua" placeholder="Rua" />
+                                <PixelInput v-model="studentForm.street" placeholder="Rua" />
                             </div>
 
                             <div>
                                 <label class="font-pixel text-[9px] block mb-2"> NÚMERO </label>
 
-                                <PixelInput v-model="studentForm.numero" placeholder="123" />
+                                <PixelInput v-model="studentForm.number" placeholder="123" />
                             </div>
 
                             <div>
                                 <label class="font-pixel text-[9px] block mb-2"> BAIRRO </label>
 
-                                <PixelInput v-model="studentForm.bairro" placeholder="Bairro" />
+                                <PixelInput v-model="studentForm.neighborhood" placeholder="Bairro" />
                             </div>
 
                             <div class="col-span-2">
@@ -440,7 +440,7 @@ function goBack(): void {
                                 </label>
 
                                 <PixelInput
-                                    v-model="studentForm.complemento"
+                                    v-model="studentForm.complement"
                                     placeholder="Apto, bloco..."
                                 />
                             </div>
@@ -455,7 +455,7 @@ function goBack(): void {
                                 </label>
 
                                 <select
-                                    v-model="studentForm.instituicao"
+                                    v-model="studentForm.institution"
                                     class="w-full border-2 border-border bg-card px-3 py-2 font-pixel text-[10px]"
                                 >
                                     <option
@@ -472,7 +472,7 @@ function goBack(): void {
                                 <label class="font-pixel text-[9px] block mb-2"> CURSO </label>
 
                                 <select
-                                    v-model="studentForm.curso"
+                                    v-model="studentForm.course"
                                     class="w-full border-2 border-border bg-card px-3 py-2 font-pixel text-[10px]"
                                 >
                                     <option v-for="course in cursos" :key="course" :value="course">
@@ -500,7 +500,7 @@ function goBack(): void {
 
                                 <div class="relative">
                                     <PixelInput
-                                        v-model="studentForm.senha"
+                                        v-model="studentForm.password"
                                         :type="showPassword ? 'text' : 'password'"
                                         class="pr-10"
                                         placeholder="••••••••"
@@ -525,7 +525,7 @@ function goBack(): void {
 
                                 <div class="relative">
                                     <PixelInput
-                                        v-model="studentForm.confirmarSenha"
+                                        v-model="studentForm.confirmPassword"
                                         :type="showConfirmPassword ? 'text' : 'password'"
                                         class="pr-10"
                                         placeholder="••••••••"

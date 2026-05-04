@@ -1,66 +1,66 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { useStudentStore } from '@/modules/student/stores/student.store';
+import CoinIcon from '@/shared/components/CoinIcon.vue';
+import MarioAvatar from '@/shared/components/MarioAvatar.vue';
+import PixelBadge from '@/shared/components/PixelBadge.vue';
+import PixelButton from '@/shared/components/PixelButton.vue';
+import PixelCard from '@/shared/components/PixelCard.vue';
+import PixelInput from '@/shared/components/PixelInput.vue';
+import XPBar from '@/shared/components/XPBar.vue';
+import { achievements, initialBenefits, ranking } from '@/shared/data/mockData';
 import {
     PhCrown,
-    PhStorefront,
     PhLightning,
-    PhTrophy,
-    PhSparkle,
     PhMagnifyingGlass,
+    PhSparkle,
+    PhStorefront,
+    PhTrophy,
     PhX,
 } from '@phosphor-icons/vue';
 import { storeToRefs } from 'pinia';
-import PixelCard from '@/shared/components/PixelCard.vue';
-import PixelBadge from '@/shared/components/PixelBadge.vue';
-import PixelButton from '@/shared/components/PixelButton.vue';
-import PixelInput from '@/shared/components/PixelInput.vue';
-import MarioAvatar from '@/shared/components/MarioAvatar.vue';
-import CoinIcon from '@/shared/components/CoinIcon.vue';
-import XPBar from '@/shared/components/XPBar.vue';
-import { useStudentStore } from '@/modules/student/stores/student.store';
-import { vantagensIniciais, ranking, conquistas } from '@/shared/data/mockData';
+import { computed, ref } from 'vue';
 
 const store = useStudentStore();
-const { saldo, nivel, xp, nome, personagem } = storeToRefs(store);
+const { balance, level, xp, name, character } = storeToRefs(store);
 
-const resgate = ref<{ nome: string; custo: number } | null>(null);
-const cupom = ref<{ codigo: string; nome: string } | null>(null);
-const busca = ref('');
-const categoria = ref('todas');
-const ordenar = ref<'recentes' | 'menor' | 'maior' | 'alfabetica'>('recentes');
-const soResgataveis = ref(false);
+const pendingRedemption = ref<{ name: string; cost: number } | null>(null);
+const generatedCoupon = ref<{ code: string; name: string } | null>(null);
+const searchQuery = ref('');
+const selectedCategory = ref('todas');
+const sortOrder = ref<'recentes' | 'menor' | 'maior' | 'alfabetica'>('recentes');
+const onlyAffordable = ref(false);
 
-const categorias = computed(() => Array.from(new Set(vantagensIniciais.map((v) => v.categoria))));
+const categories = computed(() => Array.from(new Set(initialBenefits.map((v) => v.category))));
 
-const vantagensFiltradas = computed(() => {
-    let lista = [...vantagensIniciais];
-    if (busca.value) {
-        const q = busca.value.toLowerCase();
-        lista = lista.filter(
+const filteredBenefits = computed(() => {
+    let list = [...initialBenefits];
+    if (searchQuery.value) {
+        const q = searchQuery.value.toLowerCase();
+        list = list.filter(
             (v) =>
-                v.nome.toLowerCase().includes(q) ||
-                v.descricao.toLowerCase().includes(q) ||
-                v.empresa.toLowerCase().includes(q)
+                v.name.toLowerCase().includes(q) ||
+                v.description.toLowerCase().includes(q) ||
+                v.company.toLowerCase().includes(q)
         );
     }
-    if (categoria.value !== 'todas') lista = lista.filter((v) => v.categoria === categoria.value);
-    if (soResgataveis.value) lista = lista.filter((v) => saldo.value >= v.custo);
-    if (ordenar.value === 'menor') lista = lista.sort((a, b) => a.custo - b.custo);
-    else if (ordenar.value === 'maior') lista = lista.sort((a, b) => b.custo - a.custo);
-    else if (ordenar.value === 'alfabetica')
-        lista = lista.sort((a, b) => a.nome.localeCompare(b.nome));
-    return lista;
+    if (selectedCategory.value !== 'todas') list = list.filter((v) => v.category === selectedCategory.value);
+    if (onlyAffordable.value) list = list.filter((v) => balance.value >= v.cost);
+    if (sortOrder.value === 'menor') list = list.sort((a, b) => a.cost - b.cost);
+    else if (sortOrder.value === 'maior') list = list.sort((a, b) => b.cost - a.cost);
+    else if (sortOrder.value === 'alfabetica')
+        list = list.sort((a, b) => a.name.localeCompare(b.name));
+    return list;
 });
 
-function confirmar() {
-    if (!resgate.value) return;
-    if (saldo.value < resgate.value.custo) {
-        resgate.value = null;
+function confirmRedemption() {
+    if (!pendingRedemption.value) return;
+    if (balance.value < pendingRedemption.value.cost) {
+        pendingRedemption.value = null;
         return;
     }
-    const codigo = store.gastar(resgate.value.custo, resgate.value.nome);
-    cupom.value = { codigo, nome: resgate.value.nome };
-    resgate.value = null;
+    const code = store.spend(pendingRedemption.value.cost, pendingRedemption.value.name);
+    generatedCoupon.value = { code, name: pendingRedemption.value.name };
+    pendingRedemption.value = null;
 }
 
 const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 'teal', 'teal'];
@@ -74,13 +74,13 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="font-pixel text-[10px] text-primary">▶ CARTEIRA DO JOGADOR</div>
-                        <div class="font-pixel text-xl mt-2">{{ nome.toUpperCase() }}</div>
+                        <div class="font-pixel text-xl mt-2">{{ name.toUpperCase() }}</div>
                         <div class="font-sans text-sm text-muted-foreground">
                             Eng. de Software · UNIFEI
                         </div>
                     </div>
                     <div class="border-2 border-border bg-hud p-1">
-                        <MarioAvatar :character="personagem" :size="64" />
+                        <MarioAvatar :character="character" :size="64" />
                     </div>
                 </div>
 
@@ -89,7 +89,7 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                     <div class="flex items-center justify-center gap-3">
                         <CoinIcon :size="36" class="animate-bob" />
                         <span class="font-pixel text-4xl md:text-5xl animate-coin-flash">{{
-                            saldo.toLocaleString('pt-BR')
+                            balance.toLocaleString('pt-BR')
                         }}</span>
                     </div>
                     <div class="font-display text-sm mt-2 opacity-80 tracking-wider">
@@ -102,7 +102,7 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                         <div class="font-pixel text-[9px] text-muted-foreground">NÍVEL</div>
                         <div class="font-pixel text-2xl mt-1 flex items-center gap-2">
                             <PhTrophy weight="fill" class="pixel-icon text-primary" /> LV
-                            {{ nivel }}
+                            {{ level }}
                         </div>
                     </div>
                     <div class="border-2 border-border bg-card p-3">
@@ -118,15 +118,15 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                 <div class="font-pixel text-sm mt-1 mb-4">MEDALHAS</div>
                 <div class="grid grid-cols-2 gap-3">
                     <div
-                        v-for="c in conquistas"
-                        :key="c.id"
+                        v-for="achievement in achievements"
+                        :key="achievement.id"
                         class="border-2 border-border p-3"
-                        :class="c.desbloqueado ? 'bg-card' : 'bg-muted opacity-50'"
+                        :class="achievement.unlocked ? 'bg-card' : 'bg-muted opacity-50'"
                     >
-                        <PixelBadge :tone="c.tone as any"
-                            >{{ c.desbloqueado ? '✓' : '?' }} {{ c.nome.toUpperCase() }}</PixelBadge
+                        <PixelBadge :tone="achievement.tone as 'gold' | 'blue' | 'green' | 'red' | 'teal'"
+                            >{{ achievement.unlocked ? '✓' : '?' }} {{ achievement.name.toUpperCase() }}</PixelBadge
                         >
-                        <p class="font-sans text-xs text-foreground/75 mt-2">{{ c.desc }}</p>
+                        <p class="font-sans text-xs text-foreground/75 mt-2">{{ achievement.description }}</p>
                     </div>
                 </div>
             </PixelCard>
@@ -142,7 +142,7 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                     </h2>
                 </div>
                 <div class="font-pixel text-[10px] text-muted-foreground">
-                    {{ vantagensFiltradas.length }} DE {{ vantagensIniciais.length }} VANTAGENS
+                {{ filteredBenefits.length }} DE {{ initialBenefits.length }} VANTAGENS
                 </div>
             </div>
 
@@ -156,21 +156,21 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                             class="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
                         />
                         <PixelInput
-                            v-model="busca"
+                            v-model="searchQuery"
                             placeholder="Buscar vantagem, empresa, descrição..."
                             class="pl-8 pr-8"
                         />
                         <button
-                            v-if="busca"
+                            v-if="searchQuery"
                             type="button"
                             class="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                            @click="busca = ''"
+                            @click="searchQuery = ''"
                         >
                             <PhX weight="bold" :size="14" />
                         </button>
                     </div>
                     <select
-                        v-model="ordenar"
+                        v-model="sortOrder"
                         class="bg-input border-2 border-border px-3 py-2 font-display text-base focus:outline-none"
                     >
                         <option value="recentes">ORDENAR: PADRÃO</option>
@@ -181,7 +181,7 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                     <label
                         class="flex items-center gap-2 font-pixel text-[9px] border-2 border-border bg-card px-3 py-2 cursor-pointer"
                     >
-                        <input v-model="soResgataveis" type="checkbox" class="accent-primary" /> SÓ
+                        <input v-model="onlyAffordable" type="checkbox" class="accent-primary" /> SÓ
                         POSSO RESGATAR
                     </label>
                 </div>
@@ -189,31 +189,31 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                     <button
                         class="border-2 border-border font-pixel text-[9px] px-2 py-1 transition-all"
                         :class="
-                            categoria === 'todas'
+                            selectedCategory === 'todas'
                                 ? 'bg-primary text-primary-foreground'
                                 : 'bg-card hover:-translate-y-0.5'
                         "
-                        @click="categoria = 'todas'"
+                        @click="selectedCategory = 'todas'"
                     >
                         TODAS
                     </button>
                     <button
-                        v-for="c in categorias"
+                        v-for="c in categories"
                         :key="c"
                         class="border-2 border-border font-pixel text-[9px] px-2 py-1 transition-all"
                         :class="
-                            categoria === c
+                            selectedCategory === c
                                 ? 'bg-primary text-primary-foreground'
                                 : 'bg-card hover:-translate-y-0.5'
                         "
-                        @click="categoria = c"
+                        @click="selectedCategory = c"
                     >
                         {{ c.toUpperCase() }}
                     </button>
                 </div>
             </PixelCard>
 
-            <PixelCard v-if="vantagensFiltradas.length === 0" class="p-8 text-center">
+            <PixelCard v-if="filteredBenefits.length === 0" class="p-8 text-center">
                 <div class="font-pixel text-sm">GAME OVER · NENHUMA VANTAGEM</div>
                 <p class="font-sans text-sm text-muted-foreground mt-2">
                     Tente outra busca ou remova os filtros.
@@ -222,9 +222,9 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                     <PixelButton
                         variant="ghost"
                         @click="
-                            busca = '';
-                            categoria = 'todas';
-                            soResgataveis = false;
+                            searchQuery = '';
+                            selectedCategory = 'todas';
+                            onlyAffordable = false;
                         "
                         >LIMPAR FILTROS</PixelButton
                     >
@@ -233,12 +233,12 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
 
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 <PixelCard
-                    v-for="v in vantagensFiltradas"
+                    v-for="v in filteredBenefits"
                     :key="v.id"
                     class="overflow-hidden flex flex-col"
                 >
                     <div
-                        class="aspect-[5/3] flex items-center justify-center bg-hud text-hud-foreground crt-scanlines border-b-2 border-border text-7xl"
+                        class="aspect-5/3 flex items-center justify-center bg-hud text-hud-foreground crt-scanlines border-b-2 border-border text-7xl"
                     >
                         <span class="animate-bob" style="image-rendering: pixelated">{{
                             v.emoji
@@ -247,28 +247,28 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                     <div class="p-4 flex-1 flex flex-col">
                         <div class="flex items-start justify-between gap-2">
                             <div>
-                                <div class="font-pixel text-xs">{{ v.nome.toUpperCase() }}</div>
+                                <div class="font-pixel text-xs">{{ v.name.toUpperCase() }}</div>
                                 <div class="font-sans text-xs text-muted-foreground mt-1">
-                                    {{ v.empresa }}
+                                    {{ v.company }}
                                 </div>
                             </div>
-                            <PixelBadge tone="gold">{{ v.categoria.toUpperCase() }}</PixelBadge>
+                            <PixelBadge tone="gold">{{ v.category.toUpperCase() }}</PixelBadge>
                         </div>
                         <p class="font-sans text-sm text-foreground/75 mt-2 flex-1">
-                            {{ v.descricao }}
+                            {{ v.description }}
                         </p>
                         <div class="mt-4 flex items-center justify-between">
                             <div class="font-pixel text-sm flex items-center gap-1">
-                                <CoinIcon :size="14" /> {{ v.custo }}
+                                <CoinIcon :size="14" /> {{ v.cost }}
                             </div>
                             <PixelButton
                                 size="sm"
-                                :variant="saldo >= v.custo ? 'success' : 'ghost'"
-                                :disabled="saldo < v.custo"
-                                @click="resgate = { nome: v.nome, custo: v.custo }"
+                                :variant="balance >= v.cost ? 'success' : 'ghost'"
+                                :disabled="balance < v.cost"
+                                @click="pendingRedemption = { name: v.name, cost: v.cost }"
                             >
                                 <PhSparkle weight="fill" class="pixel-icon" />
-                                {{ saldo >= v.custo ? 'RESGATAR' : 'FALTAM MOEDAS' }}
+                                {{ balance >= v.cost ? 'RESGATAR' : 'FALTAM MOEDAS' }}
                             </PixelButton>
                         </div>
                     </div>
@@ -291,14 +291,14 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                     >
                         <span class="flex items-center gap-3 min-w-0">
                             <PixelBadge :tone="medals[i] || 'teal'">#{{ i + 1 }}</PixelBadge>
-                            <span class="font-sans text-sm truncate">{{ p.nome }}</span>
+                            <span class="font-sans text-sm truncate">{{ p.name }}</span>
                             <span
                                 class="hidden sm:inline font-pixel text-[9px] text-muted-foreground"
-                                >LV{{ p.nivel }}</span
+                                >LV{{ p.level }}</span
                             >
                         </span>
                         <span class="font-pixel text-xs flex items-center gap-1 shrink-0">
-                            <CoinIcon :size="12" /> {{ p.moedas }}
+                            <CoinIcon :size="12" /> {{ p.coins }}
                         </span>
                     </li>
                 </ul>
@@ -307,9 +307,9 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
 
         <!-- Confirm modal -->
         <div
-            v-if="resgate"
+            v-if="pendingRedemption"
             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/70"
-            @click="resgate = null"
+            @click="pendingRedemption = null"
         >
             <div
                 class="w-full max-w-md bg-card text-card-foreground border-4 border-border shadow-[8px_8px_0_0_hsl(var(--border))] animate-pop"
@@ -322,21 +322,21 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                 </div>
                 <div class="p-5">
                     <p class="font-display text-xl">
-                        Resgatar <span class="text-primary">{{ resgate.nome }}</span> por
+                        Resgatar <span class="text-primary">{{ pendingRedemption.name }}</span> por
                         <span class="inline-flex items-center gap-1"
-                            ><CoinIcon :size="16" /> {{ resgate.custo }}</span
+                            ><CoinIcon :size="16" /> {{ pendingRedemption.cost }}</span
                         >?
                     </p>
                     <p class="font-sans text-sm text-muted-foreground mt-3">
                         Um cupom será gerado no seu extrato. Saldo após resgate:
-                        <strong>{{ (saldo - resgate.custo).toLocaleString('pt-BR') }}</strong
+                        <strong>{{ (balance - pendingRedemption.cost).toLocaleString('pt-BR') }}</strong
                         >.
                     </p>
                     <div class="mt-5 flex gap-3">
-                        <PixelButton variant="ghost" class="flex-1" @click="resgate = null"
+                        <PixelButton variant="ghost" class="flex-1" @click="pendingRedemption = null"
                             >CANCELAR</PixelButton
                         >
-                        <PixelButton variant="success" class="flex-1" @click="confirmar"
+                        <PixelButton variant="success" class="flex-1" @click="confirmRedemption"
                             ><PhLightning weight="fill" class="pixel-icon" /> CONFIRMAR</PixelButton
                         >
                     </div>
@@ -346,9 +346,9 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
 
         <!-- Coupon modal -->
         <div
-            v-if="cupom"
+            v-if="generatedCoupon"
             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80"
-            @click="cupom = null"
+            @click="generatedCoupon = null"
         >
             <div
                 class="w-full max-w-md bg-card border-4 border-border shadow-[8px_8px_0_0_hsl(var(--border))] animate-pop"
@@ -364,7 +364,7 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                         <CoinIcon :size="48" class="animate-bob" />
                     </div>
                     <p class="font-display text-xl">
-                        Você resgatou <strong>{{ cupom.nome }}</strong
+                        Você resgatou <strong>{{ generatedCoupon.name }}</strong
                         >!
                     </p>
                     <div
@@ -372,14 +372,14 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                     >
                         <div class="font-pixel text-[9px] mb-2">CUPOM GERADO</div>
                         <div class="font-pixel text-lg md:text-xl break-all">
-                            {{ cupom.codigo }}
+                            {{ generatedCoupon.code }}
                         </div>
                     </div>
                     <p class="font-sans text-xs text-muted-foreground mt-3">
                         Apresente este código no estabelecimento parceiro.
                     </p>
                     <div class="mt-5">
-                        <PixelButton variant="primary" class="w-full" @click="cupom = null"
+                        <PixelButton variant="primary" class="w-full" @click="generatedCoupon = null"
                             >FECHAR</PixelButton
                         >
                     </div>

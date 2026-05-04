@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { storeToRefs } from 'pinia';
-import { PhBell } from '@phosphor-icons/vue';
-import PixelCard from '@/shared/components/PixelCard.vue';
+import { useStudentStore } from '@/modules/student/stores/student.store';
+import CoinIcon from '@/shared/components/CoinIcon.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
-import CoinIcon from '@/shared/components/CoinIcon.vue';
-import { useStudentStore } from '@/modules/student/stores/student.store';
+import PixelCard from '@/shared/components/PixelCard.vue';
+import { PhBell } from '@phosphor-icons/vue';
+import { storeToRefs } from 'pinia';
+import { onMounted } from 'vue';
 
 const store = useStudentStore();
-const { notificacoes } = storeToRefs(store);
+const { notifications } = storeToRefs(store);
 
 onMounted(() => {
-    setTimeout(() => store.marcarLidas(), 800);
+    setTimeout(() => store.markAsRead(), 800);
 });
 </script>
 
@@ -25,13 +25,13 @@ onMounted(() => {
                     <PhBell weight="fill" class="pixel-icon" /> NOTIFICAÇÕES
                 </h1>
             </div>
-            <PixelButton size="sm" variant="ghost" @click="store.marcarLidas()"
+            <PixelButton size="sm" variant="ghost" @click="store.markAsRead()"
                 >MARCAR COMO LIDAS</PixelButton
             >
         </div>
 
         <PixelCard
-            v-if="notificacoes.length === 0"
+            v-if="notifications.length === 0"
             class="p-6 text-center font-sans text-muted-foreground text-sm"
         >
             Sem notificações. Continue jogando!
@@ -39,10 +39,10 @@ onMounted(() => {
 
         <div class="space-y-3">
             <PixelCard
-                v-for="n in notificacoes"
+                v-for="n in notifications"
                 :key="n.id"
                 class="p-4"
-                :class="!n.lida ? 'ring-4 ring-primary/50' : ''"
+                :class="!n.isRead ? 'ring-4 ring-primary/50' : ''"
             >
                 <div class="flex items-start gap-4">
                     <div
@@ -52,22 +52,22 @@ onMounted(() => {
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <div class="font-pixel text-xs">{{ n.titulo }}</div>
-                            <PixelBadge v-if="!n.lida" tone="red">NOVA</PixelBadge>
+                            <div class="font-pixel text-xs">{{ n.title }}</div>
+                            <PixelBadge v-if="!n.isRead" tone="red">NOVA</PixelBadge>
                         </div>
-                        <p class="font-sans text-sm text-foreground/80 mt-1">{{ n.mensagem }}</p>
-                        <p v-if="n.professor" class="font-sans text-xs text-muted-foreground mt-1">
-                            Enviado por {{ n.professor }}
+                        <p class="font-sans text-sm text-foreground/80 mt-1">{{ n.message }}</p>
+                        <p v-if="n.teacher" class="font-sans text-xs text-muted-foreground mt-1">
+                            Enviado por {{ n.teacher }}
                         </p>
                         <div class="flex items-center justify-between mt-2">
                             <span class="font-pixel text-[9px] text-muted-foreground">{{
-                                n.data
+                                n.date
                             }}</span>
                             <span
-                                v-if="n.valor !== undefined"
+                                v-if="n.amount !== undefined"
                                 class="font-pixel text-sm text-success flex items-center gap-1"
                             >
-                                +<CoinIcon :size="12" /> {{ n.valor }}
+                                +<CoinIcon :size="12" /> {{ n.amount }}
                             </span>
                         </div>
                     </div>

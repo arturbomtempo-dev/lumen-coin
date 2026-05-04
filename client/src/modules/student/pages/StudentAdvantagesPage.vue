@@ -2,7 +2,7 @@
 
 <template>
     <div>
-        <h2 class="text-2xl font-bold mb-6">Advantages</h2>
-        <p class="text-muted">Browse and redeem available advantages with your coins.</p>
+        <h2 class="text-2xl font-bold mb-6">Vantagens</h2>
+        <p class="text-muted">Navegue e resgate vantagens disponíveis com suas moedas.</p>
     </div>
 </template>

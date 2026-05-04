@@ -25,7 +25,7 @@ api.interceptors.response.use(
 
         ui.stopLoading();
 
-        const message = error.response?.data?.message || 'Unexpected error occurred';
+        const message = error.response?.data?.message || 'Ocorreu um erro inesperado.';
         toast.error(message);
 
         if (error.response?.status === 401) {

@@ -2,7 +2,7 @@
 
 <template>
     <div>
-        <h2 class="text-2xl font-bold mb-6">Statement</h2>
-        <p class="text-muted">Your coin distribution history will appear here.</p>
+        <h2 class="text-2xl font-bold mb-6">Extrato</h2>
+        <p class="text-muted">Seu histórico de distribuição de moedas aparecerá aqui.</p>
     </div>
 </template>

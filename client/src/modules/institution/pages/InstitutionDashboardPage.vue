@@ -21,10 +21,10 @@ import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import {
-    cursosInstituicao,
+    institutionCourses,
     alunos as alunosBase,
     cursoToId,
-    type Curso,
+    type Course,
 } from '@/shared/data/mockData';
 import { useThemeStore } from '@/shared/stores/theme.store';
 import { useForm } from '@/shared/composables/useForm';
@@ -58,34 +58,34 @@ const TEACHER_AVATARS = [
     { value: 'BOWSER', label: 'Bowser' },
 ];
 
-type Tab = 'cursos' | 'professores' | 'empresas' | 'alunos';
-const tab = ref<Tab>('cursos');
+type Tab = 'courses' | 'teachers' | 'companies' | 'students';
+const tab = ref<Tab>('courses');
 
-const cursos = ref<Curso[]>([...cursosInstituicao]);
+const courses = ref<Course[]>([...institutionCourses]);
 
-const novoCurso = ref({ nome: '', periodo: '2025.1', duracao: '8 semestres', cargaHoraria: 3200 });
+const newCourse = ref({ name: '', period: '2025.1', duration: '8 semestres', workload: 3200 });
 
-function criarCurso(e: Event) {
+function createCourse(e: Event) {
     e.preventDefault();
-    if (!novoCurso.value.nome) return;
-    const c: Curso = {
+    if (!newCourse.value.name) return;
+    const c: Course = {
         id: 'cur-' + Date.now(),
-        ...novoCurso.value,
-        cargaHoraria: Number(novoCurso.value.cargaHoraria),
+        ...newCourse.value,
+        workload: Number(newCourse.value.workload),
     };
-    cursos.value.unshift(c);
-    toast.success(`Curso "${c.nome}" criado!`);
-    novoCurso.value = { nome: '', periodo: '2025.1', duracao: '8 semestres', cargaHoraria: 3200 };
+    courses.value.unshift(c);
+    toast.success(`Curso "${c.name}" criado!`);
+    newCourse.value = { name: '', period: '2025.1', duration: '8 semestres', workload: 3200 };
 }
 
-function removerCurso(id: string) {
-    cursos.value = cursos.value.filter((c) => c.id !== id);
+function removeCourse(id: string) {
+    courses.value = courses.value.filter((c) => c.id !== id);
 }
 
 const teachers = ref<TeacherResponse[]>([]);
 
 const {
-    data: teacherData,
+    fields: teacherData,
     errors: teacherErrors,
     isSubmitting: teacherIsSubmitting,
     validate: validateTeacher,
@@ -95,7 +95,7 @@ const {
 const editingTeacherId = ref<string | null>(null);
 
 const {
-    data: editTeacherData,
+    fields: editTeacherData,
     errors: editTeacherErrors,
     isSubmitting: editTeacherIsSubmitting,
     validate: validateEditTeacher,
@@ -167,7 +167,7 @@ async function handleDeleteTeacher(id: string) {
 const companies = ref<CompanyResponse[]>([]);
 
 const {
-    data: companyData,
+    fields: companyData,
     errors: companyErrors,
     isSubmitting: companyIsSubmitting,
     validate: validateCompany,
@@ -195,23 +195,23 @@ async function submitCompany(e: Event) {
     }
 }
 
-const filtroCursoAluno = ref('todos');
-const buscaAluno = ref('');
+const courseFilter = ref('all');
+const studentSearch = ref('');
 
-const alunosFiltrados = computed(() =>
+const filteredStudents = computed(() =>
     alunosBase.filter((a) => {
-        const cid = cursoToId[a.curso] ?? '';
-        const matchCurso = filtroCursoAluno.value === 'todos' || cid === filtroCursoAluno.value;
-        const matchBusca = a.nome.toLowerCase().includes(buscaAluno.value.toLowerCase());
+        const cid = cursoToId[a.course] ?? '';
+        const matchCurso = courseFilter.value === 'all' || cid === courseFilter.value;
+        const matchBusca = a.name.toLowerCase().includes(studentSearch.value.toLowerCase());
         return matchCurso && matchBusca;
     })
 );
 
 const tabs = [
-    { id: 'cursos' as Tab, label: 'CURSOS', icon: PhBookOpen },
-    { id: 'professores' as Tab, label: 'PROFESSORES', icon: PhGraduationCap },
-    { id: 'empresas' as Tab, label: 'EMPRESAS', icon: PhBriefcase },
-    { id: 'alunos' as Tab, label: 'ALUNOS', icon: PhStudent },
+    { id: 'courses' as Tab, label: 'CURSOS', icon: PhBookOpen },
+    { id: 'teachers' as Tab, label: 'PROFESSORES', icon: PhGraduationCap },
+    { id: 'companies' as Tab, label: 'EMPRESAS', icon: PhBriefcase },
+    { id: 'students' as Tab, label: 'ALUNOS', icon: PhStudent },
 ];
 
 onMounted(async () => {
@@ -249,7 +249,7 @@ onMounted(async () => {
                     <PhBookOpen weight="fill" class="pixel-icon text-primary" :size="28" />
                     <div>
                         <div class="font-pixel text-[9px] text-muted-foreground">CURSOS</div>
-                        <div class="font-pixel text-2xl">{{ cursos.length }}</div>
+                        <div class="font-pixel text-2xl">{{ courses.length }}</div>
                     </div>
                 </PixelCard>
                 <PixelCard class="p-4 flex items-center gap-3">
@@ -295,16 +295,16 @@ onMounted(async () => {
             </div>
 
             <!-- CURSOS TAB -->
-            <div v-if="tab === 'cursos'" class="grid lg:grid-cols-[1fr_1.4fr] gap-6">
+            <div v-if="tab === 'courses'" class="grid lg:grid-cols-[1fr_1.4fr] gap-6">
                 <PixelCard class="p-5">
                     <h2 class="font-pixel text-sm mb-4 flex items-center gap-2">
                         <PhPlus weight="bold" /> NOVO CURSO
                     </h2>
-                    <form class="space-y-3" @submit="criarCurso">
+                    <form class="space-y-3" @submit="createCourse">
                         <div>
                             <label class="font-pixel text-[9px] block mb-1">NOME DO CURSO</label>
                             <PixelInput
-                                v-model="novoCurso.nome"
+                                v-model="newCourse.name"
                                 placeholder="Ex: Engenharia Civil"
                                 required
                             />
@@ -312,16 +312,16 @@ onMounted(async () => {
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="font-pixel text-[9px] block mb-1">PERÍODO</label>
-                                <PixelInput v-model="novoCurso.periodo" />
+                                <PixelInput v-model="newCourse.period" />
                             </div>
                             <div>
                                 <label class="font-pixel text-[9px] block mb-1">DURAÇÃO</label>
-                                <PixelInput v-model="novoCurso.duracao" />
+                                <PixelInput v-model="newCourse.duration" />
                             </div>
                         </div>
                         <div>
                             <label class="font-pixel text-[9px] block mb-1">CARGA HORÁRIA</label>
-                            <PixelInput v-model="novoCurso.cargaHoraria" type="number" />
+                            <PixelInput v-model="newCourse.workload" type="number" />
                         </div>
                         <PixelButton type="submit" variant="success" class="w-full">
                             <PhPlus weight="bold" /> CRIAR CURSO
@@ -333,34 +333,34 @@ onMounted(async () => {
                     <h2 class="font-pixel text-sm mb-4">CURSOS CADASTRADOS</h2>
                     <div class="space-y-3">
                         <p
-                            v-if="cursos.length === 0"
+                            v-if="courses.length === 0"
                             class="font-display text-sm text-muted-foreground"
                         >
                             Nenhum curso cadastrado.
                         </p>
                         <div
-                            v-for="c in cursos"
+                            v-for="c in courses"
                             :key="c.id"
                             class="border-2 border-border bg-card p-3 shadow-[3px_3px_0_0_hsl(var(--border))]"
                         >
                             <div class="flex items-start justify-between gap-3">
                                 <div class="min-w-0">
-                                    <div class="font-pixel text-xs">{{ c.nome }}</div>
+                                    <div class="font-pixel text-xs">{{ c.name }}</div>
                                     <div class="font-display text-sm text-muted-foreground mt-1">
-                                        {{ c.duracao }} · {{ c.cargaHoraria }}h · {{ c.periodo }}
+                                        {{ c.duration }} · {{ c.workload }}h · {{ c.period }}
                                     </div>
                                     <div class="flex gap-2 mt-2 flex-wrap">
                                         <PixelBadge tone="green">
                                             {{
                                                 alunosBase.filter(
-                                                    (a) => cursoToId[a.curso] === c.id
+                                                    (a) => cursoToId[a.course] === c.id
                                                 ).length
                                             }}
                                             alunos
                                         </PixelBadge>
                                     </div>
                                 </div>
-                                <PixelButton variant="danger" size="sm" @click="removerCurso(c.id)">
+                                <PixelButton variant="danger" size="sm" @click="removeCourse(c.id)">
                                     <PhTrash weight="bold" /> EXCLUIR
                                 </PixelButton>
                             </div>
@@ -370,7 +370,7 @@ onMounted(async () => {
             </div>
 
             <!-- PROFESSORES TAB -->
-            <div v-if="tab === 'professores'" class="grid lg:grid-cols-[1fr_1.4fr] gap-6">
+            <div v-if="tab === 'teachers'" class="grid lg:grid-cols-[1fr_1.4fr] gap-6">
                 <PixelCard class="p-5">
                     <h2 class="font-pixel text-sm mb-4 flex items-center gap-2">
                         <PhPlus weight="bold" /> CADASTRAR PROFESSOR
@@ -597,7 +597,7 @@ onMounted(async () => {
             </div>
 
             <!-- EMPRESAS TAB -->
-            <div v-if="tab === 'empresas'" class="grid lg:grid-cols-[1fr_1.4fr] gap-6">
+            <div v-if="tab === 'companies'" class="grid lg:grid-cols-[1fr_1.4fr] gap-6">
                 <PixelCard class="p-5">
                     <h2 class="font-pixel text-sm mb-4 flex items-center gap-2">
                         <PhPlus weight="bold" /> CADASTRAR EMPRESA
@@ -702,39 +702,39 @@ onMounted(async () => {
             </div>
 
             <!-- ALUNOS TAB -->
-            <div v-if="tab === 'alunos'" class="space-y-4">
+            <div v-if="tab === 'students'" class="space-y-4">
                 <div class="flex flex-wrap gap-3 items-end">
                     <div class="flex flex-wrap gap-2">
                         <button
                             class="border-2 border-border font-pixel text-[9px] px-2 py-1"
                             :class="
-                                filtroCursoAluno === 'todos'
+                                courseFilter === 'all'
                                     ? 'bg-primary text-primary-foreground'
                                     : 'bg-card'
                             "
-                            @click="filtroCursoAluno = 'todos'"
+                            @click="courseFilter = 'all'"
                         >
                             TODOS
                         </button>
                         <button
-                            v-for="c in cursos"
+                            v-for="c in courses"
                             :key="c.id"
                             class="border-2 border-border font-pixel text-[9px] px-2 py-1"
                             :class="
-                                filtroCursoAluno === c.id
+                                courseFilter === c.id
                                     ? 'bg-primary text-primary-foreground'
                                     : 'bg-card'
                             "
-                            @click="filtroCursoAluno = c.id"
+                            @click="courseFilter = c.id"
                         >
-                            {{ c.nome }}
+                            {{ c.name }}
                         </button>
                     </div>
-                    <PixelInput v-model="buscaAluno" placeholder="Buscar aluno..." class="w-64" />
+                    <PixelInput v-model="studentSearch" placeholder="Buscar aluno..." class="w-64" />
                 </div>
 
                 <div class="font-pixel text-[9px] text-muted-foreground">
-                    {{ alunosFiltrados.length }} aluno(s) encontrado(s)
+                    {{ filteredStudents.length }} aluno(s) encontrado(s)
                 </div>
 
                 <PixelCard class="overflow-hidden">
@@ -744,22 +744,22 @@ onMounted(async () => {
                         <span>NOME</span><span>CURSO</span><span>LV</span><span>MOEDAS</span>
                     </div>
                     <div
-                        v-if="alunosFiltrados.length === 0"
+                        v-if="filteredStudents.length === 0"
                         class="p-6 text-center font-sans text-sm text-muted-foreground"
                     >
                         Nenhum aluno encontrado.
                     </div>
                     <div
-                        v-for="a in alunosFiltrados"
+                        v-for="a in filteredStudents"
                         :key="a.id"
                         class="px-4 py-3 border-t-2 border-border grid grid-cols-[2fr_1fr_auto_auto] gap-2 items-center"
                     >
-                        <div class="font-pixel text-[10px] truncate">{{ a.nome }}</div>
+                        <div class="font-pixel text-[10px] truncate">{{ a.name }}</div>
                         <div class="font-sans text-xs text-muted-foreground truncate">
-                            {{ a.curso }}
+                            {{ a.course }}
                         </div>
-                        <PixelBadge tone="blue">{{ a.nivel }}</PixelBadge>
-                        <div class="font-pixel text-xs">{{ a.moedas }}</div>
+                        <PixelBadge tone="blue">{{ a.level }}</PixelBadge>
+                        <div class="font-pixel text-xs">{{ a.coins }}</div>
                     </div>
                 </PixelCard>
             </div>

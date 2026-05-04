@@ -1,22 +1,22 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
-import {
-    notificacoesIniciais,
-    transacoesIniciais,
-    type Transacao,
-    type Notificacao,
-} from '@/shared/data/mockData';
 import type { MarioCharacter } from '@/shared/data/characters';
+import {
+    initialNotifications,
+    initialTransactions,
+    type AppNotification,
+    type Transaction,
+} from '@/shared/data/mockData';
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
-interface Cupom {
+interface Coupon {
     id: string;
-    codigo: string;
-    vantagem: string;
-    data: string;
-    usado: boolean;
+    code: string;
+    benefit: string;
+    date: string;
+    used: boolean;
 }
 
-function generateCoupon() {
+function generateCouponCode() {
     return (
         'LUMEN-' +
         Math.random().toString(36).slice(2, 7).toUpperCase() +
@@ -26,82 +26,82 @@ function generateCoupon() {
 }
 
 export const useStudentStore = defineStore('student', () => {
-    const nome = ref('Maria L.');
-    const saldo = ref(1280);
-    const nivel = ref(7);
+    const name = ref('Maria L.');
+    const balance = ref(1280);
+    const level = ref(7);
     const xp = ref(72);
-    const personagem = ref<MarioCharacter>('peach');
-    const notificacoes = ref<Notificacao[]>([...notificacoesIniciais]);
-    const transacoes = ref<Transacao[]>(
-        transacoesIniciais.filter((t) => t.aluno === 'Maria Luiza Souza')
+    const character = ref<MarioCharacter>('peach');
+    const notifications = ref<AppNotification[]>([...initialNotifications]);
+    const transactions = ref<Transaction[]>(
+        initialTransactions.filter((t) => t.student === 'Maria Luiza Souza')
     );
-    const cupons = ref<Cupom[]>([]);
+    const coupons = ref<Coupon[]>([]);
 
-    const unreadCount = computed(() => notificacoes.value.filter((n) => !n.lida).length);
+    const unreadCount = computed(() => notifications.value.filter((n) => !n.isRead).length);
 
-    function setPersonagem(p: MarioCharacter) {
-        personagem.value = p;
+    function setCharacter(c: MarioCharacter) {
+        character.value = c;
     }
 
-    function gastar(valor: number, vantagem: string): string {
-        const codigo = generateCoupon();
-        saldo.value = Math.max(0, saldo.value - valor);
-        cupons.value.unshift({
-            id: codigo,
-            codigo,
-            vantagem,
-            data: new Date().toLocaleDateString('pt-BR'),
-            usado: false,
+    function spend(amount: number, benefitName: string): string {
+        const code = generateCouponCode();
+        balance.value = Math.max(0, balance.value - amount);
+        coupons.value.unshift({
+            id: code,
+            code,
+            benefit: benefitName,
+            date: new Date().toLocaleDateString('pt-BR'),
+            used: false,
         });
-        notificacoes.value.unshift({
+        notifications.value.unshift({
             id: 'n' + Date.now(),
-            titulo: 'Recompensa Desbloqueada',
-            mensagem: `Cupom ${vantagem} gerado.`,
-            data: 'Agora',
-            lida: false,
+            title: 'Recompensa Desbloqueada',
+            message: `Cupom ${benefitName} gerado.`,
+            date: 'Agora',
+            isRead: false,
         });
-        return codigo;
+        return code;
     }
 
-    function receber(valor: number, motivo: string, professor: string) {
-        saldo.value += valor;
-        xp.value = Math.min(100, xp.value + Math.floor(valor / 10));
-        notificacoes.value.unshift({
+    function receive(amount: number, reason: string, teacher: string) {
+        balance.value += amount;
+        xp.value = Math.min(100, xp.value + Math.floor(amount / 10));
+        notifications.value.unshift({
             id: 'n' + Date.now(),
-            titulo: 'Missão Concluída!',
-            mensagem: motivo,
-            professor,
-            valor,
-            data: 'Agora',
-            lida: false,
+            title: 'Missão Concluída!',
+            message: reason,
+            teacher,
+            amount,
+            date: 'Agora',
+            isRead: false,
         });
-        transacoes.value.unshift({
+        transactions.value.unshift({
             id: 't' + Date.now(),
-            aluno: 'Maria Luiza Souza',
-            professor,
-            valor,
-            motivo,
-            data: new Date().toISOString().slice(0, 10),
+            student: 'Maria Luiza Souza',
+            teacher,
+            amount,
+            reason,
+            date: new Date().toISOString().slice(0, 10),
         });
     }
 
-    function marcarLidas() {
-        notificacoes.value = notificacoes.value.map((n) => ({ ...n, lida: true }));
+    function markAsRead() {
+        notifications.value = notifications.value.map((n) => ({ ...n, isRead: true }));
     }
 
     return {
-        nome,
-        saldo,
-        nivel,
+        name,
+        balance,
+        level,
         xp,
-        personagem,
-        notificacoes,
-        transacoes,
-        cupons,
+        character,
+        notifications,
+        transactions,
+        coupons,
         unreadCount,
-        setPersonagem,
-        gastar,
-        receber,
-        marcarLidas,
+        setCharacter,
+        spend,
+        receive,
+        markAsRead,
     };
 });

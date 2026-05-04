@@ -34,6 +34,7 @@ export const routes: RouteRecordRaw[] = [
     {
         path: '/app/aluno',
         component: () => import('@/shared/layouts/StudentLayout.vue'),
+        meta: { requiresAuth: true },
         children: [
             {
                 path: '',
@@ -60,21 +61,24 @@ export const routes: RouteRecordRaw[] = [
     {
         path: '/app/professor',
         name: 'teacher-dashboard',
+        meta: { requiresAuth: true },
         component: () => import('@/modules/teacher/pages/TeacherDashboardPage.vue'),
     },
     {
         path: '/app/empresa',
         name: 'company-dashboard',
+        meta: { requiresAuth: true },
         component: () => import('@/modules/company/pages/CompanyDashboardPage.vue'),
     },
     {
         path: '/app/instituicao',
         name: 'institution-dashboard',
+        meta: { requiresAuth: true },
         component: () => import('@/modules/institution/pages/InstitutionDashboardPage.vue'),
     },
     {
         path: '/:pathMatch(.*)*',
         name: 'not-found',
-        component: () => import('@/pages/NotFoundPage.vue'),
+        component: () => import('@/modules/home/pages/NotFoundPage.vue'),
     },
 ];

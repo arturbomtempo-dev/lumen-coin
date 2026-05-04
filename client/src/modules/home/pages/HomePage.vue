@@ -44,7 +44,7 @@ const themeStore = useThemeStore();
                 </nav>
                 <div class="flex items-center gap-2">
                     <button
-                        class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+                        class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                         @click="themeStore.toggle"
                     >
                         <PhSun
@@ -125,7 +125,7 @@ const themeStore = useThemeStore();
                         >
                             <MarioAvatar :character="c.id" :size="64" />
                         </div>
-                        <div class="font-pixel text-[9px] mt-2">{{ c.nome.toUpperCase() }}</div>
+                        <div class="font-pixel text-[9px] mt-2">{{ c.name.toUpperCase() }}</div>
                     </PixelCard>
                 </div>
             </div>
@@ -477,7 +477,7 @@ const themeStore = useThemeStore();
                     <div class="border-2 border-border bg-hud p-3 flex items-center justify-center">
                         <MarioAvatar :character="c.id" :size="72" />
                     </div>
-                    <div class="font-pixel text-[10px] mt-3">{{ c.nome.toUpperCase() }}</div>
+                    <div class="font-pixel text-[10px] mt-3">{{ c.name.toUpperCase() }}</div>
                     <div class="font-sans text-xs text-muted-foreground mt-1">{{ c.classe }}</div>
                 </PixelCard>
             </div>

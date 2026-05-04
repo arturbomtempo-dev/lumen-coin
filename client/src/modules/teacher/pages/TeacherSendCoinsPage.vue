@@ -2,7 +2,7 @@
 
 <template>
     <div>
-        <h2 class="text-2xl font-bold mb-6">Send Coins</h2>
-        <p class="text-muted">Select a student and send coins as recognition.</p>
+        <h2 class="text-2xl font-bold mb-6">Enviar Moedas</h2>
+        <p class="text-muted">Selecione um aluno e envie moedas como reconhecimento.</p>
     </div>
 </template>

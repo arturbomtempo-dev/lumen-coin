@@ -10,4 +10,14 @@ const router = createRouter({
     },
 });
 
+router.beforeEach(async (to) => {
+    if (to.meta.requiresAuth) {
+        const { useAuthStore } = await import('@/modules/auth/stores/auth.store');
+        const authStore = useAuthStore();
+        if (!authStore.isAuthenticated) {
+            return { name: 'login' };
+        }
+    }
+});
+
 export default router;
