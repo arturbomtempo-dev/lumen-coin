@@ -10,6 +10,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -71,6 +74,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBadCredentials(
             BadCredentialsException ex, HttpServletRequest request) {
         return build(HttpStatus.UNAUTHORIZED, "Unauthorized", "Invalid email or password.", request);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            AccessDeniedException ex, HttpServletRequest request) {
+        return build(HttpStatus.FORBIDDEN, "Forbidden", "You do not have permission to access this resource.", request);
+    }
+
+    @ExceptionHandler({ AuthenticationException.class, InsufficientAuthenticationException.class })
+    public ResponseEntity<ErrorResponse> handleAuthentication(
+            Exception ex, HttpServletRequest request) {
+        return build(HttpStatus.UNAUTHORIZED, "Unauthorized", "Authentication is required to access this resource.",
+                request);
     }
 
     @ExceptionHandler(Exception.class)
