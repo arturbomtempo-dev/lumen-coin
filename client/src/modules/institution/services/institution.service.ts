@@ -32,3 +32,17 @@ export function getCompanies() {
 export function registerCompany(dto: RegisterCompanyDto) {
     return api.post<CompanyResponse>('/companies', dto);
 }
+
+export type UpdateTeacherDto = {
+    name?: string;
+    email?: string;
+    department?: string;
+};
+
+export function updateTeacher(id: string, dto: UpdateTeacherDto) {
+    return api.put<TeacherResponse>(`/teachers/${id}`, dto);
+}
+
+export function deleteTeacher(id: string) {
+    return api.delete(`/teachers/${id}`);
+}
