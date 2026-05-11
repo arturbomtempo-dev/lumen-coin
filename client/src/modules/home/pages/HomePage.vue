@@ -8,6 +8,7 @@ import {
     PhTrophy,
     PhCoin,
     PhStorefront,
+    PhBuildings,
     PhGraduationCap,
     PhStudent,
     PhLightning,
@@ -21,10 +22,14 @@ import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import MarioAvatar from '@/shared/components/MarioAvatar.vue';
+import { computed } from 'vue';
 import { MARIO_CHARACTERS } from '@/shared/data/characters';
 import { useThemeStore } from '@/shared/stores/theme.store';
 
 const themeStore = useThemeStore();
+const VISIBLE_CHARACTERS = computed(() =>
+    MARIO_CHARACTERS.filter((c) => c.id !== 'company' && c.id !== 'institution')
+);
 </script>
 
 <template>
@@ -34,7 +39,7 @@ const themeStore = useThemeStore();
             <div class="container flex items-center justify-between py-3 gap-3">
                 <RouterLink to="/" class="flex items-center gap-2 font-pixel text-[10px]">
                     <PhGameController weight="fill" class="pixel-icon text-primary" :size="18" />
-                    LUMEN COIN · MUSHROOM ACADEMY
+                    LUMEN COIN 
                 </RouterLink>
                 <nav class="hidden md:flex items-center gap-4 font-pixel text-[9px]">
                     <a href="#regras" class="hover:text-primary">REGRAS</a>
@@ -118,7 +123,7 @@ const themeStore = useThemeStore();
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-3">
-                    <PixelCard v-for="c in MARIO_CHARACTERS" :key="c.id" class="p-3 text-center">
+                    <PixelCard v-for="c in VISIBLE_CHARACTERS" :key="c.id" class="p-3 text-center">
                         <div
                             class="border-2 border-border bg-hud p-2 flex items-center justify-center"
                         >
@@ -202,8 +207,8 @@ const themeStore = useThemeStore();
                 <div id="perfis" class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mt-10">
                     <PixelCard class="p-6 flex flex-col">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="border-2 border-border bg-hud p-2">
-                                <MarioAvatar character="institution" :size="40" />
+                            <div class="border-2 border-border bg-primary text-primary-foreground p-2">
+                                <PhBuildings weight="fill" class="pixel-icon" :size="24" />
                             </div>
                             <div>
                                 <div class="font-pixel text-[10px] text-primary">PLAYER 0</div>
@@ -426,7 +431,7 @@ const themeStore = useThemeStore();
                         </div>
                         <div class="mt-auto pt-5">
                             <RouterLink to="/app/professor"
-                                ><PixelButton variant="primary" class="w-full"
+                                ><PixelButton variant="danger" class="w-full"
                                     ><PhChartBar weight="fill" class="pixel-icon" /> ENTRAR COMO
                                     PROFESSOR</PixelButton
                                 ></RouterLink
@@ -436,8 +441,8 @@ const themeStore = useThemeStore();
 
                     <PixelCard class="p-6 flex flex-col">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="border-2 border-border bg-hud p-2">
-                                <MarioAvatar character="company" :size="40" />
+                            <div class="border-2 border-border bg-success text-success-foreground p-2">
+                                <PhStorefront weight="fill" class="pixel-icon" :size="24" />
                             </div>
                             <div>
                                 <div class="font-pixel text-[10px] text-primary">PLAYER 3</div>
@@ -529,7 +534,7 @@ const themeStore = useThemeStore();
                 da conta e pode trocar quando quiser no perfil.
             </p>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-8">
-                <PixelCard v-for="c in MARIO_CHARACTERS" :key="c.id" class="p-4 text-center">
+                <PixelCard v-for="c in VISIBLE_CHARACTERS" :key="c.id" class="p-4 text-center">
                     <div class="border-2 border-border bg-hud p-3 flex items-center justify-center">
                         <MarioAvatar :character="c.id" :size="72" />
                     </div>
