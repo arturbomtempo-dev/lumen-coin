@@ -43,8 +43,11 @@ import { useRouter } from 'vue-router';
 type DesignToken = {
     name: string;
     label: string;
-    description: string;
-    reference: string;
+    hex: string;
+};
+
+type PaletteToken = DesignToken & {
+    aliases: string[];
 };
 
 type IconItem = {
@@ -64,76 +67,109 @@ const themeStore = useThemeStore();
 
 const designTokens: DesignToken[] = [
     {
-        name: '--color-primary',
-        label: 'Primário',
-        description: 'Moedas, chamadas de ação e detalhes de destaque',
-        reference: 'hsl(var(--primary))',
-    },
-    {
-        name: '--color-secondary',
-        label: 'Secundário',
-        description: 'Estados críticos, alertas e contraste de apoio',
-        reference: 'hsl(var(--secondary))',
-    },
-    {
-        name: '--color-success',
-        label: 'Sucesso',
-        description: 'Confirmações, ganhos e feedback positivo',
-        reference: 'hsl(var(--success))',
-    },
-    {
-        name: '--color-info',
-        label: 'Informação',
-        description: 'Painéis, indicadores e elementos de suporte',
-        reference: 'hsl(var(--info))',
-    },
-    {
-        name: '--color-accent',
-        label: 'Destaque',
-        description: 'Elementos especiais, cartões e ações alternativas',
-        reference: 'hsl(var(--accent))',
-    },
-    {
-        name: '--color-destructive',
-        label: 'Destrutivo',
-        description: 'Remoções, exclusões e estados de risco',
-        reference: 'hsl(var(--destructive))',
-    },
-    {
-        name: '--color-background',
+        name: '--background',
         label: 'Fundo',
-        description: 'Plano de base do app em ambos os temas',
-        reference: 'hsl(var(--background))',
+        hex: '#f9f3e7',
     },
     {
-        name: '--color-card',
-        label: 'Cartão',
-        description: 'Superfície de conteúdo e blocos de interface',
-        reference: 'hsl(var(--card))',
-    },
-    {
-        name: '--color-hud',
-        label: 'HUD',
-        description: 'Barra superior, telas de login e áreas de sistema',
-        reference: 'hsl(var(--hud))',
-    },
-    {
-        name: '--color-border',
-        label: 'Borda',
-        description: 'Contorno pixelado e sombra estrutural',
-        reference: 'hsl(var(--border))',
-    },
-    {
-        name: '--color-foreground',
+        name: '--foreground',
         label: 'Texto',
-        description: 'Tipografia principal e conteúdo legível',
-        reference: 'hsl(var(--foreground))',
+        hex: '#0b0e28',
     },
     {
-        name: '--color-muted',
-        label: 'Mudo',
-        description: 'Informações auxiliares e textos de apoio',
-        reference: 'hsl(var(--muted))',
+        name: '--card',
+        label: 'Cartão',
+        hex: '#fef9ec',
+    },
+    {
+        name: '--card-foreground',
+        label: 'Texto do cartão',
+        hex: '#0f122e',
+    },
+    {
+        name: '--primary',
+        label: 'Primário',
+        hex: '#f9bf10',
+    },
+    {
+        name: '--primary-foreground',
+        label: 'Primário invertido',
+        hex: '#0a0d29',
+    },
+    {
+        name: '--secondary',
+        label: 'Secundário',
+        hex: '#da341b',
+    },
+    {
+        name: '--secondary-foreground',
+        label: 'Texto secundário',
+        hex: '#ffffff',
+    },
+    {
+        name: '--success',
+        label: 'Sucesso',
+        hex: '#188b48',
+    },
+    {
+        name: '--success-foreground',
+        label: 'Texto de sucesso',
+        hex: '#ffffff',
+    },
+    {
+        name: '--info',
+        label: 'Informação',
+        hex: '#105cc6',
+    },
+    {
+        name: '--info-foreground',
+        label: 'Texto informativo',
+        hex: '#ffffff',
+    },
+    {
+        name: '--accent',
+        label: 'Destaque',
+        hex: '#148f85',
+    },
+    {
+        name: '--accent-foreground',
+        label: 'Texto de destaque',
+        hex: '#ffffff',
+    },
+    {
+        name: '--destructive',
+        label: 'Destrutivo',
+        hex: '#e61919',
+    },
+    {
+        name: '--destructive-foreground',
+        label: 'Texto destrutivo',
+        hex: '#ffffff',
+    },
+    {
+        name: '--muted',
+        label: 'Suave',
+        hex: '#e8e0cf',
+    },
+    {
+        name: '--muted-foreground',
+        label: 'Texto suave',
+        hex: '#24284c',
+    },
+    {
+        name: '--border',
+        label: 'Borda',
+        hex: '#0a0d29',
+    },
+    {
+        name: '--hud',
+        label: 'HUD',
+        hex: '#0a0d29',
+    },
+    {
+        name: '--hud-foreground',
+        label: 'Texto HUD',
+        hex: '#fac938',
     },
 ];
 
@@ -180,30 +216,50 @@ const avatarGroups: AvatarGroup[] = [
 ];
 
 const componentVariants = [
-    { variant: 'primary', label: 'Primary' },
-    { variant: 'secondary', label: 'Secondary' },
-    { variant: 'success', label: 'Success' },
+    { variant: 'primary', label: 'Primário' },
+    { variant: 'secondary', label: 'Secundário' },
+    { variant: 'success', label: 'Sucesso' },
     { variant: 'info', label: 'Info' },
-    { variant: 'accent', label: 'Accent' },
-    { variant: 'ghost', label: 'Ghost' },
-    { variant: 'danger', label: 'Danger' },
+    { variant: 'accent', label: 'Destaque' },
+    { variant: 'ghost', label: 'Fantasma' },
+    { variant: 'danger', label: 'Perigo' },
 ] as const;
 
 const componentTones = [
-    { tone: 'gold', label: 'Gold' },
-    { tone: 'red', label: 'Red' },
-    { tone: 'green', label: 'Green' },
-    { tone: 'blue', label: 'Blue' },
-    { tone: 'purple', label: 'Purple' },
-    { tone: 'teal', label: 'Teal' },
+    { tone: 'gold', label: 'Dourado' },
+    { tone: 'red', label: 'Vermelho' },
+    { tone: 'green', label: 'Verde' },
+    { tone: 'blue', label: 'Azul' },
+    { tone: 'purple', label: 'Roxo' },
+    { tone: 'teal', label: 'Verde-água' },
 ] as const;
 
 const overviewStats = computed(() => [
     { label: 'PERSONAGENS', value: String(MARIO_CHARACTERS.length) },
     { label: 'ÍCONES', value: String(iconItems.length) },
-    { label: 'TOKENS', value: String(designTokens.length) },
+    { label: 'CORES', value: String(designTokens.length) },
     { label: 'TEMAS', value: '2' },
 ]);
+
+const paletteTokens = computed<PaletteToken[]>(() => {
+    const grouped = new Map<string, PaletteToken>();
+
+    for (const token of designTokens) {
+        const existing = grouped.get(token.hex);
+
+        if (existing) {
+            existing.aliases.push(token.name);
+            continue;
+        }
+
+        grouped.set(token.hex, {
+            ...token,
+            aliases: [],
+        });
+    }
+
+    return [...grouped.values()];
+});
 
 const avatarTitles = Object.fromEntries(MARIO_CHARACTERS.map((character) => [character.id, character.title])) as Record<
     MarioCharacter,
@@ -254,24 +310,18 @@ function navigateTo(path: string) {
                 <div class="absolute bottom-10 left-1/3 h-80 w-80 rounded-full bg-accent/10 blur-3xl" />
             </div>
 
-            <section class="container relative z-10 py-12 md:py-16 grid lg:grid-cols-[1.15fr_0.85fr] gap-8 items-center">
+            <section class="container relative z-10 py-12 md:py-16 grid lg:grid-cols-[1.15fr_0.85fr] gap-8 items-center mt-5">
                 <div class="space-y-5">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <PixelBadge tone="gold">GUIA VIVO</PixelBadge>
-                        <PixelBadge tone="blue">PIXEL UI</PixelBadge>
-                        <PixelBadge tone="green">PHOSPHOR ICONS</PixelBadge>
-                    </div>
 
                     <div class="space-y-3">
-                        <div class="font-pixel text-[10px] text-primary">▶ ANÁLISE DO SISTEMA ATUAL</div>
+                        <div class="font-pixel text-[10px] text-primary">▶ DESIGN SYSTEM DO PRODUTO</div>
                         <h1 class="font-pixel text-3xl md:text-4xl leading-tight">
-                            UMA DOCUMENTAÇÃO QUE SEGUE O MESMO ARCADE DO APP
+                            DESIGN SYSTEM ALINHADO AO PRODUTO REAL
                         </h1>
                         <p class="font-display text-lg md:text-xl text-foreground/85 max-w-2xl">
-                            Esta página agora espelha a linguagem real do produto: avatares do
-                            <span class="text-primary">MarioAvatar</span>, componentes pixelados,
-                            tokens semânticos e os ícones Phosphor que já aparecem nas telas de login,
-                            cadastro e dashboard.
+                            A página mostra exatamente os elementos que a interface usa hoje: avatares
+                            do <span class="text-primary">MarioAvatar</span>, cores, ícones
+                            Phosphor e componentes pixelados com contraste real.
                         </p>
                     </div>
 
@@ -300,7 +350,7 @@ function navigateTo(path: string) {
                             <div class="font-pixel text-[10px] text-primary">▶ RECORTE DO UI KIT</div>
                             <div class="font-pixel text-sm mt-2">COMPONENTES REAIS</div>
                         </div>
-                        <PixelBadge tone="teal">{{ themeStore.theme === 'night' ? 'NOITE' : 'DIA' }}</PixelBadge>
+                        <PixelBadge tone="teal">TEMA ATUAL</PixelBadge>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
@@ -342,23 +392,23 @@ function navigateTo(path: string) {
                 <div class="container py-12">
                     <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
                         <div>
-                            <div class="font-pixel text-[10px] text-primary mb-2">▶ TOKENS SEMÂNTICOS</div>
-                            <h2 class="font-pixel text-2xl">CORES QUE O APP JÁ USA</h2>
+                            <div class="font-pixel text-[10px] text-primary mb-2">▶ PALETA OFICIAL</div>
+                            <h2 class="font-pixel text-2xl">CORES DO SISTEMA</h2>
                         </div>
-                        <PixelBadge tone="red">SEM CORES HARDCODED</PixelBadge>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                        <PixelCard v-for="token in designTokens" :key="token.name" class="overflow-hidden">
-                            <div class="h-24 border-b-2 border-border" :style="{ backgroundColor: token.reference }" />
-                            <div class="p-4 space-y-2">
-                                <div class="flex items-center justify-between gap-3">
-                                    <div class="font-pixel text-[10px]">{{ token.label }}</div>
-                                    <PixelBadge tone="gold">TOKEN</PixelBadge>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+                        <PixelCard v-for="token in paletteTokens" :key="token.hex" class="overflow-hidden">
+                            <div class="h-16 border-b-2 border-border" :style="{ backgroundColor: token.hex }" />
+                            <div class="p-3">
+                                <div class="font-pixel text-[10px] truncate">{{ token.label }}</div>
+                                <div class="mt-1 flex items-center justify-between gap-2">
+                                    <div class="font-sans text-[10px] text-muted-foreground truncate">{{ token.name }}</div>
+                                    <div class="font-sans text-sm">{{ token.hex }}</div>
                                 </div>
-                                <div class="font-display text-base text-muted-foreground">{{ token.description }}</div>
-                                <div class="font-sans text-[10px] text-muted-foreground">{{ token.name }}</div>
-                                <div class="font-sans text-[10px] text-foreground/80">{{ token.reference }}</div>
+                                <div v-if="token.aliases.length" class="font-sans text-[10px] text-muted-foreground mt-1 truncate">
+                                    +{{ token.aliases.length }} uso{{ token.aliases.length > 1 ? 's' : '' }}
+                                </div>
                             </div>
                         </PixelCard>
                     </div>
@@ -375,7 +425,7 @@ function navigateTo(path: string) {
                     <div class="grid lg:grid-cols-2 gap-4">
                         <PixelCard class="p-6">
                             <div class="font-pixel text-[10px] text-primary mb-4">TÍTULOS</div>
-                            <div class="font-pixel text-4xl md:text-xl leading-tight">PRESS START 2P</div>
+                            <div class="font-pixel text-2xl leading-tight">PRESS START 2P</div>
                             <p class="font-display text-lg text-muted-foreground mt-4">
                                 Usado em navegação, seções e chamadas de atenção com leitura curta.
                             </p>
