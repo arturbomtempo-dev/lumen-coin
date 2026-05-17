@@ -59,6 +59,9 @@ const VISIBLE_CHARACTERS = computed(() =>
                         <PhMoon v-else weight="fill" class="pixel-icon" />
                         {{ themeStore.theme === 'night' ? 'DIA' : 'NOITE' }}
                     </button>
+                    <RouterLink to="/signup">
+                        <PixelButton size="sm" variant="success">CRIAR CONTA</PixelButton>
+                    </RouterLink>
                     <RouterLink to="/login">
                         <PixelButton size="sm" variant="primary">
                             <PhSparkle weight="fill" class="pixel-icon" /> ENTRAR
