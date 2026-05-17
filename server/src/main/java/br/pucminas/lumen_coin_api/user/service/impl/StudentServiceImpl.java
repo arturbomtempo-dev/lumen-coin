@@ -164,4 +164,13 @@ public class StudentServiceImpl implements StudentService {
                 .orElseThrow(() -> new UserNotFoundException(id));
         studentRepository.delete(student);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<StudentResponse> findByInstitutionId(UUID institutionId) {
+        return studentRepository.findByInstitutionId(institutionId)
+                .stream()
+                .map(mapper::toResponse)
+                .toList();
+    }
 }

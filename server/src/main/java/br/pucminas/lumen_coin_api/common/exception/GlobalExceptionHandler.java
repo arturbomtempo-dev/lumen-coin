@@ -1,5 +1,6 @@
 package br.pucminas.lumen_coin_api.common.exception;
 
+import br.pucminas.lumen_coin_api.coin_transfer.exception.InsufficientBalanceException;
 import br.pucminas.lumen_coin_api.common.dto.ErrorResponse;
 import br.pucminas.lumen_coin_api.course.exception.CourseNotFoundException;
 import br.pucminas.lumen_coin_api.user.exception.CnpjAlreadyInUseException;
@@ -59,6 +60,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleCpfConflict(
             CpfAlreadyInUseException ex, HttpServletRequest request) {
         return build(HttpStatus.CONFLICT, "Conflict", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(InsufficientBalanceException.class)
+    public ResponseEntity<ErrorResponse> handleInsufficientBalance(
+            InsufficientBalanceException ex, HttpServletRequest request) {
+        return build(HttpStatus.UNPROCESSABLE_ENTITY, "Unprocessable Entity", ex.getMessage(), request);
     }
 
     @ExceptionHandler(StudentInstitutionCourseMismatchException.class)

@@ -1,13 +1,39 @@
 <script setup lang="ts">
+import {
+    getReceivedTransfers,
+    type CoinTransferResponse,
+} from '@/modules/coin-transfer/services/coin-transfer.service';
 import { useStudentStore } from '@/modules/student/stores/student.store';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import { PhReceipt, PhTicket } from '@phosphor-icons/vue';
 import { storeToRefs } from 'pinia';
+import { onMounted, ref } from 'vue';
 
 const store = useStudentStore();
-const { transactions, coupons } = storeToRefs(store);
+const { coupons } = storeToRefs(store);
+
+const transfers = ref<CoinTransferResponse[]>([]);
+const isLoading = ref(true);
+
+function formatDate(iso: string) {
+    return new Intl.DateTimeFormat('pt-BR', {
+        timeZone: 'America/Sao_Paulo',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    }).format(new Date(iso));
+}
+
+onMounted(async () => {
+    try {
+        const { data } = await getReceivedTransfers();
+        transfers.value = data;
+    } finally {
+        isLoading.value = false;
+    }
+});
 </script>
 
 <template>
@@ -28,29 +54,32 @@ const { transactions, coupons } = storeToRefs(store);
                 <span class="hidden sm:block">DATA</span>
                 <span>VALOR</span>
             </div>
+            <div v-if="isLoading" class="p-6 font-sans text-sm text-muted-foreground text-center">
+                Carregando...
+            </div>
             <div
-                v-if="transactions.length === 0"
+                v-else-if="transfers.length === 0"
                 class="p-6 font-sans text-sm text-muted-foreground text-center"
             >
                 Nenhuma transação registrada.
             </div>
             <div
-                v-for="t in transactions"
+                v-for="t in transfers"
                 :key="t.id"
                 class="px-4 py-3 border-t-2 border-border grid grid-cols-[1fr_auto] sm:grid-cols-[1.5fr_2fr_auto_auto] gap-2 items-center"
             >
                 <div>
-                    <div class="font-pixel text-[10px]">{{ t.teacher }}</div>
+                    <div class="font-pixel text-[10px]">{{ t.senderName }}</div>
                     <div class="font-sans text-xs text-muted-foreground sm:hidden mt-1">
-                        {{ t.reason }}
+                        {{ t.message }}
                     </div>
                     <div class="font-sans text-xs text-muted-foreground sm:hidden">
-                        {{ t.date }}
+                        {{ formatDate(t.sentAt) }}
                     </div>
                 </div>
-                <div class="hidden sm:block font-sans text-sm">{{ t.reason }}</div>
+                <div class="hidden sm:block font-sans text-sm">{{ t.message }}</div>
                 <div class="hidden sm:block font-pixel text-[9px] text-muted-foreground">
-                    {{ t.date }}
+                    {{ formatDate(t.sentAt) }}
                 </div>
                 <div class="font-pixel text-sm flex items-center gap-1 text-success">
                     +<CoinIcon :size="12" /> {{ t.amount }}

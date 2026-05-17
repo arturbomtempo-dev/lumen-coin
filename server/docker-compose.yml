@@ -23,8 +23,24 @@ services:
     networks:
       - lumen-coin-network
 
+  rabbitmq:
+    image: rabbitmq:4.0-management
+    container_name: lumen-coin-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MGMT_PORT:-15672}:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - lumen-coin-network
+
 volumes:
   pg-data:
+  rabbitmq-data:
 
 networks:
   lumen-coin-network:

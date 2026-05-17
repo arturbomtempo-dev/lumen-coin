@@ -1,52 +1,51 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
-import { useStudentStore } from '@/modules/student/stores/student.store';
+import { useTeacherStore } from '@/modules/teacher/stores/teacher.store';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import { useThemeStore } from '@/shared/stores/theme.store';
 import {
-    PhBell,
     PhGameController,
-    PhHouse,
+    PhGraduationCap,
     PhMoon,
+    PhPaperPlaneTilt,
     PhReceipt,
     PhSignOut,
     PhSun,
-    PhUser,
 } from '@phosphor-icons/vue';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 
 const themeStore = useThemeStore();
-const studentStore = useStudentStore();
+const teacherStore = useTeacherStore();
 const authStore = useAuthStore();
-const { balance, level, name, unreadCount } = storeToRefs(studentStore);
+const { name, balance } = storeToRefs(teacherStore);
 const route = useRoute();
 const router = useRouter();
 
 const navItems = [
-    { to: '/app/aluno', icon: PhHouse, label: 'INÍCIO', badge: 0 },
-    { to: '/app/aluno/extrato', icon: PhReceipt, label: 'EXTRATO', badge: 0 },
-    { to: '/app/aluno/perfil', icon: PhUser, label: 'PERFIL', badge: 0 },
-    { to: '/app/aluno/notificacoes', icon: PhBell, label: 'AVISOS', badge: unreadCount },
+    { to: '/app/professor', icon: PhGraduationCap, label: 'PAINEL' },
+    { to: '/app/professor/enviar-moedas', icon: PhPaperPlaneTilt, label: 'ENVIAR' },
+    { to: '/app/professor/extrato', icon: PhReceipt, label: 'EXTRATO' },
 ];
-
-onMounted(() => {
-    studentStore.loadProfile();
-});
 
 async function handleLogout() {
     await authStore.logout();
     router.push('/login');
 }
+
+onMounted(() => {
+    if (!teacherStore.isLoaded) {
+        teacherStore.loadProfile();
+    }
+});
 </script>
 
 <template>
     <div class="min-h-screen flex flex-col">
-        <!-- HUD Top -->
         <header class="sticky top-0 z-40 bg-hud text-hud-foreground border-b-4 border-border">
             <div class="container flex items-center justify-between py-2 gap-3">
-                <RouterLink to="/app/aluno" class="flex items-center gap-2 min-w-0">
+                <RouterLink to="/app/professor" class="flex items-center gap-2 min-w-0">
                     <div
                         class="pixel-icon border-2 border-border bg-primary text-primary-foreground p-1"
                     >
@@ -55,13 +54,12 @@ async function handleLogout() {
                     <div class="min-w-0">
                         <div class="font-pixel text-[10px] leading-tight">LUMEN COIN</div>
                         <div class="font-display text-xs opacity-70 -mt-0.5 truncate">
-                            {{ name.toUpperCase() }}
+                            {{ name ? name.toUpperCase() : 'PROFESSOR' }}
                         </div>
                     </div>
                 </RouterLink>
 
                 <div class="hidden sm:flex items-center gap-4 font-pixel text-[10px]">
-                    <span>LV {{ level }}</span>
                     <span class="flex items-center gap-1">
                         <CoinIcon :size="14" />
                         {{ balance.toLocaleString('pt-BR') }}
@@ -98,7 +96,6 @@ async function handleLogout() {
             <router-view />
         </main>
 
-        <!-- HUD Bottom -->
         <nav class="sticky bottom-0 z-40 bg-hud text-hud-foreground border-t-4 border-border">
             <div class="container flex items-center justify-between py-2 gap-2">
                 <div class="hidden md:flex items-center gap-2 font-pixel text-[10px]">
@@ -124,17 +121,6 @@ async function handleLogout() {
                                 class="pixel-icon"
                             />
                             <span class="hidden sm:inline">{{ item.label }}</span>
-                            <span
-                                v-if="
-                                    item.badge &&
-                                    (typeof item.badge === 'number'
-                                        ? item.badge
-                                        : item.badge.value) > 0
-                                "
-                                class="absolute -top-1 -right-1 h-4 min-w-4 px-0.5 flex items-center justify-center bg-secondary text-secondary-foreground border-2 border-border font-pixel text-[8px]"
-                            >
-                                {{ typeof item.badge === 'number' ? item.badge : item.badge.value }}
-                            </span>
                         </RouterLink>
                     </li>
                 </ul>

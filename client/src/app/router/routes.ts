@@ -65,9 +65,25 @@ export const routes: RouteRecordRaw[] = [
     },
     {
         path: '/app/professor',
-        name: 'teacher-dashboard',
+        component: () => import('@/shared/layouts/TeacherLayout.vue'),
         meta: { requiresAuth: true },
-        component: () => import('@/modules/teacher/pages/TeacherDashboardPage.vue'),
+        children: [
+            {
+                path: '',
+                name: 'teacher-dashboard',
+                component: () => import('@/modules/teacher/pages/TeacherDashboardPage.vue'),
+            },
+            {
+                path: 'enviar-moedas',
+                name: 'teacher-send-coins',
+                component: () => import('@/modules/teacher/pages/TeacherSendCoinsPage.vue'),
+            },
+            {
+                path: 'extrato',
+                name: 'teacher-statement',
+                component: () => import('@/modules/teacher/pages/TeacherStatementPage.vue'),
+            },
+        ],
     },
     {
         path: '/app/empresa',

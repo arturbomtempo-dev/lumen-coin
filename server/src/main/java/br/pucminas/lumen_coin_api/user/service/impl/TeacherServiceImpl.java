@@ -47,6 +47,7 @@ public class TeacherServiceImpl implements TeacherService {
         teacher.setCpf(request.cpf());
         teacher.setDepartment(request.department());
         teacher.setInstitutionId(institutionId);
+        teacher.setBalance(1000);
 
         Teacher saved = teacherRepository.save(teacher);
         emailService.sendWelcome(saved.getEmail(), saved.getName());

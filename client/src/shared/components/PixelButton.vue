@@ -41,7 +41,7 @@ const sizeClass: Record<Size, string> = {
         :class="[
             'relative inline-flex items-center justify-center gap-2 font-pixel uppercase select-none',
             'border-2 border-border',
-            'transition-all duration-75 active:translate-x-[3px] active:translate-y-[3px]',
+            'transition-all duration-75 active:translate-x-0.75 active:translate-y-0.75',
             'shadow-[3px_3px_0_0_var(--btn-shadow,hsl(var(--border)))] active:shadow-none',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             'disabled:opacity-60 disabled:pointer-events-none',

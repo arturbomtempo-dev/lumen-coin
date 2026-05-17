@@ -1,3 +1,5 @@
+import { useAuthStore } from '@/modules/auth/stores/auth.store';
+import { getStudent } from '@/modules/student/services/student.service';
 import type { MarioCharacter } from '@/shared/data/characters';
 import {
     initialNotifications,
@@ -97,6 +99,14 @@ export const useStudentStore = defineStore('student', () => {
         notifications.value = notifications.value.map((n) => ({ ...n, isRead: true }));
     }
 
+    async function loadProfile() {
+        const auth = useAuthStore();
+        if (!auth.user) return;
+        const { data } = await getStudent(auth.user.id);
+        name.value = data.name;
+        balance.value = data.balance;
+    }
+
     return {
         name,
         balance,
@@ -113,5 +123,6 @@ export const useStudentStore = defineStore('student', () => {
         spend,
         receive,
         markAsRead,
+        loadProfile,
     };
 });

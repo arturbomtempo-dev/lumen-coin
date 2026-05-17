@@ -50,4 +50,10 @@ public class StudentController {
         studentService.delete(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/by-institution/{institutionId}")
+    @PreAuthorize("hasAnyRole('TEACHER', 'INSTITUTION')")
+    public ResponseEntity<List<StudentResponse>> findByInstitution(@PathVariable UUID institutionId) {
+        return ResponseEntity.ok(studentService.findByInstitutionId(institutionId));
+    }
 }

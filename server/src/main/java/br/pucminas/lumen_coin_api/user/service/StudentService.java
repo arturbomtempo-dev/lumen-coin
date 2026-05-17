@@ -17,4 +17,6 @@ public interface StudentService {
     StudentResponse update(UUID id, UpdateStudentRequest request);
 
     void delete(UUID id);
+
+    List<StudentResponse> findByInstitutionId(UUID institutionId);
 }
