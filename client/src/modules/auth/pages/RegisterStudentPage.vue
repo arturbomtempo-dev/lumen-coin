@@ -285,14 +285,24 @@ async function goToNextStep() {
     step.value += 1;
 }
 
-async function loadInstitutions() {
-    const response = await getPublicInstitutions();
-    institutions.value = response.data;
-}
+async function loadAcademicOptions() {
+    const [institutionsResponse, coursesResponse] = await Promise.all([
+        getPublicInstitutions(),
+        getPublicCourses(),
+    ]);
 
-async function loadCourses() {
-    const response = await getPublicCourses();
-    courses.value = response.data;
+    courses.value = coursesResponse.data;
+
+    const institutionIdsWithCourses = new Set(coursesResponse.data.map((course) => course.institutionId));
+
+    institutions.value = institutionsResponse.data.filter((institution) =>
+        institutionIdsWithCourses.has(institution.id)
+    );
+
+    if (!institutions.value.some((institution) => institution.id === studentData.value.institutionId)) {
+        studentData.value.institutionId = '';
+        studentData.value.courseId = '';
+    }
 }
 
 watch(character, (value) => {
@@ -326,7 +336,7 @@ watch(
 );
 
 onMounted(async () => {
-    await Promise.all([loadInstitutions(), loadCourses()]);
+    await loadAcademicOptions();
 });
 </script>
 
