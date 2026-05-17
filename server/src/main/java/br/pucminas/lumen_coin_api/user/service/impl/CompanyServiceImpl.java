@@ -1,5 +1,6 @@
 package br.pucminas.lumen_coin_api.user.service.impl;
 
+import br.pucminas.lumen_coin_api.email.service.EmailService;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterCompanyRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateCompanyRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.CompanyResponse;
@@ -27,6 +28,7 @@ public class CompanyServiceImpl implements CompanyService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
+    private final EmailService emailService;
 
     @Override
     @Transactional
@@ -45,7 +47,9 @@ public class CompanyServiceImpl implements CompanyService {
         company.setAvatar(request.avatar() != null ? request.avatar() : Avatar.COMPANY);
         company.setCnpj(request.cnpj());
 
-        return mapper.toResponse(companyRepository.save(company));
+        Company saved = companyRepository.save(company);
+        emailService.sendWelcome(saved.getEmail(), saved.getName());
+        return mapper.toResponse(saved);
     }
 
     @Override

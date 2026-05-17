@@ -9,5 +9,4 @@ public class LumenCoinApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(LumenCoinApiApplication.class, args);
 	}
-
 }

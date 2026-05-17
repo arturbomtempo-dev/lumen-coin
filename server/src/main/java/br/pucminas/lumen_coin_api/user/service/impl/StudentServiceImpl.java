@@ -3,6 +3,7 @@ package br.pucminas.lumen_coin_api.user.service.impl;
 import br.pucminas.lumen_coin_api.course.entity.Course;
 import br.pucminas.lumen_coin_api.course.exception.CourseNotFoundException;
 import br.pucminas.lumen_coin_api.course.repository.CourseRepository;
+import br.pucminas.lumen_coin_api.email.service.EmailService;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterStudentRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateStudentRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.StudentResponse;
@@ -33,6 +34,7 @@ public class StudentServiceImpl implements StudentService {
     private final CourseRepository courseRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
+    private final EmailService emailService;
 
     @Override
     @Transactional
@@ -68,7 +70,9 @@ public class StudentServiceImpl implements StudentService {
         student.setInstitutionId(request.institutionId());
         student.setCourseId(request.courseId());
 
-        return mapper.toResponse(studentRepository.save(student));
+        Student saved = studentRepository.save(student);
+        emailService.sendWelcome(saved.getEmail(), saved.getName());
+        return mapper.toResponse(saved);
     }
 
     @Override

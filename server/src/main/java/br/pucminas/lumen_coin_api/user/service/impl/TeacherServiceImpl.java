@@ -1,5 +1,6 @@
 package br.pucminas.lumen_coin_api.user.service.impl;
 
+import br.pucminas.lumen_coin_api.email.service.EmailService;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterTeacherRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateTeacherRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.TeacherResponse;
@@ -26,6 +27,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
+    private final EmailService emailService;
 
     @Override
     @Transactional
@@ -46,7 +48,9 @@ public class TeacherServiceImpl implements TeacherService {
         teacher.setDepartment(request.department());
         teacher.setInstitutionId(institutionId);
 
-        return mapper.toResponse(teacherRepository.save(teacher));
+        Teacher saved = teacherRepository.save(teacher);
+        emailService.sendWelcome(saved.getEmail(), saved.getName());
+        return mapper.toResponse(saved);
     }
 
     @Override

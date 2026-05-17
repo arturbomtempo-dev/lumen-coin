@@ -2,6 +2,7 @@ package br.pucminas.lumen_coin_api.user.service.impl;
 
 import br.pucminas.lumen_coin_api.course.entity.Course;
 import br.pucminas.lumen_coin_api.course.repository.CourseRepository;
+import br.pucminas.lumen_coin_api.email.service.EmailService;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterInstitutionRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateInstitutionRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.InstitutionResponse;
@@ -36,6 +37,7 @@ public class InstitutionServiceImpl implements InstitutionService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
+    private final EmailService emailService;
 
     @Override
     @Transactional
@@ -56,7 +58,9 @@ public class InstitutionServiceImpl implements InstitutionService {
         institution.setZipCode(request.zipCode());
         institution.setAddress(request.address());
 
-        return mapper.toResponse(institutionRepository.save(institution));
+        Institution saved = institutionRepository.save(institution);
+        emailService.sendWelcome(saved.getEmail(), saved.getName());
+        return mapper.toResponse(saved);
     }
 
     @Override
