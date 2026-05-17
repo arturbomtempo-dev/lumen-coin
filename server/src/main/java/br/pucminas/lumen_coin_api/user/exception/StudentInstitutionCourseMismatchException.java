@@ -4,6 +4,6 @@ import java.util.UUID;
 
 public class StudentInstitutionCourseMismatchException extends RuntimeException {
     public StudentInstitutionCourseMismatchException(UUID institutionId, UUID courseId) {
-        super("Course with ID " + courseId + " does not belong to institution with ID " + institutionId);
+        super("O curso selecionado não pertence à instituição informada");
     }
 }

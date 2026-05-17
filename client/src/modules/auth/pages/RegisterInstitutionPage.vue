@@ -1,29 +1,28 @@
 <script setup lang="ts">
 import { registerInstitutionRequest } from '@/modules/auth/services/auth.service';
-import { registerInstitutionSchema } from '@/modules/schemas/register-institution.schema';
+import {
+    registerInstitutionSchema,
+    type RegisterInstitutionFormData,
+} from '@/modules/schemas/register-institution.schema';
+import MarioAvatar from '@/shared/components/MarioAvatar.vue';
+import PixelButton from '@/shared/components/PixelButton.vue';
+import PixelCard from '@/shared/components/PixelCard.vue';
+import PixelInput from '@/shared/components/PixelInput.vue';
 import { useForm } from '@/shared/composables/useForm';
-import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { toast } from 'vue-sonner';
-
 import {
     PhArrowLeft,
     PhArrowRight,
     PhBuildings,
     PhCheckCircle,
-    PhCrown,
     PhEye,
     PhEyeSlash,
     PhHouse,
     PhIdentificationCard,
 } from '@phosphor-icons/vue';
-
-import MarioAvatar from '@/shared/components/MarioAvatar.vue';
-import PixelButton from '@/shared/components/PixelButton.vue';
-import PixelCard from '@/shared/components/PixelCard.vue';
-import PixelInput from '@/shared/components/PixelInput.vue';
-
-import { type MarioCharacter } from '@/shared/data/characters';
+import { vMaska } from 'maska/vue';
+import { computed, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { toast } from 'vue-sonner';
 
 interface InstitutionStep {
     label: string;
@@ -33,6 +32,7 @@ interface InstitutionStep {
 const router = useRouter();
 
 const step = ref<number>(0);
+const attemptedSteps = ref<Record<number, boolean>>({});
 
 const showPassword = ref<boolean>(false);
 
@@ -60,25 +60,10 @@ institutionForm.value = {
     city: '',
 };
 
-const character = ref<MarioCharacter>('institution');
-
 const institutionSteps = ref<InstitutionStep[]>([
-    {
-        label: 'AVATAR',
-        icon: PhCrown,
-    },
-    {
-        label: 'INSTITUIÇÃO',
-        icon: PhBuildings,
-    },
-    {
-        label: 'ENDEREÇO',
-        icon: PhHouse,
-    },
-    {
-        label: 'ACESSO',
-        icon: PhIdentificationCard,
-    },
+    { label: 'DADOS', icon: PhBuildings },
+    { label: 'ENDEREÇO', icon: PhHouse },
+    { label: 'ACESSO', icon: PhIdentificationCard },
 ]);
 
 const progress = computed<number>(() => {
@@ -93,54 +78,42 @@ const passwordsMatch = computed<boolean | null>(() => {
     return institutionForm.value.password === institutionForm.value.confirmPassword;
 });
 
-function formatCnpj(value: string): string {
-    const numericValue = value.replace(/\D/g, '').slice(0, 14);
+const phoneMaskOptions = {
+    mask: ['(##) ####-####', '(##) #####-####'],
+};
 
-    return numericValue
-        .replace(/^(\d{2})(\d)/, '$1.$2')
-        .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
-        .replace(/^(\d{2})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3/$4')
-        .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+const stepFields: Record<number, Array<keyof RegisterInstitutionFormData>> = {
+    0: ['name', 'cnpj'],
+    1: ['zipCode', 'street', 'number', 'neighborhood', 'city'],
+    2: ['email', 'password', 'confirmPassword'],
+};
+
+function digitsOnly(value: string): string {
+    return value.replace(/\D/g, '');
 }
 
-function formatPhone(value: string): string {
-    const numericValue = value.replace(/\D/g, '').slice(0, 11);
-
-    if (numericValue.length <= 10) {
-        return numericValue.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d)/, '$1-$2');
-    }
-
-    return numericValue.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
-}
-
-function formatCep(value: string): string {
-    const numericValue = value.replace(/\D/g, '').slice(0, 8);
-
-    return numericValue.replace(/^(\d{5})(\d)/, '$1-$2');
-}
-
-function handleCepInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-
-    institutionForm.value.zipCode = formatCep(inputElement.value);
-
-    const numericCep = inputElement.value.replace(/\D/g, '');
-
-    if (numericCep.length === 8) {
-        fetchAddressByCep(numericCep);
-    }
+function validateCurrentStep(): boolean {
+    attemptedSteps.value[step.value] = true;
+    const parseResult = registerInstitutionSchema.safeParse(institutionForm.value);
+    institutionErrors.value = {};
+    if (parseResult.success) return true;
+    const fieldsForStep = new Set(stepFields[step.value]);
+    let hasError = false;
+    parseResult.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof RegisterInstitutionFormData;
+        if (!fieldsForStep.has(field)) return;
+        if (institutionErrors.value[field]) return;
+        institutionErrors.value[field] = issue.message;
+        hasError = true;
+    });
+    return !hasError;
 }
 
 async function fetchAddressByCep(cep: string): Promise<void> {
     try {
         const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-
         const addressData = await response.json();
-
-        if (addressData.erro) {
-            return;
-        }
-
+        if (addressData.erro) return;
         institutionForm.value.street = addressData.logradouro ?? '';
         institutionForm.value.neighborhood = addressData.bairro ?? '';
         institutionForm.value.city = addressData.localidade ?? '';
@@ -149,32 +122,8 @@ async function fetchAddressByCep(cep: string): Promise<void> {
     }
 }
 
-function handleCnpjInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-
-    institutionForm.value.cnpj = formatCnpj(inputElement.value);
-}
-
-function handlePhoneInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-
-    institutionForm.value.phone = formatPhone(inputElement.value);
-}
-
-function goToNextStep(): void {
-    if (step.value >= institutionSteps.value.length - 1) {
-        void submitInstitution();
-        return;
-    }
-
-    step.value += 1;
-}
-
 function goToPreviousStep(): void {
-    if (step.value <= 0) {
-        return;
-    }
-
+    if (step.value <= 0) return;
     step.value -= 1;
 }
 
@@ -183,45 +132,67 @@ function goBack(): void {
 }
 
 function getAddress(): string {
-    const parts = [
+    return [
         institutionForm.value.street.trim(),
         institutionForm.value.number.trim(),
         institutionForm.value.neighborhood.trim(),
         institutionForm.value.city.trim(),
-    ].filter((value) => value.length > 0);
-
-    return parts.join(', ').slice(0, 300);
+    ]
+        .filter((v) => v.length > 0)
+        .join(', ')
+        .slice(0, 300);
 }
 
 async function submitInstitution(): Promise<void> {
-    if (!validate()) {
-        return;
-    }
-
+    if (!validate()) return;
     isSubmitting.value = true;
-
     try {
         await registerInstitutionRequest({
             name: institutionForm.value.name.trim(),
             email: institutionForm.value.email.trim(),
             password: institutionForm.value.password,
-            cnpj: institutionForm.value.cnpj.replace(/\D/g, ''),
-            zipCode: institutionForm.value.zipCode.replace(/\D/g, ''),
+            cnpj: digitsOnly(institutionForm.value.cnpj),
+            zipCode: digitsOnly(institutionForm.value.zipCode),
             address: getAddress(),
         });
-
         toast.success('Instituição cadastrada com sucesso!', {
             description: 'Faça login para acessar o portal.',
         });
-
         clearErrors();
-
         router.push({ name: 'login' });
     } catch {
     } finally {
         isSubmitting.value = false;
     }
 }
+
+async function goToNextStep(): Promise<void> {
+    if (!validateCurrentStep()) return;
+    if (step.value >= institutionSteps.value.length - 1) {
+        await submitInstitution();
+        return;
+    }
+    step.value += 1;
+}
+
+watch(
+    () => digitsOnly(institutionForm.value.zipCode ?? ''),
+    (numeric) => {
+        if (numeric.length === 8) {
+            void fetchAddressByCep(numeric);
+        }
+    },
+);
+
+watch(
+    institutionForm,
+    () => {
+        if (!attemptedSteps.value[step.value]) return;
+        validateCurrentStep();
+    },
+    { deep: true },
+);
+
 </script>
 
 <template>
@@ -247,7 +218,7 @@ async function submitInstitution(): Promise<void> {
                         <div
                             class="bg-hud border-2 border-border p-2 shadow-[4px_4px_0px_hsl(var(--border))]"
                         >
-                            <MarioAvatar :character="character" :size="56" />
+                            <MarioAvatar character="institution" :size="56" />
                         </div>
 
                         <div>
@@ -313,29 +284,6 @@ async function submitInstitution(): Promise<void> {
 
                 <div class="space-y-4">
                     <template v-if="step === 0">
-                        <div>
-                            <p class="font-pixel text-[10px] mb-4">AVATAR DA INSTITUIÇÃO</p>
-
-                            <button
-                                class="w-full border-2 border-border p-4 text-center bg-primary text-primary-foreground shadow-[4px_4px_0px_hsl(var(--border))] -translate-y-0.5 transition-all"
-                                type="button"
-                            >
-                                <div
-                                    class="bg-hud border-2 border-border p-3 flex justify-center mb-3"
-                                >
-                                    <MarioAvatar :character="character" :size="70" />
-                                </div>
-
-                                <p class="font-pixel text-[10px] mb-1">INSTITUIÇÃO</p>
-
-                                <p class="font-sans text-[11px] opacity-90">
-                                    Avatar oficial da instituição
-                                </p>
-                            </button>
-                        </div>
-                    </template>
-
-                    <template v-if="step === 1">
                         <div class="space-y-4">
                             <div>
                                 <label class="font-pixel text-[9px] block mb-2">
@@ -344,7 +292,7 @@ async function submitInstitution(): Promise<void> {
 
                                 <PixelInput
                                     v-model="institutionForm.name"
-                                    placeholder="Digite o nome"
+                                    placeholder="Ex: Universidade PUC Minas"
                                 />
                                 <p
                                     v-if="institutionErrors.name"
@@ -360,10 +308,10 @@ async function submitInstitution(): Promise<void> {
                                     <label class="font-pixel text-[9px] block mb-2"> CNPJ </label>
 
                                     <PixelInput
-                                        :model-value="institutionForm.cnpj"
+                                        v-model="institutionForm.cnpj"
+                                        v-maska="'##.###.###/####-##'"
                                         maxlength="18"
                                         placeholder="00.000.000/0000-00"
-                                        @input="handleCnpjInput"
                                     />
                                     <p
                                         v-if="institutionErrors.cnpj"
@@ -380,10 +328,10 @@ async function submitInstitution(): Promise<void> {
                                     </label>
 
                                     <PixelInput
-                                        :model-value="institutionForm.phone"
+                                        v-model="institutionForm.phone"
+                                        v-maska="phoneMaskOptions"
                                         maxlength="15"
                                         placeholder="(00) 00000-0000"
-                                        @input="handlePhoneInput"
                                     />
                                     <p
                                         v-if="institutionErrors.phone"
@@ -397,16 +345,16 @@ async function submitInstitution(): Promise<void> {
                         </div>
                     </template>
 
-                    <template v-if="step === 2">
+                    <template v-if="step === 1">
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="font-pixel text-[9px] block mb-2"> CEP </label>
 
                                 <PixelInput
-                                    :model-value="institutionForm.zipCode"
+                                    v-model="institutionForm.zipCode"
+                                    v-maska="'#####-###'"
                                     maxlength="9"
                                     placeholder="00000-000"
-                                    @input="handleCepInput"
                                 />
                                 <p
                                     v-if="institutionErrors.zipCode"
@@ -477,7 +425,7 @@ async function submitInstitution(): Promise<void> {
                         </div>
                     </template>
 
-                    <template v-if="step === 3">
+                    <template v-if="step === 2">
                         <div class="space-y-4">
                             <div>
                                 <label class="font-pixel text-[9px] block mb-2"> E-MAIL </label>
@@ -504,7 +452,7 @@ async function submitInstitution(): Promise<void> {
                                         v-model="institutionForm.password"
                                         :type="showPassword ? 'text' : 'password'"
                                         class="pr-10"
-                                        placeholder="••••••••"
+                                        placeholder="Mín. 8 chars, maiúscula, número e especial"
                                     />
 
                                     <button

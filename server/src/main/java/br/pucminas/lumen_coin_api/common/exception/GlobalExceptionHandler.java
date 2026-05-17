@@ -81,32 +81,32 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleTypeMismatch(
             MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
-        String message = "Parameter '" + ex.getName() + "' has an invalid value: " + ex.getValue();
+        String message = "Parâmetro inválido: '" + ex.getName() + "'";
         return build(HttpStatus.BAD_REQUEST, "Bad Request", message, request);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleNotReadable(
             HttpMessageNotReadableException ex, HttpServletRequest request) {
-        return build(HttpStatus.BAD_REQUEST, "Bad Request", "Malformed or invalid request body.", request);
+        return build(HttpStatus.BAD_REQUEST, "Bad Request", "Requisição inválida ou malformada.", request);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentials(
             BadCredentialsException ex, HttpServletRequest request) {
-        return build(HttpStatus.UNAUTHORIZED, "Unauthorized", "Invalid email or password.", request);
+        return build(HttpStatus.UNAUTHORIZED, "Unauthorized", "E-mail ou senha inválidos.", request);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(
             AccessDeniedException ex, HttpServletRequest request) {
-        return build(HttpStatus.FORBIDDEN, "Forbidden", "You do not have permission to access this resource.", request);
+        return build(HttpStatus.FORBIDDEN, "Forbidden", "Você não tem permissão para acessar este recurso.", request);
     }
 
     @ExceptionHandler({ AuthenticationException.class, InsufficientAuthenticationException.class })
     public ResponseEntity<ErrorResponse> handleAuthentication(
             Exception ex, HttpServletRequest request) {
-        return build(HttpStatus.UNAUTHORIZED, "Unauthorized", "Authentication is required to access this resource.",
+        return build(HttpStatus.UNAUTHORIZED, "Unauthorized", "Autenticação necessária para acessar este recurso.",
                 request);
     }
 
@@ -116,7 +116,7 @@ public class GlobalExceptionHandler {
         return build(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "Internal Server Error",
-                "An unexpected error occurred. Please contact support.",
+                "Ocorreu um erro inesperado. Tente novamente mais tarde.",
                 request);
     }
 

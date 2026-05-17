@@ -4,6 +4,6 @@ import java.util.UUID;
 
 public class CourseNotFoundException extends RuntimeException {
     public CourseNotFoundException(UUID id) {
-        super("Course with ID " + id + " was not found");
+        super("Curso não encontrado");
     }
 }

@@ -20,7 +20,11 @@ export const registerStudentSchema = z
         password: z
             .string()
             .min(8, 'A senha deve ter pelo menos 8 caracteres')
-            .max(72, 'A senha deve ter no máximo 72 caracteres'),
+            .max(72, 'A senha deve ter no máximo 72 caracteres')
+            .regex(/[a-z]/, 'A senha deve conter pelo menos uma letra minúscula')
+            .regex(/[A-Z]/, 'A senha deve conter pelo menos uma letra maiúscula')
+            .regex(/\d/, 'A senha deve conter pelo menos um número')
+            .regex(/[^A-Za-z0-9]/, 'A senha deve conter pelo menos um caractere especial'),
         confirmPassword: z.string().min(1, 'Confirme sua senha'),
         avatar: z.enum(avatarValues, { message: 'Selecione um avatar' }),
         cpf: z.string().refine((value) => /^\d{11}$/.test(digitsOnly(value)), {

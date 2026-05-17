@@ -6,6 +6,7 @@ import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import { useForm } from '@/shared/composables/useForm';
 import { PhArrowLeft, PhEye, PhEyeSlash, PhStorefront } from '@phosphor-icons/vue';
+import { vMaska } from 'maska/vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
@@ -13,6 +14,14 @@ import { toast } from 'vue-sonner';
 const router = useRouter();
 
 const { fields, errors, isSubmitting, validate, clearErrors } = useForm(registerCompanySchema);
+
+fields.value = {
+    name: '',
+    email: '',
+    cnpj: '',
+    password: '',
+    confirmPassword: '',
+};
 
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
@@ -26,7 +35,7 @@ async function handleSubmit(e: Event) {
             name: fields.value.name,
             email: fields.value.email,
             password: fields.value.password,
-            cnpj: fields.value.cnpj,
+            cnpj: fields.value.cnpj.replace(/\D/g, ''),
         });
         toast.success('Empresa cadastrada com sucesso!', {
             description: 'Faça login para acessar o portal.',
@@ -101,8 +110,9 @@ async function handleSubmit(e: Event) {
                     <label class="font-pixel text-[9px] block mb-2">CNPJ</label>
                     <PixelInput
                         v-model="fields.cnpj"
-                        placeholder="Somente 14 dígitos"
-                        maxlength="14"
+                        v-maska="'##.###.###/####-##'"
+                        placeholder="00.000.000/0000-00"
+                        maxlength="18"
                     />
                     <p
                         v-if="errors.cnpj"
