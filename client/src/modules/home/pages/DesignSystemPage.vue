@@ -174,7 +174,11 @@ const designTokens: DesignToken[] = [
 ];
 
 const iconItems: IconItem[] = [
-    { name: 'PhGameController', description: 'Marca e navegação principal', icon: PhGameController },
+    {
+        name: 'PhGameController',
+        description: 'Marca e navegação principal',
+        icon: PhGameController,
+    },
     { name: 'PhSparkle', description: 'Login, destaque e entrada', icon: PhSparkle },
     { name: 'PhCoin', description: 'Moedas, saldo e recompensas', icon: PhCoin },
     { name: 'PhGraduationCap', description: 'Aluno e formação', icon: PhGraduationCap },
@@ -261,10 +265,9 @@ const paletteTokens = computed<PaletteToken[]>(() => {
     return [...grouped.values()];
 });
 
-const avatarTitles = Object.fromEntries(MARIO_CHARACTERS.map((character) => [character.id, character.title])) as Record<
-    MarioCharacter,
-    string
->;
+const avatarTitles = Object.fromEntries(
+    MARIO_CHARACTERS.map((character) => [character.id, character.title])
+) as Record<MarioCharacter, string>;
 
 function navigateTo(path: string) {
     void router.push(path);
@@ -290,7 +293,11 @@ function navigateTo(path: string) {
                         type="button"
                         @click="themeStore.toggle"
                     >
-                        <PhSun v-if="themeStore.theme === 'night'" weight="fill" class="pixel-icon" />
+                        <PhSun
+                            v-if="themeStore.theme === 'night'"
+                            weight="fill"
+                            class="pixel-icon"
+                        />
                         <PhMoon v-else weight="fill" class="pixel-icon" />
                         {{ themeStore.theme === 'night' ? 'DIA' : 'NOITE' }}
                     </button>
@@ -305,22 +312,31 @@ function navigateTo(path: string) {
 
         <main class="relative overflow-hidden">
             <div class="absolute inset-0 pointer-events-none opacity-35">
-                <div class="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-primary/15 blur-3xl" />
-                <div class="absolute top-24 right-8 h-64 w-64 rounded-full bg-secondary/10 blur-3xl" />
-                <div class="absolute bottom-10 left-1/3 h-80 w-80 rounded-full bg-accent/10 blur-3xl" />
+                <div
+                    class="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-primary/15 blur-3xl"
+                />
+                <div
+                    class="absolute top-24 right-8 h-64 w-64 rounded-full bg-secondary/10 blur-3xl"
+                />
+                <div
+                    class="absolute bottom-10 left-1/3 h-80 w-80 rounded-full bg-accent/10 blur-3xl"
+                />
             </div>
 
-            <section class="container relative z-10 py-12 md:py-16 grid lg:grid-cols-[1.15fr_0.85fr] gap-8 items-center mt-5">
+            <section
+                class="container relative z-10 py-12 md:py-16 grid lg:grid-cols-[1.15fr_0.85fr] gap-8 items-center mt-5"
+            >
                 <div class="space-y-5">
-
                     <div class="space-y-3">
-                        <div class="font-pixel text-[10px] text-primary">▶ DESIGN SYSTEM DO PRODUTO</div>
+                        <div class="font-pixel text-[10px] text-primary">
+                            ▶ DESIGN SYSTEM DO PRODUTO
+                        </div>
                         <h1 class="font-pixel text-3xl md:text-4xl leading-tight">
                             DESIGN SYSTEM ALINHADO AO PRODUTO REAL
                         </h1>
                         <p class="font-display text-lg md:text-xl text-foreground/85 max-w-2xl">
-                            A página mostra exatamente os elementos que a interface usa hoje: avatares
-                            do <span class="text-primary">MarioAvatar</span>, cores, ícones
+                            A página mostra exatamente os elementos que a interface usa hoje:
+                            avatares do <span class="text-primary">MarioAvatar</span>, cores, ícones
                             Phosphor e componentes pixelados com contraste real.
                         </p>
                     </div>
@@ -337,9 +353,15 @@ function navigateTo(path: string) {
                     </div>
 
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
-                        <PixelCard v-for="stat in overviewStats" :key="stat.label" class="p-4 text-center">
+                        <PixelCard
+                            v-for="stat in overviewStats"
+                            :key="stat.label"
+                            class="p-4 text-center"
+                        >
                             <div class="font-pixel text-xl text-primary">{{ stat.value }}</div>
-                            <div class="font-pixel text-[8px] text-muted-foreground mt-2">{{ stat.label }}</div>
+                            <div class="font-pixel text-[8px] text-muted-foreground mt-2">
+                                {{ stat.label }}
+                            </div>
                         </PixelCard>
                     </div>
                 </div>
@@ -347,19 +369,25 @@ function navigateTo(path: string) {
                 <PixelCard class="p-5 md:p-6 crt-scanlines">
                     <div class="flex items-center justify-between gap-3 mb-5">
                         <div>
-                            <div class="font-pixel text-[10px] text-primary">▶ RECORTE DO UI KIT</div>
+                            <div class="font-pixel text-[10px] text-primary">
+                                ▶ RECORTE DO UI KIT
+                            </div>
                             <div class="font-pixel text-sm mt-2">COMPONENTES REAIS</div>
                         </div>
                         <PixelBadge tone="teal">TEMA ATUAL</PixelBadge>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
-                        <div class="border-2 border-border bg-hud p-3 flex items-center justify-center">
+                        <div
+                            class="border-2 border-border bg-hud p-3 flex items-center justify-center"
+                        >
                             <MarioAvatar character="mario" :size="88" />
                         </div>
                         <div class="space-y-3">
                             <div class="border-2 border-border bg-card p-3">
-                                <div class="font-pixel text-[9px] text-primary mb-2">TIPOGRAFIA</div>
+                                <div class="font-pixel text-[9px] text-primary mb-2">
+                                    TIPOGRAFIA
+                                </div>
                                 <div class="font-pixel text-lg">PRESS START 2P</div>
                                 <div class="font-display text-lg text-muted-foreground mt-1">
                                     VT323 para interface e leitura contínua
@@ -392,22 +420,40 @@ function navigateTo(path: string) {
                 <div class="container py-12">
                     <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
                         <div>
-                            <div class="font-pixel text-[10px] text-primary mb-2">▶ PALETA OFICIAL</div>
+                            <div class="font-pixel text-[10px] text-primary mb-2">
+                                ▶ PALETA OFICIAL
+                            </div>
                             <h2 class="font-pixel text-2xl">CORES DO SISTEMA</h2>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-                        <PixelCard v-for="token in paletteTokens" :key="token.hex" class="overflow-hidden">
-                            <div class="h-16 border-b-2 border-border" :style="{ backgroundColor: token.hex }" />
+                        <PixelCard
+                            v-for="token in paletteTokens"
+                            :key="token.hex"
+                            class="overflow-hidden"
+                        >
+                            <div
+                                class="h-16 border-b-2 border-border"
+                                :style="{ backgroundColor: token.hex }"
+                            />
                             <div class="p-3">
                                 <div class="font-pixel text-[10px] truncate">{{ token.label }}</div>
                                 <div class="mt-1 flex items-center justify-between gap-2">
-                                    <div class="font-sans text-[10px] text-muted-foreground truncate">{{ token.name }}</div>
+                                    <div
+                                        class="font-sans text-[10px] text-muted-foreground truncate"
+                                    >
+                                        {{ token.name }}
+                                    </div>
                                     <div class="font-sans text-sm">{{ token.hex }}</div>
                                 </div>
-                                <div v-if="token.aliases.length" class="font-sans text-[10px] text-muted-foreground mt-1 truncate">
-                                    +{{ token.aliases.length }} uso{{ token.aliases.length > 1 ? 's' : '' }}
+                                <div
+                                    v-if="token.aliases.length"
+                                    class="font-sans text-[10px] text-muted-foreground mt-1 truncate"
+                                >
+                                    +{{ token.aliases.length }} uso{{
+                                        token.aliases.length > 1 ? 's' : ''
+                                    }}
                                 </div>
                             </div>
                         </PixelCard>
@@ -435,7 +481,8 @@ function navigateTo(path: string) {
                             <div class="font-pixel text-[10px] text-primary mb-4">CORPO</div>
                             <div class="font-display text-3xl">VT323</div>
                             <p class="font-display text-lg text-muted-foreground mt-4">
-                                Base da interface. Funciona bem para descrições, formulários e estados.
+                                Base da interface. Funciona bem para descrições, formulários e
+                                estados.
                             </p>
                         </PixelCard>
                     </div>
@@ -472,7 +519,11 @@ function navigateTo(path: string) {
                         <PixelCard class="p-6 space-y-6">
                             <div class="font-pixel text-[10px] text-primary">BADGES E INPUTS</div>
                             <div class="flex flex-wrap gap-2">
-                                <PixelBadge v-for="tone in componentTones" :key="tone.label" :tone="tone.tone">
+                                <PixelBadge
+                                    v-for="tone in componentTones"
+                                    :key="tone.label"
+                                    :tone="tone.tone"
+                                >
                                     {{ tone.label }}
                                 </PixelBadge>
                             </div>
@@ -496,7 +547,9 @@ function navigateTo(path: string) {
                                 </PixelCard>
                                 <PixelCard>
                                     <div class="p-4 bg-primary/10">
-                                        <div class="font-pixel text-sm mb-2 text-primary">Cartão de destaque</div>
+                                        <div class="font-pixel text-sm mb-2 text-primary">
+                                            Cartão de destaque
+                                        </div>
                                         <p class="font-display text-lg text-muted-foreground">
                                             Bloco com ênfase para chamadas importantes.
                                         </p>
@@ -508,13 +561,19 @@ function navigateTo(path: string) {
                         <PixelCard class="p-6 space-y-6">
                             <div class="font-pixel text-[10px] text-primary">ESTADO E FLUXO</div>
                             <div class="grid grid-cols-3 gap-3">
-                                <div class="border-2 border-border bg-hud p-3 flex items-center justify-center">
+                                <div
+                                    class="border-2 border-border bg-hud p-3 flex items-center justify-center"
+                                >
                                     <MarioAvatar character="institution" :size="56" />
                                 </div>
-                                <div class="border-2 border-border bg-hud p-3 flex items-center justify-center">
+                                <div
+                                    class="border-2 border-border bg-hud p-3 flex items-center justify-center"
+                                >
                                     <MarioAvatar character="company" :size="56" />
                                 </div>
-                                <div class="border-2 border-border bg-hud p-3 flex items-center justify-center">
+                                <div
+                                    class="border-2 border-border bg-hud p-3 flex items-center justify-center"
+                                >
                                     <MarioAvatar character="mario" :size="56" />
                                 </div>
                             </div>
@@ -543,23 +602,39 @@ function navigateTo(path: string) {
                                     {{ group.description }}
                                 </div>
                             </div>
-                            <PixelBadge tone="teal">{{ group.characters.length }} AVATARES</PixelBadge>
+                            <PixelBadge tone="teal"
+                                >{{ group.characters.length }} AVATARES</PixelBadge
+                            >
                         </div>
 
                         <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                            <PixelCard v-for="character in group.characters" :key="character" class="p-4">
-                                <div class="border-2 border-border bg-hud p-4 flex items-center justify-center mb-4">
+                            <PixelCard
+                                v-for="character in group.characters"
+                                :key="character"
+                                class="p-4"
+                            >
+                                <div
+                                    class="border-2 border-border bg-hud p-4 flex items-center justify-center mb-4"
+                                >
                                     <MarioAvatar :character="character" :size="88" />
                                 </div>
                                 <div class="flex items-start justify-between gap-3">
                                     <div>
-                                        <div class="font-pixel text-sm capitalize">{{ character }}</div>
-                                        <div class="font-display text-lg text-muted-foreground capitalize">
+                                        <div class="font-pixel text-sm capitalize">
+                                            {{ character }}
+                                        </div>
+                                        <div
+                                            class="font-display text-lg text-muted-foreground capitalize"
+                                        >
                                             {{ avatarTitles[character] }}
                                         </div>
                                     </div>
                                     <PixelBadge tone="gold">
-                                        {{ character === 'institution' || character === 'company' ? 'ESPECIAL' : 'ALUNO' }}
+                                        {{
+                                            character === 'institution' || character === 'company'
+                                                ? 'ESPECIAL'
+                                                : 'ALUNO'
+                                        }}
                                     </PixelBadge>
                                 </div>
                             </PixelCard>
@@ -583,11 +658,20 @@ function navigateTo(path: string) {
                     <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
                         <PixelCard v-for="item in iconItems" :key="item.name" class="p-4">
                             <div class="flex items-start gap-4">
-                                <div class="w-14 h-14 border-2 border-border bg-hud flex items-center justify-center shrink-0">
-                                    <component :is="item.icon" weight="fill" class="pixel-icon text-primary" :size="24" />
+                                <div
+                                    class="w-14 h-14 border-2 border-border bg-hud flex items-center justify-center shrink-0"
+                                >
+                                    <component
+                                        :is="item.icon"
+                                        weight="fill"
+                                        class="pixel-icon text-primary"
+                                        :size="24"
+                                    />
                                 </div>
                                 <div class="min-w-0">
-                                    <div class="font-pixel text-[10px] truncate">{{ item.name }}</div>
+                                    <div class="font-pixel text-[10px] truncate">
+                                        {{ item.name }}
+                                    </div>
                                     <div class="font-display text-lg text-muted-foreground">
                                         {{ item.description }}
                                     </div>
@@ -609,10 +693,14 @@ function navigateTo(path: string) {
                         <PixelCard class="p-6">
                             <div class="font-pixel text-[10px] text-primary mb-4">BORDAS</div>
                             <div class="space-y-3">
-                                <div class="h-20 bg-card border-2 border-border flex items-center justify-center font-pixel text-[10px] pixel-border">
+                                <div
+                                    class="h-20 bg-card border-2 border-border flex items-center justify-center font-pixel text-[10px] pixel-border"
+                                >
                                     pixel-border
                                 </div>
-                                <div class="h-20 bg-card border-2 border-border flex items-center justify-center font-pixel text-[10px] pixel-border-thin">
+                                <div
+                                    class="h-20 bg-card border-2 border-border flex items-center justify-center font-pixel text-[10px] pixel-border-thin"
+                                >
                                     pixel-border-thin
                                 </div>
                             </div>
@@ -621,10 +709,14 @@ function navigateTo(path: string) {
                         <PixelCard class="p-6">
                             <div class="font-pixel text-[10px] text-primary mb-4">SOMBRAS</div>
                             <div class="space-y-3">
-                                <div class="bg-card border-2 border-border pixel-shadow p-4 font-pixel text-[10px]">
+                                <div
+                                    class="bg-card border-2 border-border pixel-shadow p-4 font-pixel text-[10px]"
+                                >
                                     pixel-shadow
                                 </div>
-                                <div class="bg-card border-2 border-border pixel-shadow-lg p-4 font-pixel text-[10px]">
+                                <div
+                                    class="bg-card border-2 border-border pixel-shadow-lg p-4 font-pixel text-[10px]"
+                                >
                                     pixel-shadow-lg
                                 </div>
                             </div>
@@ -642,7 +734,9 @@ function navigateTo(path: string) {
                                     <div class="font-display text-lg">animate-blink</div>
                                 </div>
                                 <div class="flex items-center gap-4">
-                                    <div class="animate-glow font-pixel text-primary text-2xl">✨</div>
+                                    <div class="animate-glow font-pixel text-primary text-2xl">
+                                        ✨
+                                    </div>
                                     <div class="font-display text-lg">animate-glow</div>
                                 </div>
                             </div>
@@ -657,8 +751,8 @@ function navigateTo(path: string) {
                         <div class="font-pixel text-sm mb-4">CRITÉRIO DE ANÁLISE</div>
                         <p class="font-display text-lg text-hud-foreground/90 max-w-3xl">
                             O design system agora serve como espelho do produto atual: sem ícones ou
-                            avatares genéricos, sem paleta inventada e com o mesmo conjunto de peças que
-                            aparece nas jornadas de login, cadastro, perfil e dashboard.
+                            avatares genéricos, sem paleta inventada e com o mesmo conjunto de peças
+                            que aparece nas jornadas de login, cadastro, perfil e dashboard.
                         </p>
                     </div>
 

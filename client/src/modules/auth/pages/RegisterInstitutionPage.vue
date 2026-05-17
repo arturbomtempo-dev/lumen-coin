@@ -182,7 +182,7 @@ watch(
         if (numeric.length === 8) {
             void fetchAddressByCep(numeric);
         }
-    },
+    }
 );
 
 watch(
@@ -191,9 +191,8 @@ watch(
         if (!attemptedSteps.value[step.value]) return;
         validateCurrentStep();
     },
-    { deep: true },
+    { deep: true }
 );
-
 </script>
 
 <template>

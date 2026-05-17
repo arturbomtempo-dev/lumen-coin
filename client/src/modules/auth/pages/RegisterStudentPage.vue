@@ -293,13 +293,19 @@ async function loadAcademicOptions() {
 
     courses.value = coursesResponse.data;
 
-    const institutionIdsWithCourses = new Set(coursesResponse.data.map((course) => course.institutionId));
+    const institutionIdsWithCourses = new Set(
+        coursesResponse.data.map((course) => course.institutionId)
+    );
 
     institutions.value = institutionsResponse.data.filter((institution) =>
         institutionIdsWithCourses.has(institution.id)
     );
 
-    if (!institutions.value.some((institution) => institution.id === studentData.value.institutionId)) {
+    if (
+        !institutions.value.some(
+            (institution) => institution.id === studentData.value.institutionId
+        )
+    ) {
         studentData.value.institutionId = '';
         studentData.value.courseId = '';
     }

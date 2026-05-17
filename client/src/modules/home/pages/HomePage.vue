@@ -39,7 +39,7 @@ const VISIBLE_CHARACTERS = computed(() =>
             <div class="container flex items-center justify-between py-3 gap-3">
                 <RouterLink to="/" class="flex items-center gap-2 font-pixel text-[10px]">
                     <PhGameController weight="fill" class="pixel-icon text-primary" :size="18" />
-                    LUMEN COIN 
+                    LUMEN COIN
                 </RouterLink>
                 <nav class="hidden md:flex items-center gap-4 font-pixel text-[9px]">
                     <a href="#regras" class="hover:text-primary">REGRAS</a>
@@ -210,7 +210,9 @@ const VISIBLE_CHARACTERS = computed(() =>
                 <div id="perfis" class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mt-10">
                     <PixelCard class="p-6 flex flex-col">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="border-2 border-border bg-primary text-primary-foreground p-2">
+                            <div
+                                class="border-2 border-border bg-primary text-primary-foreground p-2"
+                            >
                                 <PhBuildings weight="fill" class="pixel-icon" :size="24" />
                             </div>
                             <div>
@@ -444,7 +446,9 @@ const VISIBLE_CHARACTERS = computed(() =>
 
                     <PixelCard class="p-6 flex flex-col">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="border-2 border-border bg-success text-success-foreground p-2">
+                            <div
+                                class="border-2 border-border bg-success text-success-foreground p-2"
+                            >
                                 <PhStorefront weight="fill" class="pixel-icon" :size="24" />
                             </div>
                             <div>

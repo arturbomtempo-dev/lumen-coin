@@ -3,14 +3,7 @@ import { ref, computed } from 'vue';
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import { useThemeStore } from '@/shared/stores/theme.store';
 import { useRoute, useRouter } from 'vue-router';
-import {
-    PhGameController,
-    PhMoon,
-    PhSignOut,
-    PhSun,
-    PhList,
-    PhX,
-} from '@phosphor-icons/vue';
+import { PhGameController, PhMoon, PhSignOut, PhSun, PhList, PhX } from '@phosphor-icons/vue';
 
 const auth = useAuthStore();
 const themeStore = useThemeStore();
@@ -29,17 +22,11 @@ const studentNav: NavItem[] = [
     { to: '/app/aluno/perfil', label: 'PERFIL' },
 ];
 
-const teacherNav: NavItem[] = [
-    { to: '/app/professor', label: 'PAINEL' },
-];
+const teacherNav: NavItem[] = [{ to: '/app/professor', label: 'PAINEL' }];
 
-const companyNav: NavItem[] = [
-    { to: '/app/empresa', label: 'PAINEL' },
-];
+const companyNav: NavItem[] = [{ to: '/app/empresa', label: 'PAINEL' }];
 
-const institutionNav: NavItem[] = [
-    { to: '/app/instituicao', label: 'PAINEL' },
-];
+const institutionNav: NavItem[] = [{ to: '/app/instituicao', label: 'PAINEL' }];
 
 const navItems = computed<NavItem[]>(() => {
     const role = auth.user?.role;
@@ -62,7 +49,6 @@ async function handleLogout() {
 
 <template>
     <div class="min-h-screen flex flex-col">
-
         <header class="sticky top-0 z-40 bg-hud text-hud-foreground border-b-4 border-border">
             <div class="container flex items-center justify-between py-2 gap-3">
                 <router-link to="/" class="flex items-center gap-2 font-pixel text-[10px]">
@@ -88,7 +74,11 @@ async function handleLogout() {
                         aria-label="Alternar tema"
                         @click="themeStore.toggle"
                     >
-                        <PhSun v-if="themeStore.theme === 'night'" weight="fill" class="pixel-icon" />
+                        <PhSun
+                            v-if="themeStore.theme === 'night'"
+                            weight="fill"
+                            class="pixel-icon"
+                        />
                         <PhMoon v-else weight="fill" class="pixel-icon" />
                         {{ themeStore.theme === 'night' ? 'DIA' : 'NOITE' }}
                     </button>
@@ -155,6 +145,5 @@ async function handleLogout() {
         <main class="flex-1 container py-6">
             <router-view />
         </main>
-
     </div>
 </template>

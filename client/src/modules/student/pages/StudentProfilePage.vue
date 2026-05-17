@@ -60,7 +60,10 @@ profileData.value = {
 
 type StudentAvatar = NonNullable<UpdateStudentDto['avatar']>;
 
-const avatarByCharacter: Record<Exclude<MarioCharacter, 'institution' | 'company'>, StudentAvatar> = {
+const avatarByCharacter: Record<
+    Exclude<MarioCharacter, 'institution' | 'company'>,
+    StudentAvatar
+> = {
     mario: 'MARIO',
     luigi: 'LUIGI',
     peach: 'PEACH',
@@ -86,7 +89,11 @@ const studentCharacters = computed(() =>
 
 const selectedCharacter = computed<MarioCharacter>(() => {
     if (!studentProfile.value?.avatar) return 'mario';
-    return characterByAvatar[studentProfile.value.avatar as StudentAvatar | 'COMPANY' | 'INSTITUTION'] ?? 'mario';
+    return (
+        characterByAvatar[
+            studentProfile.value.avatar as StudentAvatar | 'COMPANY' | 'INSTITUTION'
+        ] ?? 'mario'
+    );
 });
 
 const availableCourses = computed(() =>
@@ -94,7 +101,9 @@ const availableCourses = computed(() =>
 );
 
 const institutionName = computed(() => {
-    const found = institutions.value.find((institution) => institution.id === studentProfile.value?.institutionId);
+    const found = institutions.value.find(
+        (institution) => institution.id === studentProfile.value?.institutionId
+    );
     return found?.name ?? '-';
 });
 
@@ -142,8 +151,7 @@ async function loadProfile() {
         studentProfile.value = response.data;
         setProfileForm(response.data);
         syncStudentStore(response.data);
-    } catch {
-    }
+    } catch {}
 }
 
 async function loadFormOptions() {
@@ -159,8 +167,7 @@ async function loadFormOptions() {
             name: course.name,
             institutionId: course.institutionId,
         }));
-    } catch {
-    }
+    } catch {}
 }
 
 function startProfileEdit() {
@@ -278,9 +285,7 @@ onMounted(async () => {
         </div>
 
         <PixelCard class="p-6 space-y-6">
-
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-
                 <div class="flex items-center gap-4">
                     <div class="border-2 border-border bg-hud p-2">
                         <MarioAvatar :character="selectedCharacter" :size="64" />
@@ -288,7 +293,13 @@ onMounted(async () => {
 
                     <div>
                         <div class="font-pixel text-xl">
-                            {{ (studentProfile?.name ?? authStore.user?.name ?? 'ALUNO').toUpperCase() }}
+                            {{
+                                (
+                                    studentProfile?.name ??
+                                    authStore.user?.name ??
+                                    'ALUNO'
+                                ).toUpperCase()
+                            }}
                         </div>
                         <div class="font-sans text-sm text-muted-foreground mt-1">
                             Perfil de aluno
@@ -306,12 +317,7 @@ onMounted(async () => {
                         <PhPencilSimple weight="bold" /> EDITAR
                     </PixelButton>
 
-                    <PixelButton
-                        v-else
-                        variant="ghost"
-                        size="sm"
-                        @click="cancelProfileEdit"
-                    >
+                    <PixelButton v-else variant="ghost" size="sm" @click="cancelProfileEdit">
                         <PhX weight="bold" /> CANCELAR
                     </PixelButton>
                 </div>
@@ -339,7 +345,9 @@ onMounted(async () => {
                                 : 'bg-card hover:-translate-y-0.5'
                         "
                         :disabled="isUpdatingAvatar"
-                        @click="selectAvatar(c.id as Exclude<MarioCharacter, 'institution' | 'company'>)"
+                        @click="
+                            selectAvatar(c.id as Exclude<MarioCharacter, 'institution' | 'company'>)
+                        "
                     >
                         <div class="flex justify-center bg-hud border-2 border-border p-1">
                             <MarioAvatar :character="c.id" :size="32" />
@@ -405,7 +413,11 @@ onMounted(async () => {
                 <div class="grid md:grid-cols-2 gap-3">
                     <PixelInput v-model="profileData.name" placeholder="NOME" />
                     <PixelInput v-model="profileData.email" type="email" placeholder="EMAIL" />
-                    <PixelInput v-model="profileData.password" type="password" placeholder="SENHA" />
+                    <PixelInput
+                        v-model="profileData.password"
+                        type="password"
+                        placeholder="SENHA"
+                    />
                     <PixelInput v-model="profileData.cpf" placeholder="CPF" />
                     <PixelInput v-model="profileData.rg" placeholder="RG" />
                     <PixelInput v-model="profileData.zipCode" placeholder="CEP" />
@@ -427,7 +439,8 @@ onMounted(async () => {
             <div class="font-pixel text-sm mb-3 text-destructive">EXCLUIR CONTA</div>
 
             <p class="font-sans text-sm text-muted-foreground mb-4">
-                Esta ação é permanente. Ao excluir sua conta, todas as moedas e conquistas serão perdidas.
+                Esta ação é permanente. Ao excluir sua conta, todas as moedas e conquistas serão
+                perdidas.
             </p>
 
             <div v-if="!showDeleteConfirmation">
