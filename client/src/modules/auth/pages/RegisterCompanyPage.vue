@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { registerCompanyRequest } from '@/modules/auth/services/auth.service';
 import { registerCompanySchema } from '@/modules/schemas/register-company.schema';
+import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
@@ -141,6 +142,7 @@ async function handleSubmit(e: Event) {
                             <PhEye v-else :size="18" weight="bold" />
                         </button>
                     </div>
+                    <PasswordStrengthHint :password="fields.password" />
                     <p
                         v-if="errors.password"
                         class="font-sans text-xs mt-1"

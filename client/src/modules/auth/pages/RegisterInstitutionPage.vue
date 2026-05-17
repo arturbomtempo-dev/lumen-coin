@@ -5,6 +5,7 @@ import {
     type RegisterInstitutionFormData,
 } from '@/modules/schemas/register-institution.schema';
 import MarioAvatar from '@/shared/components/MarioAvatar.vue';
+import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
@@ -465,6 +466,7 @@ watch(
                                         <PhEye v-else :size="18" weight="bold" />
                                     </button>
                                 </div>
+                                <PasswordStrengthHint :password="institutionForm.password" />
                                 <p
                                     v-if="institutionErrors.password"
                                     class="font-sans text-xs mt-1"
