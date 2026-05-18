@@ -5,6 +5,11 @@ import {
     type StudentSummary,
 } from '@/modules/teacher/services/teacher.service';
 import { useTeacherStore } from '@/modules/teacher/stores/teacher.store';
+import CoinIcon from '@/shared/components/CoinIcon.vue';
+import PixelButton from '@/shared/components/PixelButton.vue';
+import PixelCard from '@/shared/components/PixelCard.vue';
+import PixelInput from '@/shared/components/PixelInput.vue';
+import { PhPaperPlaneTilt } from '@phosphor-icons/vue';
 import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
 import { toast } from 'vue-sonner';
@@ -16,7 +21,7 @@ const students = ref<StudentSummary[]>([]);
 const studentId = ref('');
 const amount = ref<number | ''>(50);
 const message = ref('');
-const errorMessage = ref('');
+const errors = ref<Record<string, string>>({});
 const isSubmitting = ref(false);
 const isLoadingStudents = ref(true);
 
@@ -27,20 +32,30 @@ onMounted(async () => {
     if (institutionId.value) {
         const { data } = await getStudentsByInstitution(institutionId.value);
         students.value = data;
-        if (data.length > 0) studentId.value = data[0].id;
     }
     isLoadingStudents.value = false;
 });
 
 async function submit(e: Event) {
     e.preventDefault();
-    errorMessage.value = '';
+    errors.value = {};
     const v = Number(amount.value);
-    if (!v || v <= 0) return void (errorMessage.value = 'Informe um valor válido.');
-    if (v > balance.value)
-        return void (errorMessage.value = `Saldo insuficiente. Disponível: ${balance.value} moedas.`);
-    if (!message.value.trim()) return void (errorMessage.value = 'O motivo é obrigatório.');
-    if (!studentId.value) return void (errorMessage.value = 'Selecione um aluno.');
+    if (!v || v <= 0) {
+        errors.value.amount = 'Informe um valor válido.';
+        return;
+    }
+    if (v > balance.value) {
+        errors.value.amount = `Saldo insuficiente. Disponível: ${balance.value} moedas.`;
+        return;
+    }
+    if (!message.value.trim()) {
+        errors.value.message = 'O motivo é obrigatório.';
+        return;
+    }
+    if (!studentId.value) {
+        errors.value.studentId = 'Selecione um aluno.';
+        return;
+    }
 
     isSubmitting.value = true;
     try {
@@ -51,7 +66,7 @@ async function submit(e: Event) {
         message.value = '';
         amount.value = 50;
     } catch {
-        errorMessage.value = 'Erro ao enviar moedas. Tente novamente.';
+        errors.value.submit = 'Erro ao enviar moedas. Tente novamente.';
     } finally {
         isSubmitting.value = false;
     }
@@ -59,81 +74,119 @@ async function submit(e: Event) {
 </script>
 
 <template>
-    <div class="space-y-8">
+    <div class="space-y-6">
         <div>
-            <div class="font-pixel text-[10px] text-primary">▶ ENVIAR RECONHECIMENTO</div>
-            <h1 class="font-pixel text-xl mt-2 flex items-center gap-2">
-                <PhPaperPlaneTilt weight="fill" class="pixel-icon" /> ENVIAR MOEDAS
+            <div class="font-pixel text-[10px] text-primary mb-1">▶ ENVIAR RECONHECIMENTO</div>
+            <h1 class="font-pixel text-xl flex items-center gap-2">
+                <PhPaperPlaneTilt weight="fill" class="text-primary" />
+                ENVIAR MOEDAS
             </h1>
         </div>
 
-        <PixelCard class="p-4 flex items-center gap-3">
-            <CoinIcon :size="28" class="animate-bob" />
+        <PixelCard class="p-4 flex items-center gap-4">
+            <CoinIcon :size="32" class="animate-bob shrink-0" />
             <div>
-                <div class="font-pixel text-[10px] text-muted-foreground">SEU SALDO</div>
-                <div class="font-pixel text-2xl text-primary">
+                <div class="font-pixel text-[9px] text-muted-foreground mb-1">SEU SALDO</div>
+                <div class="font-pixel text-3xl text-primary leading-none">
                     {{ balance.toLocaleString('pt-BR') }}
                 </div>
             </div>
         </PixelCard>
 
         <PixelCard class="p-6">
-            <div class="font-pixel text-sm mb-4">FORMULÁRIO DE ENVIO</div>
-            <form class="space-y-4" @submit.prevent="submit">
+            <div class="font-pixel text-sm mb-6 pb-3 border-b-2 border-border">
+                FORMULÁRIO DE ENVIO
+            </div>
+
+            <form class="space-y-5" @submit.prevent="submit">
                 <div>
-                    <label class="font-pixel text-[10px] block mb-2">ALUNO</label>
-                    <div v-if="isLoadingStudents" class="font-sans text-sm text-muted-foreground">
+                    <label class="font-pixel text-[9px] text-muted-foreground block mb-2"
+                        >ALUNO</label
+                    >
+                    <div
+                        v-if="isLoadingStudents"
+                        class="font-sans text-sm text-muted-foreground py-2"
+                    >
                         Carregando alunos...
                     </div>
-                    <select
-                        v-else
-                        v-model="studentId"
-                        class="w-full bg-input border-2 border-border px-3 py-2 font-display text-lg focus:outline-none"
-                    >
-                        <option v-for="s in students" :key="s.id" :value="s.id">
-                            {{ s.name }}
-                        </option>
-                    </select>
+                    <div v-else>
+                        <select
+                            v-model="studentId"
+                            class="w-full bg-background border-2 border-border px-3 py-2.5 font-display text-base focus:outline-none focus:border-primary cursor-pointer"
+                        >
+                            <option value="" disabled>Selecione um aluno</option>
+                            <option v-for="s in students" :key="s.id" :value="s.id">
+                                {{ s.name }}
+                            </option>
+                        </select>
+                        <p
+                            v-if="errors.studentId"
+                            class="font-sans text-xs mt-1"
+                            style="color: hsl(var(--destructive))"
+                        >
+                            {{ errors.studentId }}
+                        </p>
+                    </div>
                 </div>
+
                 <div>
-                    <label class="font-pixel text-[10px] block mb-2">VALOR (MOEDAS)</label>
+                    <label class="font-pixel text-[9px] text-muted-foreground block mb-2">
+                        VALOR (MOEDAS)
+                    </label>
                     <PixelInput
                         v-model="amount"
                         type="number"
-                        :min="1"
-                        :max="balance"
                         placeholder="Ex: 50"
                     />
-                </div>
-                <div>
-                    <label class="font-pixel text-[10px] block mb-2"
-                        >MOTIVO <span class="text-secondary">*</span></label
+                    <p
+                        v-if="errors.amount"
+                        class="font-sans text-xs mt-1"
+                        style="color: hsl(var(--destructive))"
                     >
-                    <PixelInput
+                        {{ errors.amount }}
+                    </p>
+                    <div class="font-pixel text-[8px] text-muted-foreground mt-1.5">
+                        MÁX: {{ balance.toLocaleString('pt-BR') }} MOEDAS
+                    </div>
+                </div>
+
+                <div>
+                    <label class="font-pixel text-[9px] text-muted-foreground block mb-2">
+                        MOTIVO <span class="text-destructive">*</span>
+                    </label>
+                    <textarea
                         v-model="message"
                         placeholder="Ex: Excelência na apresentação do projeto"
+                        rows="3"
+                        class="w-full bg-background border-2 border-border px-3 py-2.5 font-sans text-sm focus:outline-none focus:border-primary resize-none"
                     />
+                    <p
+                        v-if="errors.message"
+                        class="font-sans text-xs mt-1"
+                        style="color: hsl(var(--destructive))"
+                    >
+                        {{ errors.message }}
+                    </p>
                 </div>
-                <div v-if="errorMessage" class="font-pixel text-[10px] text-destructive">
-                    ⚠ {{ errorMessage }}
+
+                <div
+                    v-if="errors.submit"
+                    class="font-sans text-xs"
+                    style="color: hsl(var(--destructive))"
+                >
+                    {{ errors.submit }}
                 </div>
+
                 <PixelButton
                     variant="success"
                     class="w-full"
                     type="submit"
                     :disabled="isSubmitting"
                 >
-                    <PhPaperPlaneTilt weight="fill" class="pixel-icon" />
+                    <PhPaperPlaneTilt weight="fill" />
                     {{ isSubmitting ? 'ENVIANDO...' : 'ENVIAR RECONHECIMENTO' }}
                 </PixelButton>
             </form>
         </PixelCard>
-    </div>
-</template>
-
-<template>
-    <div>
-        <h2 class="text-2xl font-bold mb-6">Enviar Moedas</h2>
-        <p class="text-muted">Selecione um aluno e envie moedas como reconhecimento.</p>
     </div>
 </template>
