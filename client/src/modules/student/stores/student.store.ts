@@ -1,4 +1,5 @@
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
+import { getCourse, getInstitution } from '@/modules/institution/services/institution.service';
 import { getStudent } from '@/modules/student/services/student.service';
 import type { MarioCharacter } from '@/shared/data/characters';
 import {
@@ -28,11 +29,13 @@ function generateCouponCode() {
 }
 
 export const useStudentStore = defineStore('student', () => {
-    const name = ref('Maria L.');
-    const balance = ref(1280);
-    const level = ref(7);
-    const xp = ref(72);
-    const character = ref<MarioCharacter>('peach');
+    const name = ref('');
+    const balance = ref(0);
+    const level = ref(1);
+    const xp = ref(0);
+    const character = ref<MarioCharacter>('mario');
+    const courseName = ref('');
+    const institutionName = ref('');
     const notifications = ref<AppNotification[]>([...initialNotifications]);
     const transactions = ref<Transaction[]>(
         initialTransactions.filter((t) => t.student === 'Maria Luiza Souza')
@@ -105,6 +108,13 @@ export const useStudentStore = defineStore('student', () => {
         const { data } = await getStudent(auth.user.id);
         name.value = data.name;
         balance.value = data.balance;
+        character.value = data.avatar.toLowerCase() as MarioCharacter;
+        const [courseRes, institutionRes] = await Promise.all([
+            getCourse(data.courseId),
+            getInstitution(data.institutionId),
+        ]);
+        courseName.value = courseRes.data.name;
+        institutionName.value = institutionRes.data.name;
     }
 
     return {
@@ -113,6 +123,8 @@ export const useStudentStore = defineStore('student', () => {
         level,
         xp,
         character,
+        courseName,
+        institutionName,
         notifications,
         transactions,
         coupons,

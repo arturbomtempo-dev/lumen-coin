@@ -93,6 +93,10 @@ export function getCourses() {
     return api.get<CourseResponse[]>('/courses');
 }
 
+export function getCourse(id: string) {
+    return api.get<CourseResponse>(`/courses/${id}`);
+}
+
 export function createCourse(dto: RegisterCourseDto) {
     return api.post<CourseResponse>('/courses', dto);
 }

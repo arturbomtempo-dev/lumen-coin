@@ -21,7 +21,7 @@ import { storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
 
 const store = useStudentStore();
-const { balance, level, xp, name, character } = storeToRefs(store);
+const { balance, level, xp, name, character, courseName, institutionName } = storeToRefs(store);
 
 const pendingRedemption = ref<{ name: string; cost: number } | null>(null);
 const generatedCoupon = ref<{ code: string; name: string } | null>(null);
@@ -77,7 +77,7 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                         <div class="font-pixel text-[10px] text-primary">▶ CARTEIRA DO JOGADOR</div>
                         <div class="font-pixel text-xl mt-2">{{ name.toUpperCase() }}</div>
                         <div class="font-sans text-sm text-muted-foreground">
-                            Eng. de Software · UNIFEI
+                            {{ courseName }} · {{ institutionName }}
                         </div>
                     </div>
                     <div class="border-2 border-border bg-hud p-1">
