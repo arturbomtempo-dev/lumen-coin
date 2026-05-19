@@ -42,7 +42,6 @@ const scrollToSection = (sectionId: string) => {
 
 <template>
     <div class="min-h-screen flex flex-col">
-        <!-- HUD Header -->
         <header class="bg-hud text-hud-foreground border-b-4 border-border sticky top-0 z-10">
             <div class="px-6 md:px-12 flex items-center justify-between py-3 gap-3">
                 <RouterLink to="/" class="flex items-center gap-2 font-pixel text-[10px]">
@@ -50,9 +49,11 @@ const scrollToSection = (sectionId: string) => {
                     LUMEN COIN
                 </RouterLink>
                 <nav class="hidden md:flex items-center gap-4 font-pixel text-[9px]">
-                    <a  @click="scrollToSection('sobre')" class="hover:text-primary">SOBRE</a>
-                    <a  @click="scrollToSection('regras')" class="hover:text-primary">REGRAS</a>
-                    <a  @click="scrollToSection('personagens')" class="hover:text-primary">PERSONAGENS</a>
+                    <a @click="scrollToSection('sobre')" class="hover:text-primary">SOBRE</a>
+                    <a @click="scrollToSection('regras')" class="hover:text-primary">REGRAS</a>
+                    <a @click="scrollToSection('personagens')" class="hover:text-primary"
+                        >PERSONAGENS</a
+                    >
                 </nav>
                 <div class="flex items-center gap-2">
                     <button
@@ -90,7 +91,11 @@ const scrollToSection = (sectionId: string) => {
             </div>
         </header>
 
-        <div v-if="mobileMenuOpen" class="fixed inset-0 z-20 bg-black/60 md:hidden" @click="mobileMenuOpen = false" />
+        <div
+            v-if="mobileMenuOpen"
+            class="fixed inset-0 z-20 bg-black/60 md:hidden"
+            @click="mobileMenuOpen = false"
+        />
 
         <aside
             class="fixed inset-y-0 right-0 z-30 w-56 flex flex-col md:hidden transition-transform duration-200 bg-hud text-hud-foreground border-l-4 border-border"
@@ -102,19 +107,46 @@ const scrollToSection = (sectionId: string) => {
                     <PhX weight="bold" :size="16" />
                 </button>
             </div>
-                <nav class="flex-1 p-4 space-y-2">
-                <a @click="scrollToSection('sobre'); mobileMenuOpen = false" class="block font-pixel text-[9px] px-3 py-2 border-2 border-transparent hover:border-border hover:bg-card hover:text-card-foreground transition-colors">SOBRE</a>
-                <a @click="scrollToSection('regras'); mobileMenuOpen = false" class="block font-pixel text-[9px] px-3 py-2 border-2 border-transparent hover:border-border hover:bg-card hover:text-card-foreground transition-colors">REGRAS</a>
-                <a @click="scrollToSection('personagens'); mobileMenuOpen = false" class="block font-pixel text-[9px] px-3 py-2 border-2 border-transparent hover:border-border hover:bg-card hover:text-card-foreground transition-colors">PERSONAGENS</a>
-
-            </nav> 
+            <nav class="flex-1 p-4 space-y-2">
+                <a
+                    @click="
+                        scrollToSection('sobre');
+                        mobileMenuOpen = false;
+                    "
+                    class="block font-pixel text-[9px] px-3 py-2 border-2 border-transparent hover:border-border hover:bg-card hover:text-card-foreground transition-colors"
+                    >SOBRE</a
+                >
+                <a
+                    @click="
+                        scrollToSection('regras');
+                        mobileMenuOpen = false;
+                    "
+                    class="block font-pixel text-[9px] px-3 py-2 border-2 border-transparent hover:border-border hover:bg-card hover:text-card-foreground transition-colors"
+                    >REGRAS</a
+                >
+                <a
+                    @click="
+                        scrollToSection('personagens');
+                        mobileMenuOpen = false;
+                    "
+                    class="block font-pixel text-[9px] px-3 py-2 border-2 border-transparent hover:border-border hover:bg-card hover:text-card-foreground transition-colors"
+                    >PERSONAGENS</a
+                >
+            </nav>
             <div class="p-4 border-t-2 flex flex-col gap-2 border-border space-y-2">
-                <RouterLink to="/signup"><PixelButton variant="success" class="w-full">CRIAR CONTA</PixelButton></RouterLink>
-                <RouterLink to="/login"><PixelButton variant="primary" class="w-full"><PhSparkle weight="fill" class="pixel-icon" /> ENTRAR</PixelButton></RouterLink>
+                <RouterLink to="/signup"
+                    ><PixelButton variant="success" class="w-full"
+                        >CRIAR CONTA</PixelButton
+                    ></RouterLink
+                >
+                <RouterLink to="/login"
+                    ><PixelButton variant="primary" class="w-full"
+                        ><PhSparkle weight="fill" class="pixel-icon" /> ENTRAR</PixelButton
+                    ></RouterLink
+                >
             </div>
         </aside>
 
-        <!-- Hero -->
         <section class="relative overflow-hidden border-b-4 border-border crt-scanlines">
             <div
                 class="absolute inset-0 opacity-25 pointer-events-none"
@@ -127,19 +159,22 @@ const scrollToSection = (sectionId: string) => {
                 class="p-5 mx-auto sm:container py-14 md:py-20 grid lg:grid-cols-[1.2fr_1fr] gap-10 items-center relative"
             >
                 <div>
-                    
                     <h1 class="font-pixel text-3xl md:text-5xl leading-tight tracking-wider">
-                       
-                        <span class="flex items-center flex-wrap justify-center md:justify-start text-2xl text-center md:text-start md:text-4xl items" aria-hidden="true">
-                           
-                       
-                            <span class="text-secondary uppercase">Reconhecimento
-                        
-                            <span class="text-amber-500">vira recompensa</span></span>
+                        <span
+                            class="flex items-center flex-wrap justify-center md:justify-start text-2xl text-center md:text-start md:text-4xl items"
+                            aria-hidden="true"
+                        >
+                            <span class="text-secondary uppercase"
+                                >Reconhecimento
+
+                                <span class="text-amber-500">vira recompensa</span></span
+                            >
                         </span>
                         <span class="sr-only">Lumen Coin</span>
                     </h1>
-                    <p class="font-sans justify-center md:justify-start w-full mx-auto md:mx-0 text-center md:text-start text-lg md:text-lg mt-5 max-w-xl text-foreground/85">
+                    <p
+                        class="font-sans justify-center md:justify-start w-full mx-auto md:mx-0 text-center md:text-start text-lg md:text-lg mt-5 max-w-xl text-foreground/85"
+                    >
                         Lumen Coin é um sistema gamificado onde professores reconhecem alunos com
                         moedas a cada conquista acadêmica. Os alunos trocam essas moedas por
                         vantagens reais oferecidas por empresas parceiras — tudo em um arcade
@@ -159,51 +194,51 @@ const scrollToSection = (sectionId: string) => {
                             >
                         </RouterLink>
                     </div>
-                    
                 </div>
                 <HeroScenario />
             </div>
         </section>
 
-        <!-- Como funciona -->
         <section class="bg-hud text-white">
             <div class="container py-14">
-            <div class="font-pixel text-[10px] text-primary text-center">▶ COMO FUNCIONA</div>
-            <h2 class="font-pixel text-2xl text-center mt-3">A AVENTURA EM 3 FASES</h2>
-            <div class="grid md:grid-cols-3 gap-5 mt-8">
-                <PixelCard
-                    v-for="step in [
-                        {
-                            icon: PhGraduationCap,
-                            t: '1. PROFESSOR ENVIA',
-                            d: 'Cada professor recebe 1000 moedas por semestre e distribui aos alunos com um motivo claro de reconhecimento.',
-                        },
-                        {
-                            icon: PhCoin,
-                            t: '2. ALUNO ACUMULA',
-                            d: 'O aluno recebe notificações, sobe de nível, ganha XP e acompanha tudo no extrato gamificado.',
-                        },
-                        {
-                            icon: PhStorefront,
-                            t: '3. EMPRESA RESGATA',
-                            d: 'Vantagens das empresas parceiras viram cupons únicos que o aluno apresenta no estabelecimento.',
-                        },
-                    ]"
-                    :key="step.t"
-                    class="p-6"
-                >
-                    <div class="border-2 border-border bg-hud text-hud-foreground inline-flex p-3">
-                        <component
-                            :is="step.icon"
-                            weight="fill"
-                            class="pixel-icon text-primary"
-                            :size="28"
-                        />
-                    </div>
-                    <div class="font-pixel text-sm mt-4">{{ step.t }}</div>
-                    <p class="font-sans text-sm text-foreground/80 mt-2">{{ step.d }}</p>
-                </PixelCard>
-            </div>
+                <div class="font-pixel text-[10px] text-primary text-center">▶ COMO FUNCIONA</div>
+                <h2 class="font-pixel text-2xl text-center mt-3">A AVENTURA EM 3 FASES</h2>
+                <div class="grid md:grid-cols-3 gap-5 mt-8">
+                    <PixelCard
+                        v-for="step in [
+                            {
+                                icon: PhGraduationCap,
+                                t: '1. PROFESSOR ENVIA',
+                                d: 'Cada professor recebe 1000 moedas por semestre e distribui aos alunos com um motivo claro de reconhecimento.',
+                            },
+                            {
+                                icon: PhCoin,
+                                t: '2. ALUNO ACUMULA',
+                                d: 'O aluno recebe notificações, sobe de nível, ganha XP e acompanha tudo no extrato gamificado.',
+                            },
+                            {
+                                icon: PhStorefront,
+                                t: '3. EMPRESA RESGATA',
+                                d: 'Vantagens das empresas parceiras viram cupons únicos que o aluno apresenta no estabelecimento.',
+                            },
+                        ]"
+                        :key="step.t"
+                        class="p-6"
+                    >
+                        <div
+                            class="border-2 border-border bg-hud text-hud-foreground inline-flex p-3"
+                        >
+                            <component
+                                :is="step.icon"
+                                weight="fill"
+                                class="pixel-icon text-primary"
+                                :size="28"
+                            />
+                        </div>
+                        <div class="font-pixel text-sm mt-4">{{ step.t }}</div>
+                        <p class="font-sans text-sm text-foreground/80 mt-2">{{ step.d }}</p>
+                    </PixelCard>
+                </div>
             </div>
         </section>
 
@@ -212,8 +247,10 @@ const scrollToSection = (sectionId: string) => {
                 <div class="max-w-4xl mx-auto text-center">
                     <h3 class="font-pixel text-primary text-2xl">SOBRE O SISTEMA</h3>
                     <p class="font-sans mt-4 text-lg text-foreground/80 mb-6">
-                        Lumen Coin é uma plataforma inspirada no jogo super mario e foi desenvolvida para reconhecer e premiar esforços
-                        acadêmicos. Tenha uma experiencia gamificada que conecta alunos, professores e empresas em uma jornada de conquistas e recompensas.
+                        Lumen Coin é uma plataforma inspirada no jogo super mario e foi desenvolvida
+                        para reconhecer e premiar esforços acadêmicos. Tenha uma experiencia
+                        gamificada que conecta alunos, professores e empresas em uma jornada de
+                        conquistas e recompensas.
                     </p>
                     <a @click="scrollToSection('regras')" class="inline-block cursor-pointer">
                         <PixelButton variant="primary" size="lg"> Conheça os perfis</PixelButton>
@@ -222,7 +259,6 @@ const scrollToSection = (sectionId: string) => {
             </div>
         </section>
 
-        <!-- Perfis/Regras -->
         <section id="regras" class="border-t-2 border-border">
             <div class="container py-14">
                 <div class="font-pixel text-[10px] text-primary text-center">
@@ -304,7 +340,7 @@ const scrollToSection = (sectionId: string) => {
                         </div>
                     </PixelCard>
 
-                      <PixelCard class="p-6 flex flex-col">
+                    <PixelCard class="p-6 flex flex-col">
                         <div class="flex items-center gap-3 mb-4">
                             <div
                                 class="border-2 border-border bg-secondary text-secondary-foreground p-2"
@@ -312,7 +348,6 @@ const scrollToSection = (sectionId: string) => {
                                 <PhGraduationCap weight="fill" class="pixel-icon" :size="24" />
                             </div>
                             <div>
-                                
                                 <div class="font-pixel text-sm">PROFESSOR</div>
                             </div>
                         </div>
@@ -393,7 +428,6 @@ const scrollToSection = (sectionId: string) => {
                                 <PhStudent weight="fill" class="pixel-icon" :size="24" />
                             </div>
                             <div>
-                                
                                 <div class="font-pixel text-sm">ALUNO</div>
                             </div>
                         </div>
@@ -469,8 +503,6 @@ const scrollToSection = (sectionId: string) => {
                         </div>
                     </PixelCard>
 
-                  
-
                     <PixelCard class="p-6 flex flex-col">
                         <div class="flex items-center gap-3 mb-4">
                             <div
@@ -479,7 +511,6 @@ const scrollToSection = (sectionId: string) => {
                                 <PhStorefront weight="fill" class="pixel-icon" :size="24" />
                             </div>
                             <div>
-                               
                                 <div class="font-pixel text-sm">EMPRESA PARCEIRA</div>
                             </div>
                         </div>
@@ -557,7 +588,6 @@ const scrollToSection = (sectionId: string) => {
             </div>
         </section>
 
-        <!-- Personagens -->
         <section id="personagens" class="container py-14">
             <div class="font-pixel text-[10px] text-primary text-center">▶ ROSTER</div>
             <h2 class="font-pixel text-2xl text-center mt-3 flex items-center justify-center gap-2">
@@ -578,12 +608,11 @@ const scrollToSection = (sectionId: string) => {
             </div>
         </section>
 
-        <!-- CTA -->
         <section class="border-t-4 border-border bg-hud text-hud-foreground">
             <div class="container py-12 text-center">
                 <h3 class="font-pixel text-lg md:text-2xl">PRONTO PARA INICIAR A AVENTURA?</h3>
                 <p class="font-display text-lg md:text-xl mt-3 opacity-90">
-                   Sua jornada acadêmica nunca foi tão divertida.
+                    Sua jornada acadêmica nunca foi tão divertida.
                 </p>
                 <div class="mt-6 flex flex-wrap justify-center gap-3">
                     <RouterLink to="/signup"

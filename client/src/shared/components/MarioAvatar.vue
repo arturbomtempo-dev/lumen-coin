@@ -113,15 +113,15 @@ const palettes: Record<MarioCharacter, Record<string, string>> = {
         :style="{ width: `${size}px`, height: `${size}px`, imageRendering: 'pixelated' }"
     />
 
-  <svg
+    <svg
         v-else
-    :width="size"
-    :height="size"
-    viewBox="0 0 12 13"
-    shape-rendering="crispEdges"
-    :style="{ imageRendering: 'pixelated' }"
-    :aria-label="character"
->
+        :width="size"
+        :height="size"
+        viewBox="0 0 12 13"
+        shape-rendering="crispEdges"
+        :style="{ imageRendering: 'pixelated' }"
+        :aria-label="character"
+    >
         <rect x="0" y="0" width="12" height="13" fill="transparent" />
 
         <template v-if="character === 'peach'">
@@ -204,8 +204,6 @@ const palettes: Record<MarioCharacter, Record<string, string>> = {
             <rect x="7" y="10" width="3" height="2" :fill="palettes.bowser.shoe" />
         </template>
 
-        <!-- ✅ ATUALIZADO -->
-
         <template v-else-if="character === 'institution'">
             <rect x="1" y="1" width="10" height="9" :fill="palettes.institution.hair" />
 
@@ -214,8 +212,6 @@ const palettes: Record<MarioCharacter, Record<string, string>> = {
             <rect x="2" y="9" width="8" height="1" :fill="palettes.institution.overall" />
 
             <rect x="0" y="11" width="12" height="1" :fill="palettes.institution.overall" />
-
-            <!-- A+ centralizado -->
 
             <text
                 x="6"
@@ -245,7 +241,7 @@ const palettes: Record<MarioCharacter, Record<string, string>> = {
             <rect x="0" y="11" width="12" height="1" :fill="palettes.company.shoe" />
         </template>
 
-         <template v-else>
+        <template v-else>
             <rect x="3" y="0" width="6" height="1" :fill="palettes[character].hat" />
             <rect x="2" y="1" width="2" height="1" :fill="palettes[character].hat" />
             <rect x="4" y="1" width="5" height="1" :fill="palettes[character].hat" />

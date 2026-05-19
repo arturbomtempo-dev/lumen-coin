@@ -43,7 +43,6 @@ async function handleLogout() {
 
 <template>
     <div class="min-h-screen flex flex-col">
-        <!-- HUD Top -->
         <header class="sticky top-0 z-40 bg-hud text-hud-foreground border-b-4 border-border">
             <div class="container flex items-center justify-between py-2 gap-3">
                 <RouterLink to="/app/aluno" class="flex items-center gap-2 min-w-0">
@@ -98,7 +97,6 @@ async function handleLogout() {
             <router-view />
         </main>
 
-        <!-- HUD Bottom -->
         <nav class="sticky bottom-0 z-40 bg-hud text-hud-foreground border-t-4 border-border">
             <div class="container flex items-center justify-between py-2 gap-2">
                 <div class="hidden md:flex items-center gap-2 font-pixel text-[10px]">

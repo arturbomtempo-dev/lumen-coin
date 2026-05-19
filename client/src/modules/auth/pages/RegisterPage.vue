@@ -10,20 +10,19 @@ const router = useRouter();
     <main class="min-h-screen flex items-center justify-center px-4 py-10">
         <div class="w-full">
             <div class="max-w-3xl mx-auto flex flex-col">
-
                 <button
-                class="mb-5 flex items-center gap-3 font-pixel text-[9px] transition-all"
-                type="button"
-                @click="router.push({ name: 'home' })"
+                    class="mb-5 flex items-center gap-3 font-pixel text-[9px] transition-all"
+                    type="button"
+                    @click="router.push({ name: 'home' })"
                 >
-                <div
-                class="w-7 h-7 border-2 border-border bg-primary flex items-center justify-center shadow-[2px_2px_0px_hsl(var(--border))]"
-                >
-                <PhArrowLeft :size="14" weight="bold" />
+                    <div
+                        class="w-7 h-7 border-2 border-border bg-primary flex items-center justify-center shadow-[2px_2px_0px_hsl(var(--border))]"
+                    >
+                        <PhArrowLeft :size="14" weight="bold" />
+                    </div>
+                    <span>VOLTAR À TELA INICIAL</span>
+                </button>
             </div>
-                <span>VOLTAR À TELA INICIAL</span>
-            </button>
-        </div>
 
             <PixelCard class="p-6 md:p-8 lg:w-200 mx-auto">
                 <div class="font-pixel text-[9px] text-primary mb-2">▶ CRIAR CONTA</div>

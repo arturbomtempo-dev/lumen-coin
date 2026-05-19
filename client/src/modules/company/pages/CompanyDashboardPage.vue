@@ -219,7 +219,6 @@ onMounted(() => {
                 </button>
             </div>
 
-            <!-- VANTAGENS TAB -->
             <template v-if="tab === 'benefits'">
                 <div class="grid lg:grid-cols-2 gap-6 items-start">
                     <PixelCard class="p-6">
@@ -396,7 +395,6 @@ onMounted(() => {
                 </div>
             </template>
 
-            <!-- MINHA CONTA TAB -->
             <template v-if="tab === 'account'">
                 <div class="grid lg:grid-cols-2 gap-6 items-start">
                     <PixelCard class="p-6">

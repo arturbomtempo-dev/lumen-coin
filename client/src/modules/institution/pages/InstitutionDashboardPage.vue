@@ -488,7 +488,6 @@ onMounted(async () => {
                 </button>
             </div>
 
-            <!-- CURSOS TAB -->
             <div v-if="tab === 'courses'" class="grid lg:grid-cols-[1fr_1.4fr] gap-6">
                 <PixelCard class="p-5">
                     <h2 class="font-pixel text-sm mb-4 flex items-center gap-2">
@@ -592,7 +591,6 @@ onMounted(async () => {
                 </PixelCard>
             </div>
 
-            <!-- PROFESSORES TAB -->
             <div v-if="tab === 'teachers'" class="grid lg:grid-cols-[1fr_1.4fr] gap-6">
                 <PixelCard class="p-5">
                     <h2 class="font-pixel text-sm mb-4 flex items-center gap-2">
@@ -725,7 +723,6 @@ onMounted(async () => {
                             :key="t.id"
                             class="border-2 border-border bg-card p-3"
                         >
-                            <!-- View mode -->
                             <template v-if="editingTeacherId !== t.id">
                                 <div class="flex items-start justify-between gap-2">
                                     <div class="min-w-0">
@@ -759,7 +756,6 @@ onMounted(async () => {
                                 </div>
                             </template>
 
-                            <!-- Edit mode -->
                             <template v-else>
                                 <form class="space-y-2" @submit="submitEditTeacher">
                                     <div class="font-pixel text-[9px] text-primary mb-2">
@@ -827,7 +823,6 @@ onMounted(async () => {
                 </PixelCard>
             </div>
 
-            <!-- EMPRESAS TAB -->
             <div v-if="tab === 'companies'" class="grid lg:grid-cols-[1fr_1.4fr] gap-6">
                 <PixelCard class="p-5">
                     <h2 class="font-pixel text-sm mb-4 flex items-center gap-2">
@@ -1111,7 +1106,6 @@ onMounted(async () => {
                 </PixelCard>
             </div>
 
-            <!-- ALUNOS TAB -->
             <div v-if="tab === 'students'" class="space-y-4">
                 <div class="flex flex-wrap gap-3 items-end">
                     <div class="flex flex-wrap gap-2">

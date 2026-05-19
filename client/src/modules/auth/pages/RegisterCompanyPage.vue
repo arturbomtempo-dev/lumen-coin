@@ -68,11 +68,11 @@ async function handleSubmit(e: Event) {
             </button>
 
             <div class="flex items-center gap-3 mb-6">
-                 <div
-                            class="bg-hud border-2 border-border p-2 shadow-[4px_4px_0px_hsl(var(--border))]"
-                        >
-                            <MarioAvatar character="company" :size="56" />
-                        </div>
+                <div
+                    class="bg-hud border-2 border-border p-2 shadow-[4px_4px_0px_hsl(var(--border))]"
+                >
+                    <MarioAvatar character="company" :size="56" />
+                </div>
                 <div>
                     <div class="font-pixel text-[9px] text-primary mb-1">▶ CADASTRO</div>
                     <h1 class="font-pixel text-lg leading-5">CRIAR CONTA DE EMPRESA</h1>

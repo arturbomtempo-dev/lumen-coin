@@ -69,7 +69,6 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
 
 <template>
     <div class="space-y-10">
-        <!-- Wallet HUD -->
         <section class="grid lg:grid-cols-[1.1fr_1fr] gap-6 items-start">
             <PixelCard class="p-6 crt-scanlines">
                 <div class="flex items-center justify-between">
@@ -113,7 +112,6 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                 </div>
             </PixelCard>
 
-            <!-- Achievements -->
             <PixelCard class="p-6">
                 <div class="font-pixel text-[10px] text-primary">▶ CONQUISTAS</div>
                 <div class="font-pixel text-sm mt-1 mb-4">MEDALHAS</div>
@@ -137,7 +135,6 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
             </PixelCard>
         </section>
 
-        <!-- Marketplace -->
         <section>
             <div class="flex items-end justify-between mb-4 flex-wrap gap-3">
                 <div>
@@ -151,7 +148,6 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                 </div>
             </div>
 
-            <!-- Filters -->
             <PixelCard class="p-4 mb-5">
                 <div class="grid md:grid-cols-[1fr_auto_auto] gap-3 items-stretch">
                     <div class="relative">
@@ -281,7 +277,6 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
             </div>
         </section>
 
-        <!-- Ranking -->
         <section>
             <div class="font-pixel text-[10px] text-primary">▶ PLACAR</div>
             <h2 class="font-pixel text-xl mt-2 mb-4 flex items-center gap-2">
@@ -310,7 +305,6 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
             </PixelCard>
         </section>
 
-        <!-- Confirm modal -->
         <div
             v-if="pendingRedemption"
             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/70"
@@ -354,7 +348,6 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
             </div>
         </div>
 
-        <!-- Coupon modal -->
         <div
             v-if="generatedCoupon"
             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80"

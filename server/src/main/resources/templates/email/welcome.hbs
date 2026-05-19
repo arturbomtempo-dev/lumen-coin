@@ -20,44 +20,24 @@
     }
   </style>
 </head>
-<!--
-  Colors match system light-mode CSS variables exactly:
-  Navy   #080B1A  hsl(235 60% 10%) --border / --hud
-  Gold   #F5C31A  hsl(45  95% 52%) --primary
-  Amber  #A05200  hsl(30  90% 35%) --primary-shadow
-  HudFg  #F8CF1E  hsl(45  95% 60%) --hud-foreground
-  Cream  #F5EDDA  hsl(42  60% 94%) --background
-  Card   #FEFAEB  hsl(45  90% 96%) --card
-  Muted  #2A2D48  hsl(235 35% 22%) --muted-foreground
-  MutBg  #DDD3B6  hsl(42  35% 86%) --muted
-  Teal   #147769  hsl(175 75% 32%) --accent
-  Green  #177340  hsl(145 70% 32%) --success
--->
 <body style="margin:0;padding:0;background-color:#F5EDDA;">
 
-  <!-- Outer wrapper: cream background -->
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F5EDDA;">
     <tr>
       <td align="center" style="padding:32px 16px 48px;">
 
-        <!-- Pixel-shadow wrapper: navy offset simulates shadow-[5px_5px_0_0_#080B1A] -->
         <table role="presentation" class="email-wrap" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
           <tr>
             <td style="background-color:#080B1A;padding:0 5px 5px 0;">
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
 
-                <!-- ══════════════════════════════════════ -->
-                <!--  HUD HEADER — bg-hud / border-b-4     -->
-                <!-- ══════════════════════════════════════ -->
                 <tr>
                   <td style="background-color:#080B1A;padding:14px 28px 0;">
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                       <tr>
-                        <!-- Left: game-controller dots + wordmark -->
                         <td>
                           <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                             <tr>
-                              <!-- Pixel game-controller icon (dot grid) -->
                               <td style="vertical-align:middle;padding-right:10px;">
                                 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                                   <tr>
@@ -81,14 +61,12 @@
                                   </tr>
                                 </table>
                               </td>
-                              <!-- Wordmark -->
                               <td style="vertical-align:middle;">
                                 <span style="font-family:'Press Start 2P',monospace;color:#F8CF1E;font-size:11px;letter-spacing:2px;">LUMEN COIN</span>
                               </td>
                             </tr>
                           </table>
                         </td>
-                        <!-- Right: star decorations -->
                         <td align="right" style="vertical-align:middle;">
                           <span style="font-family:'Press Start 2P',monospace;color:#F8CF1E;font-size:8px;letter-spacing:3px;">&#9733; &#9733; &#9733;</span>
                         </td>
@@ -96,7 +74,6 @@
                     </table>
                   </td>
                 </tr>
-                <!-- Gold strip under HUD — matches border-b-4 site header treatment -->
                 <tr>
                   <td style="height:14px;background-color:#080B1A;"></td>
                 </tr>
@@ -104,19 +81,13 @@
                   <td style="height:4px;background-color:#F5C31A;"></td>
                 </tr>
 
-                <!-- ══════════════════════════════════════ -->
-                <!--  MAIN CARD — bg-card / border-border  -->
-                <!-- ══════════════════════════════════════ -->
                 <tr>
                   <td style="background-color:#FEFAEB;border-left:3px solid #080B1A;border-right:3px solid #080B1A;padding:40px 36px 44px;">
 
-                    <!-- Section label — ▶ pattern used throughout the site -->
                     <p style="font-family:'Press Start 2P',monospace;color:#F5C31A;font-size:8px;margin:0 0 16px 0;letter-spacing:1px;">&#9658; NOVA AVENTURA INICIADA!</p>
 
-                    <!-- Welcome heading -->
                     <h1 class="greet" style="font-family:'Press Start 2P',monospace;color:#080B1A;font-size:20px;line-height:1.7;margin:0 0 30px 0;">OL&#193;,<br/>{{name}}!</h1>
 
-                    <!-- Subheading -->
                     <p style="font-family:'Press Start 2P',monospace;color:#080B1A;font-size:9px;line-height:2.2;margin:0 0 10px 0;">
                       BEM-VINDO AO <span style="color:#F5C31A;">LUMEN COIN</span>!
                     </p>
@@ -126,7 +97,6 @@
                       E COME&#199;AR SUA JORNADA.
                     </p>
 
-                    <!-- Divider — muted horizontal rule with star badge -->
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:36px;">
                       <tr>
                         <td style="height:2px;background-color:#DDD3B6;"></td>
@@ -143,13 +113,10 @@
                       </tr>
                     </table>
 
-                    <!-- Section label for features -->
                     <p style="font-family:'Press Start 2P',monospace;color:#2A2D48;font-size:8px;margin:0 0 18px 0;letter-spacing:1px;">&#9658; O QUE TE ESPERA</p>
 
-                    <!-- 3 feature boxes — PixelCard style: cream bg, navy border, navy pixel shadow -->
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:36px;">
                       <tr>
-                        <!-- Box 1: coins (gold) -->
                         <td class="feat-col" width="31%" style="vertical-align:top;">
                           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                             <tr>
@@ -167,7 +134,6 @@
                           </table>
                         </td>
                         <td class="feat-gap" width="3%"></td>
-                        <!-- Box 2: advantages (teal) -->
                         <td class="feat-col" width="31%" style="vertical-align:top;">
                           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                             <tr>
@@ -185,7 +151,6 @@
                           </table>
                         </td>
                         <td class="feat-gap" width="3%"></td>
-                        <!-- Box 3: level (success green) -->
                         <td class="feat-col" width="31%" style="vertical-align:top;">
                           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                             <tr>
@@ -205,7 +170,6 @@
                       </tr>
                     </table>
 
-                    <!-- XP Bar — mirrors XPBar component -->
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:36px;">
                       <tr>
                         <td style="font-family:'Press Start 2P',monospace;color:#2A2D48;font-size:7px;padding-bottom:8px;">XP</td>
@@ -213,7 +177,6 @@
                       </tr>
                       <tr>
                         <td colspan="2">
-                          <!-- Track with navy pixel shadow -->
                           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                             <tr>
                               <td style="background-color:#080B1A;padding:0 2px 2px 0;">
@@ -234,13 +197,11 @@
                       </tr>
                     </table>
 
-                    <!-- CTA Button — PixelButton primary lg -->
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                       <tr>
                         <td align="center">
                           <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                             <tr>
-                              <!-- Amber shadow layer mimics shadow-[5px_5px_0_0_hsl(var(--primary-shadow))] -->
                               <td style="background-color:#A05200;padding:0 5px 5px 0;">
                                 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                                   <tr>
@@ -259,14 +220,10 @@
                   </td>
                 </tr>
 
-                <!-- Gold separator before footer — mirrors border-t-4 on stats sections -->
                 <tr>
                   <td style="height:4px;background-color:#F5C31A;border-left:3px solid #080B1A;border-right:3px solid #080B1A;"></td>
                 </tr>
 
-                <!-- ══════════════════════════════════════ -->
-                <!--  FOOTER — bg-hud text-hud-foreground  -->
-                <!-- ══════════════════════════════════════ -->
                 <tr>
                   <td style="background-color:#080B1A;border:3px solid #080B1A;border-top:none;padding:22px 28px;text-align:center;">
                     <p style="font-family:'Press Start 2P',monospace;color:#F8CF1E;font-size:7px;margin:0 0 10px 0;letter-spacing:1px;">
@@ -283,7 +240,6 @@
             </td>
           </tr>
         </table>
-        <!-- / email-wrap -->
 
       </td>
     </tr>
