@@ -1,47 +1,43 @@
 services:
-  postgres:
-    image: postgres:17
-    container_name: lumen-coin-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${DB_NAME:-lumen-coin-db}
-      POSTGRES_USER: ${DB_USER:-lumen}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
-    ports:
-      - "${DB_PORT:-5432}:5432"
-    volumes:
-      - pg-data:/var/lib/postgresql/data
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${DB_USER:-lumen} -d ${DB_NAME:-lumen-coin-db}",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - lumen-coin-network
+    postgres:
+        image: postgres:17
+        container_name: lumen-coin-db
+        restart: unless-stopped
+        environment:
+            POSTGRES_DB: ${DB_NAME:-lumen-coin-db}
+            POSTGRES_USER: ${DB_USER:-lumen}
+            POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+        ports:
+            - '${DB_PORT:-5432}:5432'
+        volumes:
+            - pg-data:/var/lib/postgresql/data
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-lumen} -d ${DB_NAME:-lumen-coin-db}']
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        networks:
+            - lumen-coin-network
 
-  rabbitmq:
-    image: rabbitmq:4.0-management
-    container_name: lumen-coin-rabbitmq
-    restart: unless-stopped
-    ports:
-      - "${RABBITMQ_PORT:-5672}:5672"
-      - "${RABBITMQ_MGMT_PORT:-15672}:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
-    volumes:
-      - rabbitmq-data:/var/lib/rabbitmq
-    networks:
-      - lumen-coin-network
+    rabbitmq:
+        image: rabbitmq:4.0-management
+        container_name: lumen-coin-rabbitmq
+        restart: unless-stopped
+        ports:
+            - '${RABBITMQ_PORT:-5672}:5672'
+            - '${RABBITMQ_MGMT_PORT:-15672}:15672'
+        environment:
+            RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+            RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+        volumes:
+            - rabbitmq-data:/var/lib/rabbitmq
+        networks:
+            - lumen-coin-network
 
 volumes:
-  pg-data:
-  rabbitmq-data:
+    pg-data:
+    rabbitmq-data:
 
 networks:
-  lumen-coin-network:
-    driver: bridge
+    lumen-coin-network:
+        driver: bridge

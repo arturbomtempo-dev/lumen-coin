@@ -26,43 +26,43 @@
 ## 📚 Índice
 
 - [Lumen Coin](#lumen-coin)
-  - [📚 Índice](#-índice)
-  - [🔗 Links Úteis](#-links-úteis)
-  - [📝 Sobre o Projeto](#-sobre-o-projeto)
-  - [✨ Funcionalidades Principais](#-funcionalidades-principais)
-  - [🛠 Tecnologias Utilizadas](#-tecnologias-utilizadas)
-    - [💻 Front-end](#-front-end)
-    - [🖥️ Back-end](#️-back-end)
-    - [⚙️ Infraestrutura \& DevOps](#️-infraestrutura--devops)
-  - [🏗 Arquitetura](#-arquitetura)
-    - [📊 Diagramas do Projeto](#-diagramas-do-projeto)
-  - [🔧 Instalação e Execução](#-instalação-e-execução)
-    - [Pré-requisitos](#pré-requisitos)
-    - [🔑 Variáveis de Ambiente](#-variáveis-de-ambiente)
-      - [1 Back-end (Spring Boot)](#1-back-end-spring-boot)
-      - [2 Front-end (Vue + Vite)](#2-front-end-vue--vite)
-    - [📦 Instalação de Dependências](#-instalação-de-dependências)
-    - [💾 Inicialização do Banco de Dados (PostgreSQL)](#-inicialização-do-banco-de-dados-postgresql)
-    - [⚡ Como Executar a Aplicação](#-como-executar-a-aplicação)
-      - [Terminal 1: Back-end (Spring Boot)](#terminal-1-back-end-spring-boot)
-      - [Terminal 2: Front-end (Vue + Vite)](#terminal-2-front-end-vue--vite)
-    - [🐳 Execução com Docker Compose (somente banco)](#-execução-com-docker-compose-somente-banco)
-  - [🚀 Deploy](#-deploy)
-  - [📂 Estrutura de Pastas](#-estrutura-de-pastas)
-  - [🎥 Demonstração](#-demonstração)
-    - [📱 Aplicativo Mobile](#-aplicativo-mobile)
-    - [🌐 Aplicação Web](#-aplicação-web)
-    - [💻 Exemplo de Saída no Terminal (para Back-end, API, CLI)](#-exemplo-de-saída-no-terminal-para-back-end-api-cli)
-      - [1. Demonstração da API (Exemplo com cURL)](#1-demonstração-da-api-exemplo-com-curl)
-      - [2. Demonstração de Execução de CLI/Script](#2-demonstração-de-execução-de-cliscript)
-  - [🧪 Testes](#-testes)
-    - [Testes Unitários e de Integração](#testes-unitários-e-de-integração)
-    - [Testes End-to-End (E2E)](#testes-end-to-end-e2e)
-  - [🔗 Documentações utilizadas](#-documentações-utilizadas)
-  - [👥 Autores](#-autores)
-  - [🤝 Contribuição](#-contribuição)
-  - [🙏 Agradecimentos](#-agradecimentos)
-  - [📄 Licença](#-licença)
+    - [📚 Índice](#-índice)
+    - [🔗 Links Úteis](#-links-úteis)
+    - [📝 Sobre o Projeto](#-sobre-o-projeto)
+    - [✨ Funcionalidades Principais](#-funcionalidades-principais)
+    - [🛠 Tecnologias Utilizadas](#-tecnologias-utilizadas)
+        - [💻 Front-end](#-front-end)
+        - [🖥️ Back-end](#️-back-end)
+        - [⚙️ Infraestrutura \& DevOps](#️-infraestrutura--devops)
+    - [🏗 Arquitetura](#-arquitetura)
+        - [📊 Diagramas do Projeto](#-diagramas-do-projeto)
+    - [🔧 Instalação e Execução](#-instalação-e-execução)
+        - [Pré-requisitos](#pré-requisitos)
+        - [🔑 Variáveis de Ambiente](#-variáveis-de-ambiente)
+            - [1 Back-end (Spring Boot)](#1-back-end-spring-boot)
+            - [2 Front-end (Vue + Vite)](#2-front-end-vue--vite)
+        - [📦 Instalação de Dependências](#-instalação-de-dependências)
+        - [💾 Inicialização do Banco de Dados (PostgreSQL)](#-inicialização-do-banco-de-dados-postgresql)
+        - [⚡ Como Executar a Aplicação](#-como-executar-a-aplicação)
+            - [Terminal 1: Back-end (Spring Boot)](#terminal-1-back-end-spring-boot)
+            - [Terminal 2: Front-end (Vue + Vite)](#terminal-2-front-end-vue--vite)
+        - [🐳 Execução com Docker Compose (somente banco)](#-execução-com-docker-compose-somente-banco)
+    - [🚀 Deploy](#-deploy)
+    - [📂 Estrutura de Pastas](#-estrutura-de-pastas)
+    - [🎥 Demonstração](#-demonstração)
+        - [📱 Aplicativo Mobile](#-aplicativo-mobile)
+        - [🌐 Aplicação Web](#-aplicação-web)
+        - [💻 Exemplo de Saída no Terminal (para Back-end, API, CLI)](#-exemplo-de-saída-no-terminal-para-back-end-api-cli)
+            - [1. Demonstração da API (Exemplo com cURL)](#1-demonstração-da-api-exemplo-com-curl)
+            - [2. Demonstração de Execução de CLI/Script](#2-demonstração-de-execução-de-cliscript)
+    - [🧪 Testes](#-testes)
+        - [Testes Unitários e de Integração](#testes-unitários-e-de-integração)
+        - [Testes End-to-End (E2E)](#testes-end-to-end-e2e)
+    - [🔗 Documentações utilizadas](#-documentações-utilizadas)
+    - [👥 Autores](#-autores)
+    - [🤝 Contribuição](#-contribuição)
+    - [🙏 Agradecimentos](#-agradecimentos)
+    - [📄 Licença](#-licença)
 
 ---
 
@@ -403,11 +403,11 @@ Certifique-se de que o `pom.xml` está na raiz da pasta `server` e contém a con
 3. Selecione **"Build and deploy from a Git repository"**
 4. Conecte seu repositório GitHub/GitLab
 5. Preencha os campos:
-   - **Name:** `lumen-coin-api` (ou nome desejado)
-   - **Root Directory:** `server`
-   - **Runtime:** `Java 21`
-   - **Build Command:** `./mvnw clean install`
-   - **Start Command:** `java -jar target/lumen-coin-api-*.jar`
+    - **Name:** `lumen-coin-api` (ou nome desejado)
+    - **Root Directory:** `server`
+    - **Runtime:** `Java 21`
+    - **Build Command:** `./mvnw clean install`
+    - **Start Command:** `java -jar target/lumen-coin-api-*.jar`
 
 #### 3. Vincular Banco de Dados PostgreSQL
 
@@ -417,9 +417,9 @@ No Render, você tem duas opções:
 
 1. No painel do Render, clique em **"Database"** → **"New PostgreSQL"**
 2. Configure:
-   - **Name:** `lumen-coin-db`
-   - **Database:** `lumen_coin`
-   - **User:** `lumen`
+    - **Name:** `lumen-coin-db`
+    - **Database:** `lumen_coin`
+    - **User:** `lumen`
 3. Anote a **Internal Database URL** (usada dentro do Render) e **External Database URL** (para ferramentas externas)
 
 **Opção B: Usar banco externo (ex: Neon, AWS RDS)**
@@ -464,16 +464,16 @@ Clique em **"Deploy"**. Render fará automaticamente o build e deploy a cada pus
 Após ambos os deploys estarem ativos:
 
 1. **Front-end (Vercel) sabe como chamar o back-end:**
-   - Usa a variável `VITE_API_URL` = URL do Render
-   - Axios intercepta todas as requisições e envia para essa URL
+    - Usa a variável `VITE_API_URL` = URL do Render
+    - Axios intercepta todas as requisições e envia para essa URL
 
 2. **Back-end (Render) permite requisições do front-end:**
-   - Variável `ALLOWED_ORIGINS` lista as origens autorizadas (CORS)
-   - Configure com a URL do seu domínio no Vercel
+    - Variável `ALLOWED_ORIGINS` lista as origens autorizadas (CORS)
+    - Configure com a URL do seu domínio no Vercel
 
 3. **Autenticação via HTTP-only Cookie:**
-   - JWT é armazenado em cookie HTTP-only (seguro contra XSS)
-   - Cookie é enviado automaticamente pelo navegador em cada requisição
+    - JWT é armazenado em cookie HTTP-only (seguro contra XSS)
+    - Cookie é enviado automaticamente pelo navegador em cada requisição
 
 ---
 
@@ -703,21 +703,21 @@ curl -X GET 'http://localhost:3000/api/v1/users' \
 
 ```json
 {
-  "total": 2,
-  "users": [
-    {
-      "id": "1a2b3c",
-      "name": "Prof. Aramuni",
-      "email": "contato@exemplo.com",
-      "status": "active"
-    },
-    {
-      "id": "4d5e6f",
-      "name": "Colaborador Teste",
-      "email": "teste@exemplo.com",
-      "status": "inactive"
-    }
-  ]
+    "total": 2,
+    "users": [
+        {
+            "id": "1a2b3c",
+            "name": "Prof. Aramuni",
+            "email": "contato@exemplo.com",
+            "status": "active"
+        },
+        {
+            "id": "4d5e6f",
+            "name": "Colaborador Teste",
+            "email": "teste@exemplo.com",
+            "status": "inactive"
+        }
+    ]
 }
 ```
 

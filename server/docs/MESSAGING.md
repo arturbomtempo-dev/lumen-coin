@@ -55,22 +55,22 @@ The RabbitMQ service is defined in `docker-compose.yml`:
 
 ```yaml
 rabbitmq:
-  image: rabbitmq:4.0-management
-  container_name: lumen-rabbitmq
-  ports:
-    - "5672:5672" # AMQP protocol port
-    - "15672:15672" # Management UI port
-  environment:
-    RABBITMQ_DEFAULT_USER: guest
-    RABBITMQ_DEFAULT_PASS: guest
-    RABBITMQ_DEFAULT_VHOST: /
-  volumes:
-    - rabbitmq-data:/var/lib/rabbitmq
-  networks:
-    - lumen-network
+    image: rabbitmq:4.0-management
+    container_name: lumen-rabbitmq
+    ports:
+        - '5672:5672' # AMQP protocol port
+        - '15672:15672' # Management UI port
+    environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+        RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+        - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+        - lumen-network
 
 volumes:
-  rabbitmq-data:
+    rabbitmq-data:
 ```
 
 The **Management UI** is accessible at `http://localhost:15672` (login: `guest` / `guest`).

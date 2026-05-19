@@ -154,11 +154,11 @@ The API uses **JWT stored in an HTTP-only cookie** (`lumen_auth` by default).
 ## Authorization
 
 - Public endpoints (no authentication required):
-  - `POST /auth/login`
-  - `POST /auth/logout`
-  - `POST /students`
-  - `POST /institutions`
-  - `POST /companies`
+    - `POST /auth/login`
+    - `POST /auth/logout`
+    - `POST /students`
+    - `POST /institutions`
+    - `POST /companies`
 - All other endpoints require a valid JWT cookie.
 - `POST /teachers` requires `ROLE_INSTITUTION` (`@PreAuthorize("hasRole('INSTITUTION')")`).
 
@@ -170,9 +170,9 @@ The API uses **JWT stored in an HTTP-only cookie** (`lumen_auth` by default).
 - All secrets are loaded from environment variables via `application.properties` placeholders.
 - The `.env` file must never be committed to version control.
 - `JWT_SECRET` must be at least 256 bits (32 bytes). Generate with:
-  ```bash
-  openssl rand -base64 32
-  ```
+    ```bash
+    openssl rand -base64 32
+    ```
 - `JWT_COOKIE_SECURE` must be `true` in any environment served over HTTPS.
 
 ---
@@ -191,11 +191,11 @@ All error responses follow the structure:
 
 ```json
 {
-  "timestamp": "2025-01-01T00:00:00Z",
-  "status": 400,
-  "error": "Bad Request",
-  "message": "Validation failed",
-  "details": { "field": "reason" }
+    "timestamp": "2025-01-01T00:00:00Z",
+    "status": 400,
+    "error": "Bad Request",
+    "message": "Validation failed",
+    "details": { "field": "reason" }
 }
 ```
 

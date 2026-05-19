@@ -100,11 +100,11 @@ public interface EmailService {
 **Method Details:**
 
 - **`sendWelcome(String to, String name)`**
-  - Recipient email address: `to`
-  - User's display name: `name`
-  - Renders the `welcome.hbs` template with the user's name
-  - Executes asynchronously (non-blocking)
-  - Logs success or failure; errors do not propagate to the caller
+    - Recipient email address: `to`
+    - User's display name: `name`
+    - Renders the `welcome.hbs` template with the user's name
+    - Executes asynchronously (non-blocking)
+    - Logs success or failure; errors do not propagate to the caller
 
 ### Asynchronous Execution
 
@@ -139,17 +139,17 @@ Create a new file, e.g., `src/main/resources/templates/email/password-reset.hbs`
 ```html
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Reset Your Password</title>
-  </head>
-  <body>
-    <h1>Hello {{name}},</h1>
-    <p>We received a request to reset your password.</p>
-    <p><a href="{{resetLink}}">Click here to reset your password</a></p>
-    <p>This link expires in {{expirationHours}} hours.</p>
-    <p>If you did not request this, please ignore this email.</p>
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Reset Your Password</title>
+    </head>
+    <body>
+        <h1>Hello {{name}},</h1>
+        <p>We received a request to reset your password.</p>
+        <p><a href="{{resetLink}}">Click here to reset your password</a></p>
+        <p>This link expires in {{expirationHours}} hours.</p>
+        <p>If you did not request this, please ignore this email.</p>
+    </body>
 </html>
 ```
 
@@ -247,9 +247,9 @@ Handlebars provides simple templating:
 
 ```html
 <ul>
-  {{#each achievements}}
-  <li>{{this}}</li>
-  {{/each}}
+    {{#each achievements}}
+    <li>{{this}}</li>
+    {{/each}}
 </ul>
 ```
 
@@ -328,13 +328,13 @@ Set `APP_MAIL_ENABLED=false` in test `.env` files to prevent real emails from be
 ```html
 <!DOCTYPE html>
 <html>
-  <body>
-    <h2>Welcome, {{studentName}}!</h2>
-    <p>You have successfully enrolled in:</p>
-    <h3>{{courseName}}</h3>
-    <p>Start date: {{startDate}}</p>
-    <p>Instructor: {{instructorName}}</p>
-  </body>
+    <body>
+        <h2>Welcome, {{studentName}}!</h2>
+        <p>You have successfully enrolled in:</p>
+        <h3>{{courseName}}</h3>
+        <p>Start date: {{startDate}}</p>
+        <p>Instructor: {{instructorName}}</p>
+    </body>
 </html>
 ```
 
