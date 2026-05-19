@@ -8,6 +8,7 @@ import br.pucminas.lumen_coin_api.coin_transfer.messaging.CoinTransferMessage;
 import br.pucminas.lumen_coin_api.coin_transfer.messaging.CoinTransferProducer;
 import br.pucminas.lumen_coin_api.coin_transfer.repository.CoinTransferRepository;
 import br.pucminas.lumen_coin_api.coin_transfer.service.CoinTransferService;
+import br.pucminas.lumen_coin_api.email.service.EmailService;
 import br.pucminas.lumen_coin_api.user.entity.Student;
 import br.pucminas.lumen_coin_api.user.entity.Teacher;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
@@ -28,6 +29,7 @@ public class CoinTransferServiceImpl implements CoinTransferService {
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
     private final CoinTransferProducer producer;
+    private final EmailService emailService;
 
     @Override
     @Transactional
@@ -52,7 +54,22 @@ public class CoinTransferServiceImpl implements CoinTransferService {
         transfer.setMessage(request.message());
         CoinTransfer saved = coinTransferRepository.save(transfer);
 
-        producer.send(new CoinTransferMessage(request.studentId(), request.amount()));
+        producer.send(new CoinTransferMessage(
+                request.studentId(),
+                request.amount(),
+                student.getEmail(),
+                student.getName(),
+                teacher.getName(),
+                request.message()
+        ));
+
+        emailService.sendCoinSent(
+                teacher.getEmail(),
+                teacher.getName(),
+                student.getName(),
+                request.amount(),
+                request.message()
+        );
 
         return toResponse(saved, teacher.getName(), student.getName());
     }

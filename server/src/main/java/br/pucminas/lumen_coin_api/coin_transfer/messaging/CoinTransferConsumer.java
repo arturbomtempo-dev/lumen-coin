@@ -1,6 +1,7 @@
 package br.pucminas.lumen_coin_api.coin_transfer.messaging;
 
 import br.pucminas.lumen_coin_api.config.RabbitMQConfig;
+import br.pucminas.lumen_coin_api.email.service.EmailService;
 import br.pucminas.lumen_coin_api.user.entity.Student;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
 import br.pucminas.lumen_coin_api.user.repository.StudentRepository;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CoinTransferConsumer {
 
     private final StudentRepository studentRepository;
+    private final EmailService emailService;
 
     @RabbitListener(queues = RabbitMQConfig.COIN_TRANSFER_QUEUE)
     @Transactional
@@ -25,5 +27,13 @@ public class CoinTransferConsumer {
         student.setBalance(student.getBalance() + message.amount());
         studentRepository.save(student);
         log.info("Credited {} coins to student {}", message.amount(), message.recipientId());
+
+        emailService.sendCoinReceived(
+                message.recipientEmail(),
+                message.recipientName(),
+                message.senderName(),
+                message.amount(),
+                message.transferMessage()
+        );
     }
 }
