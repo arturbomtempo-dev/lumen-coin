@@ -69,7 +69,8 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/logout").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/logout",
+                                "/auth/forgot-password", "/auth/reset-password").permitAll()
                         .requestMatchers(HttpMethod.POST, "/students", "/institutions", "/companies").permitAll()
                         .requestMatchers(HttpMethod.GET, "/institutions", "/institutions/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/courses", "/courses/*").permitAll()

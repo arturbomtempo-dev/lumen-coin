@@ -1,5 +1,6 @@
 package br.pucminas.lumen_coin_api.common.exception;
 
+import br.pucminas.lumen_coin_api.auth.exception.InvalidPasswordResetTokenException;
 import br.pucminas.lumen_coin_api.coin_transfer.exception.InsufficientBalanceException;
 import br.pucminas.lumen_coin_api.common.dto.ErrorResponse;
 import br.pucminas.lumen_coin_api.course.exception.CourseNotFoundException;
@@ -26,6 +27,12 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(InvalidPasswordResetTokenException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidPasswordResetToken(
+            InvalidPasswordResetTokenException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Bad Request", ex.getMessage(), request);
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUserNotFound(
             UserNotFoundException ex, HttpServletRequest request) {
