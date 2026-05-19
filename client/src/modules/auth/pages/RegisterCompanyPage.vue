@@ -4,6 +4,7 @@ import { registerCompanySchema } from '@/modules/schemas/register-company.schema
 import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
+import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import { useForm } from '@/shared/composables/useForm';
 import { PhArrowLeft, PhEye, PhEyeSlash, PhStorefront } from '@phosphor-icons/vue';
@@ -67,11 +68,11 @@ async function handleSubmit(e: Event) {
             </button>
 
             <div class="flex items-center gap-3 mb-6">
-                <div
-                    class="bg-hud border-2 border-border p-3 shadow-[4px_4px_0px_hsl(var(--border))]"
-                >
-                    <PhStorefront weight="fill" :size="36" class="text-accent" />
-                </div>
+                 <div
+                            class="bg-hud border-2 border-border p-2 shadow-[4px_4px_0px_hsl(var(--border))]"
+                        >
+                            <MarioAvatar character="company" :size="56" />
+                        </div>
                 <div>
                     <div class="font-pixel text-[9px] text-primary mb-1">▶ CADASTRO</div>
                     <h1 class="font-pixel text-lg leading-5">CRIAR CONTA DE EMPRESA</h1>

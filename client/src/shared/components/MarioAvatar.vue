@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { computed, toRefs } from 'vue';
 import type { MarioCharacter } from '@/shared/data/characters';
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         character?: MarioCharacter;
         size?: number;
@@ -11,6 +12,16 @@ withDefaults(
         size: 64,
     }
 );
+
+const { character, size } = toRefs(props);
+
+const avatarSrc = computed(() => {
+    if (character.value === 'mario') return '/mario.png';
+    if (character.value === 'luigi') return '/luigi.png';
+    if (character.value === 'peach') return '/princess-peach.png';
+
+    return '';
+});
 
 const palettes: Record<MarioCharacter, Record<string, string>> = {
     mario: {
@@ -92,15 +103,26 @@ const palettes: Record<MarioCharacter, Record<string, string>> = {
 </script>
 
 <template>
-    <svg
+    <img
+        v-if="avatarSrc"
+        :src="avatarSrc"
+        :alt="character"
         :width="size"
         :height="size"
-        viewBox="0 0 12 12"
-        shape-rendering="crispEdges"
-        :style="{ imageRendering: 'pixelated' }"
-        :aria-label="character"
-    >
-        <rect x="0" y="0" width="12" height="12" fill="transparent" />
+        class="block object-contain"
+        :style="{ width: `${size}px`, height: `${size}px`, imageRendering: 'pixelated' }"
+    />
+
+  <svg
+        v-else
+    :width="size"
+    :height="size"
+    viewBox="0 0 12 13"
+    shape-rendering="crispEdges"
+    :style="{ imageRendering: 'pixelated' }"
+    :aria-label="character"
+>
+        <rect x="0" y="0" width="12" height="13" fill="transparent" />
 
         <template v-if="character === 'peach'">
             <rect x="4" y="0" width="1" height="1" fill="#F8D000" />
@@ -223,7 +245,7 @@ const palettes: Record<MarioCharacter, Record<string, string>> = {
             <rect x="0" y="11" width="12" height="1" :fill="palettes.company.shoe" />
         </template>
 
-        <template v-else>
+         <template v-else>
             <rect x="3" y="0" width="6" height="1" :fill="palettes[character].hat" />
             <rect x="2" y="1" width="2" height="1" :fill="palettes[character].hat" />
             <rect x="4" y="1" width="5" height="1" :fill="palettes[character].hat" />

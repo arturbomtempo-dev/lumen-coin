@@ -8,25 +8,28 @@ const router = useRouter();
 
 <template>
     <main class="min-h-screen flex items-center justify-center px-4 py-10">
-        <div class="w-full max-w-xl">
-            <button
+        <div class="w-full">
+            <div class="max-w-3xl mx-auto flex flex-col">
+
+                <button
                 class="mb-5 flex items-center gap-3 font-pixel text-[9px] transition-all"
                 type="button"
                 @click="router.push({ name: 'home' })"
-            >
-                <div
-                    class="w-7 h-7 border-2 border-border bg-primary flex items-center justify-center shadow-[2px_2px_0px_hsl(var(--border))]"
                 >
-                    <PhArrowLeft :size="14" weight="bold" />
-                </div>
+                <div
+                class="w-7 h-7 border-2 border-border bg-primary flex items-center justify-center shadow-[2px_2px_0px_hsl(var(--border))]"
+                >
+                <PhArrowLeft :size="14" weight="bold" />
+            </div>
                 <span>VOLTAR À TELA INICIAL</span>
             </button>
+        </div>
 
-            <PixelCard class="p-6 md:p-8">
+            <PixelCard class="p-6 md:p-8 lg:w-200 mx-auto">
                 <div class="font-pixel text-[9px] text-primary mb-2">▶ CRIAR CONTA</div>
                 <h1 class="font-pixel text-xl mb-8">ESCOLHA SEU PERFIL</h1>
 
-                <div class="grid sm:grid-cols-2 gap-4">
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <button
                         class="border-2 border-border bg-card p-6 text-left transition-all hover:-translate-y-1 hover:shadow-[4px_4px_0_0_hsl(var(--border))] active:translate-y-0"
                         type="button"
