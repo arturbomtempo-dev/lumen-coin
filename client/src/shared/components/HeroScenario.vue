@@ -1,13 +1,13 @@
 <template>
-    <div class="relative w-full max-w-sm md:max-w-2xl mx-auto mt-10">
+    <div class="relative w-full max-w-sm md:max-w-2xl mx-auto mt-10 bg-login-bg transition-colors duration-300 min-h-74  overflow-hidden border-3 border-border">
         <div class="relative h-48 md:mt-15">
-            <div class="absolute bottom-6 left-8 flex flex-col items-center">
+            <div class="absolute -bottom-18 sm:-bottom-4 left-8 flex flex-col items-center">
                     <div class="cursor-pointer" :style="isJumping ? 'transform: translateY(-40px); transition: transform 450ms ease-out;' : 'transform: translateY(0); transition: transform 350ms ease-in;'">
                         <MarioAvatar character="mario" :size="80" />
                     </div>
                 </div>
 
-            <div class="absolute bottom-6 right-8 flex flex-col items-center">
+            <div class="absolute -bottom-20 sm:-bottom-5 right-8 flex flex-col items-center">
                 <MarioAvatar character="luigi" :size="80" class="animate-bounce" />
             </div>
         </div>
@@ -34,7 +34,12 @@
             <MarioAvatar character="yoshi" :size="88"  class="animate-bounce"/>
         </div>
 
-        <div class="absolute bottom-0 left-0 right-0 h-6 bg-card border-t-4 border-border" />
+        <div class="absolute bottom-0 left-0 right-0 h-6 bg-red-800 border-t-4 border-border" />
+
+        <!-- Cloud in upper right -->
+        <div class="absolute top-8 right-12">
+            <Cloud />
+        </div>
     </div>
 </template>
 
@@ -42,6 +47,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import MarioAvatar from '@/shared/components/MarioAvatar.vue';
+import Cloud from '@/modules/auth/pages/_components/Cloud.vue';
 
 const isJumping = ref(false);
 const coinVisible = ref(false);

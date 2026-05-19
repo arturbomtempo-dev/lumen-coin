@@ -211,7 +211,7 @@ const scrollToSection = (sectionId: string) => {
             <div class="container py-10">
                 <div class="max-w-4xl mx-auto text-center">
                     <h3 class="font-pixel text-primary text-2xl">SOBRE O SISTEMA</h3>
-                    <p class="font-sans mt-4 text-md text-foreground/80 mb-6">
+                    <p class="font-sans mt-4 text-lg text-foreground/80 mb-6">
                         Lumen Coin é uma plataforma inspirada no jogo super mario e foi desenvolvida para reconhecer e premiar esforços
                         acadêmicos. Tenha uma experiencia gamificada que conecta alunos, professores e empresas em uma jornada de conquistas e recompensas.
                     </p>
@@ -229,7 +229,7 @@ const scrollToSection = (sectionId: string) => {
                     ▶ REGRAS DO ARCADE
                 </div>
                 <h2 class="font-pixel text-2xl text-center mt-3">REGRAS POR PERFIL</h2>
-                <p class="font-sans text-md text-center max-w-2xl mx-auto mt-3 text-foreground/75">
+                <p class="font-sans text-lg text-center max-w-2xl mx-auto mt-3 text-foreground/75">
                     Cada perfil tem suas missões, poderes e limites. Conheça as regras antes de
                     começar a jogar.
                 </p>
