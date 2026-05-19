@@ -1,6 +1,8 @@
 package br.pucminas.lumen_coin_api.auth.controller;
 
+import br.pucminas.lumen_coin_api.auth.dto.request.ForgotPasswordRequest;
 import br.pucminas.lumen_coin_api.auth.dto.request.LoginRequest;
+import br.pucminas.lumen_coin_api.auth.dto.request.ResetPasswordRequest;
 import br.pucminas.lumen_coin_api.auth.dto.response.AuthResponse;
 import br.pucminas.lumen_coin_api.auth.dto.response.MeResponse;
 import br.pucminas.lumen_coin_api.auth.service.AuthService;
@@ -34,5 +36,15 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<MeResponse> me(@AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(authService.me(principal));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<AuthResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        return ResponseEntity.ok(authService.forgotPassword(request));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<AuthResponse> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        return ResponseEntity.ok(authService.resetPassword(request));
     }
 }

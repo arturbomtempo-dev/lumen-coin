@@ -106,3 +106,11 @@ export function meRequest() {
         skipAuthRedirect: true,
     });
 }
+
+export function forgotPasswordRequest(email: string) {
+    return api.post<{ message: string }>('/auth/forgot-password', { email });
+}
+
+export function resetPasswordRequest(token: string, newPassword: string) {
+    return api.post<{ message: string }>('/auth/reset-password', { token, newPassword }, { skipGlobalErrorToast: true });
+}
