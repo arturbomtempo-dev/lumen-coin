@@ -112,5 +112,9 @@ export function forgotPasswordRequest(email: string) {
 }
 
 export function resetPasswordRequest(token: string, newPassword: string) {
-    return api.post<{ message: string }>('/auth/reset-password', { token, newPassword }, { skipGlobalErrorToast: true });
+    return api.post<{ message: string }>(
+        '/auth/reset-password',
+        { token, newPassword },
+        { skipGlobalErrorToast: true }
+    );
 }

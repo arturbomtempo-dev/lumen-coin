@@ -155,7 +155,9 @@ async function handleLogin(e: Event) {
                             <label class="flex items-center gap-2">
                                 <input type="checkbox" class="accent-primary" /> LEMBRAR
                             </label>
-                            <RouterLink to="/forgot-password" class="hover:text-primary">ESQUECI A SENHA</RouterLink>
+                            <RouterLink to="/forgot-password" class="hover:text-primary"
+                                >ESQUECI A SENHA</RouterLink
+                            >
                         </div>
 
                         <PixelButton

@@ -81,7 +81,8 @@ async function handleSubmit(e: Event) {
 
                     <template v-if="!submitted">
                         <p class="font-pixel text-[8px] text-muted-foreground leading-loose">
-                            INFORME SEU E-MAIL CADASTRADO E ENVIAREMOS AS INSTRUÇÕES PARA REDEFINIR SUA SENHA.
+                            INFORME SEU E-MAIL CADASTRADO E ENVIAREMOS AS INSTRUÇÕES PARA REDEFINIR
+                            SUA SENHA.
                         </p>
 
                         <form class="space-y-4" @submit="handleSubmit">
@@ -113,7 +114,8 @@ async function handleSubmit(e: Event) {
                                 &#9658; E-MAIL ENVIADO!
                             </p>
                             <p class="font-pixel text-[8px] text-muted-foreground leading-loose">
-                                SE O E-MAIL ESTIVER CADASTRADO, VOCÊ RECEBERÁ AS INSTRUÇÕES EM BREVE. VERIFIQUE TAMBÉM SUA CAIXA DE SPAM.
+                                SE O E-MAIL ESTIVER CADASTRADO, VOCÊ RECEBERÁ AS INSTRUÇÕES EM
+                                BREVE. VERIFIQUE TAMBÉM SUA CAIXA DE SPAM.
                             </p>
                             <RouterLink to="/login">
                                 <PixelButton variant="secondary" class="w-full mt-4">

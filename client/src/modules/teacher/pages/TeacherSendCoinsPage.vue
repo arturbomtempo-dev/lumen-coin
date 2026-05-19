@@ -133,11 +133,7 @@ async function submit(e: Event) {
                     <label class="font-pixel text-[9px] text-muted-foreground block mb-2">
                         VALOR (MOEDAS)
                     </label>
-                    <PixelInput
-                        v-model="amount"
-                        type="number"
-                        placeholder="Ex: 50"
-                    />
+                    <PixelInput v-model="amount" type="number" placeholder="Ex: 50" />
                     <p
                         v-if="errors.amount"
                         class="font-sans text-xs mt-1"
