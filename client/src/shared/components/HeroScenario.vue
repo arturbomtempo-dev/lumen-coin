@@ -3,12 +3,12 @@
         <div class="relative h-48 md:mt-15">
             <div class="absolute -bottom-18 sm:-bottom-4 left-8 flex flex-col items-center">
                     <div class="cursor-pointer" :style="isJumping ? 'transform: translateY(-40px); transition: transform 450ms ease-out;' : 'transform: translateY(0); transition: transform 350ms ease-in;'">
-                        <MarioAvatar character="mario" :size="80" />
+                        <MarioAvatar character="mario" :size="84" />
                     </div>
                 </div>
 
             <div class="absolute -bottom-20 sm:-bottom-5 right-8 flex flex-col items-center">
-                <MarioAvatar character="luigi" :size="80" class="animate-bounce" />
+                <MarioAvatar character="luigi" :size="84" class="animate-bounce" />
             </div>
         </div>
 
@@ -31,7 +31,7 @@
         </div>
 
         <div class="absolute bottom-26 left-1/2 -translate-x-1/2 flex flex-col items-center">
-            <MarioAvatar character="yoshi" :size="88"  class="animate-bounce"/>
+            <MarioAvatar character="yoshi" :size="74"  class="animate-bounce"/>
         </div>
 
         <div class="absolute bottom-0 left-0 right-0 h-6 bg-red-800 border-t-4 border-border" />
