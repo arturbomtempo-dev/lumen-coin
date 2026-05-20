@@ -100,9 +100,8 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                 <div class="mt-5 grid grid-cols-2 gap-4">
                     <div class="border-2 border-border bg-card p-3">
                         <div class="font-pixel text-[9px] text-muted-foreground">NÍVEL</div>
-                        <div class="font-pixel text-2xl mt-1 flex items-center gap-2">
-                            <PhTrophy weight="fill" class="pixel-icon text-primary" /> LV
-                            {{ level }}
+                        <div class="font-pixel text-md md:text-2xl mt-1 flex items-center gap-2">
+                            <PhTrophy weight="fill" class="pixel-icon text-primary" /> LV {{ level }}
                         </div>
                     </div>
                     <div class="border-2 border-border bg-card p-3">
@@ -159,7 +158,7 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                         <PixelInput
                             v-model="searchQuery"
                             placeholder="Buscar vantagem, empresa, descrição..."
-                            class="pl-8 pr-8"
+                            class="pl-10 pr-8"
                         />
                         <button
                             v-if="searchQuery"
@@ -277,33 +276,6 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
             </div>
         </section>
 
-        <section>
-            <div class="font-pixel text-[10px] text-primary">▶ PLACAR</div>
-            <h2 class="font-pixel text-xl mt-2 mb-4 flex items-center gap-2">
-                <PhCrown weight="fill" class="pixel-icon text-primary" /> RANKING DA TURMA
-            </h2>
-            <PixelCard class="p-4">
-                <ul class="space-y-2">
-                    <li
-                        v-for="(p, i) in ranking.slice(0, 5)"
-                        :key="p.id"
-                        class="flex items-center justify-between border-2 border-border bg-card px-3 py-2 gap-3"
-                    >
-                        <span class="flex items-center gap-3 min-w-0">
-                            <PixelBadge :tone="medals[i] || 'teal'">#{{ i + 1 }}</PixelBadge>
-                            <span class="font-sans text-sm truncate">{{ p.name }}</span>
-                            <span
-                                class="hidden sm:inline font-pixel text-[9px] text-muted-foreground"
-                                >LV{{ p.level }}</span
-                            >
-                        </span>
-                        <span class="font-pixel text-xs flex items-center gap-1 shrink-0">
-                            <CoinIcon :size="12" /> {{ p.coins }}
-                        </span>
-                    </li>
-                </ul>
-            </PixelCard>
-        </section>
 
         <div
             v-if="pendingRedemption"

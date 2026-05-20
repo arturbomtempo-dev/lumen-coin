@@ -276,7 +276,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="space-y-8">
+    <div class="space-y-5 max-w-5xl mx-auto">
         <div>
             <div class="font-pixel text-[10px] text-primary">▶ PERFIL</div>
             <h1 class="font-pixel text-xl mt-2 flex items-center gap-2">
@@ -284,7 +284,7 @@ onMounted(async () => {
             </h1>
         </div>
 
-        <PixelCard class="p-6 space-y-6">
+        <PixelCard class="p-6 space-y-5">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div class="flex items-center gap-4">
                     <div class="border-2 border-border bg-hud p-2">
@@ -301,7 +301,7 @@ onMounted(async () => {
                                 ).toUpperCase()
                             }}
                         </div>
-                        <div class="font-sans text-sm text-muted-foreground mt-1">
+                        <div class="font-sans md text-muted-foreground mt-1">
                             Perfil de aluno
                         </div>
                     </div>
@@ -325,7 +325,7 @@ onMounted(async () => {
 
             <div class="space-y-3">
                 <div class="flex items-center justify-between">
-                    <div class="font-pixel text-sm flex items-center gap-2">
+                    <div class="font-pixel md flex items-center gap-2">
                         <PhPalette weight="fill" class="pixel-icon text-accent" />
                         AVATAR
                     </div>
@@ -334,7 +334,7 @@ onMounted(async () => {
                     </PixelBadge>
                 </div>
 
-                <div class="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
                     <button
                         v-for="c in studentCharacters"
                         :key="c.id"
@@ -349,11 +349,11 @@ onMounted(async () => {
                             selectAvatar(c.id as Exclude<MarioCharacter, 'institution' | 'company'>)
                         "
                     >
-                        <div class="flex justify-center bg-hud border-2 border-border p-1">
-                            <MarioAvatar :character="c.id" :size="32" />
+                        <div class="flex justify-center bg-hud py-2 border-2 border-border p-1">
+                            <MarioAvatar :character="c.id" :size="36" />
                         </div>
 
-                        <div class="font-pixel text-[7px] mt-1 leading-none">
+                        <div class="font-pixel text-[8px] mt-1 leading-none">
                             {{ c.name.toUpperCase() }}
                         </div>
                     </button>
@@ -362,16 +362,16 @@ onMounted(async () => {
 
             <div class="grid md:grid-cols-2 gap-3">
                 <div class="border-2 border-border bg-card p-3">
-                    <div class="font-pixel text-[8px] text-muted-foreground">MOEDAS</div>
-                    <div class="font-pixel text-sm mt-1 flex items-center gap-1">
+                    <div class="font-pixel text-[9px] text-muted-foreground">MOEDAS</div>
+                    <div class="font-pixel md mt-1 flex items-center gap-1">
                         <CoinIcon :size="12" />
                         {{ (studentProfile?.balance ?? 0).toLocaleString('pt-BR') }}
                     </div>
                 </div>
 
                 <div class="border-2 border-border bg-card p-3">
-                    <div class="font-pixel text-[8px] text-muted-foreground">EMAIL</div>
-                    <div class="font-sans text-sm mt-1 break-all">
+                    <div class="font-pixel text-[9px] text-muted-foreground">EMAIL</div>
+                    <div class="font-sans md mt-1 break-all">
                         {{ studentProfile?.email ?? authStore.user?.email ?? '-' }}
                     </div>
                 </div>
@@ -379,33 +379,33 @@ onMounted(async () => {
 
             <div v-if="!isEditingProfile" class="grid md:grid-cols-2 gap-3">
                 <div class="border-2 border-border bg-card p-3">
-                    <div class="font-pixel text-[8px] text-muted-foreground">CPF</div>
-                    <div class="font-sans text-sm">{{ studentProfile?.cpf ?? '-' }}</div>
+                    <div class="font-pixel text-[9px] text-muted-foreground">CPF</div>
+                    <div class="font-sans md">{{ studentProfile?.cpf ?? '-' }}</div>
                 </div>
 
                 <div class="border-2 border-border bg-card p-3">
-                    <div class="font-pixel text-[8px] text-muted-foreground">RG</div>
-                    <div class="font-sans text-sm">{{ studentProfile?.rg ?? '-' }}</div>
+                    <div class="font-pixel text-[9px] text-muted-foreground">RG</div>
+                    <div class="font-sans md">{{ studentProfile?.rg ?? '-' }}</div>
                 </div>
 
                 <div class="border-2 border-border bg-card p-3">
-                    <div class="font-pixel text-[8px] text-muted-foreground">CEP</div>
-                    <div class="font-sans text-sm">{{ studentProfile?.zipCode ?? '-' }}</div>
+                    <div class="font-pixel text-[9px] text-muted-foreground">CEP</div>
+                    <div class="font-sans md">{{ studentProfile?.zipCode ?? '-' }}</div>
                 </div>
 
                 <div class="border-2 border-border bg-card p-3">
-                    <div class="font-pixel text-[8px] text-muted-foreground">CURSO</div>
-                    <div class="font-sans text-sm">{{ courseName }}</div>
+                    <div class="font-pixel text-[9px] text-muted-foreground">CURSO</div>
+                    <div class="font-sans md">{{ courseName }}</div>
                 </div>
 
                 <div class="border-2 border-border bg-card p-3 md:col-span-2">
-                    <div class="font-pixel text-[8px] text-muted-foreground">INSTITUIÇÃO</div>
-                    <div class="font-sans text-sm">{{ institutionName }}</div>
+                    <div class="font-pixel text-[9px] text-muted-foreground">INSTITUIÇÃO</div>
+                    <div class="font-sans md">{{ institutionName }}</div>
                 </div>
 
                 <div class="border-2 border-border bg-card p-3 md:col-span-2">
-                    <div class="font-pixel text-[8px] text-muted-foreground">ENDEREÇO</div>
-                    <div class="font-sans text-sm">{{ studentProfile?.address ?? '-' }}</div>
+                    <div class="font-pixel text-[9px] text-muted-foreground">ENDEREÇO</div>
+                    <div class="font-sans md">{{ studentProfile?.address ?? '-' }}</div>
                 </div>
             </div>
 
@@ -436,9 +436,9 @@ onMounted(async () => {
         </PixelCard>
 
         <PixelCard class="p-6">
-            <div class="font-pixel text-sm mb-3 text-destructive">EXCLUIR CONTA</div>
+            <div class="font-pixel md mb-3 text-destructive">EXCLUIR CONTA</div>
 
-            <p class="font-sans text-sm text-muted-foreground mb-4">
+            <p class="font-sans md text-muted-foreground mb-4">
                 Esta ação é permanente. Ao excluir sua conta, todas as moedas e conquistas serão
                 perdidas.
             </p>

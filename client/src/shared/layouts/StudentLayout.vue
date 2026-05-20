@@ -4,7 +4,6 @@ import { useStudentStore } from '@/modules/student/stores/student.store';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import { useThemeStore } from '@/shared/stores/theme.store';
 import {
-    PhBell,
     PhGameController,
     PhHouse,
     PhMoon,
@@ -20,7 +19,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router';
 const themeStore = useThemeStore();
 const studentStore = useStudentStore();
 const authStore = useAuthStore();
-const { balance, level, name, unreadCount } = storeToRefs(studentStore);
+const { balance, level, name } = storeToRefs(studentStore);
 const route = useRoute();
 const router = useRouter();
 
@@ -28,7 +27,6 @@ const navItems = [
     { to: '/app/aluno', icon: PhHouse, label: 'INÍCIO', badge: 0 },
     { to: '/app/aluno/extrato', icon: PhReceipt, label: 'EXTRATO', badge: 0 },
     { to: '/app/aluno/perfil', icon: PhUser, label: 'PERFIL', badge: 0 },
-    { to: '/app/aluno/notificacoes', icon: PhBell, label: 'AVISOS', badge: unreadCount },
 ];
 
 onMounted(() => {
@@ -123,15 +121,10 @@ async function handleLogout() {
                             />
                             <span class="hidden sm:inline">{{ item.label }}</span>
                             <span
-                                v-if="
-                                    item.badge &&
-                                    (typeof item.badge === 'number'
-                                        ? item.badge
-                                        : item.badge.value) > 0
-                                "
+                                v-if="item.badge > 0"
                                 class="absolute -top-1 -right-1 h-4 min-w-4 px-0.5 flex items-center justify-center bg-secondary text-secondary-foreground border-2 border-border font-pixel text-[8px]"
                             >
-                                {{ typeof item.badge === 'number' ? item.badge : item.badge.value }}
+                                {{ item.badge }}
                             </span>
                         </RouterLink>
                     </li>

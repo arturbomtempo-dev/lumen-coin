@@ -400,7 +400,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col bg-background">
+    <div class="min-h-screen flex flex-col">
         <header class="bg-hud text-hud-foreground border-b-4 border-border">
             <div class="container flex items-center justify-between py-3 gap-3">
                 <RouterLink to="/" class="flex items-center gap-2 font-pixel text-[10px]">

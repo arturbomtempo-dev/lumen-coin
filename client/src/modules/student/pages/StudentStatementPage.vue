@@ -37,10 +37,10 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="space-y-8">
+    <div class="space-y-8 max-w-5xl mx-auto">
         <div>
             <div class="font-pixel text-[10px] text-primary">▶ HISTÓRICO</div>
-            <h1 class="font-pixel text-xl mt-2 flex items-center gap-2">
+            <h1 class="font-pixel  text-md md:text-xl mt-2 flex items-center gap-2">
                 <PhReceipt weight="fill" class="pixel-icon" /> EXTRATO DE MOEDAS
             </h1>
         </div>
@@ -88,7 +88,7 @@ onMounted(async () => {
         </PixelCard>
 
         <div>
-            <h2 class="font-pixel text-lg mb-4 flex items-center gap-2">
+            <h2 class="font-pixel  text-sm md:text-lg mb-4 flex items-center gap-2">
                 <PhTicket weight="fill" class="pixel-icon text-secondary" /> MEUS CUPONS
             </h2>
             <PixelCard
