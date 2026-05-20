@@ -74,7 +74,7 @@ async function submit(e: Event) {
 </script>
 
 <template>
-    <div class="space-y-6">
+    <div class="space-y-6 max-w-5xl mx-auto">
         <div>
             <div class="font-pixel text-[10px] text-primary mb-1">▶ ENVIAR RECONHECIMENTO</div>
             <h1 class="font-pixel text-xl flex items-center gap-2">

@@ -31,7 +31,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="space-y-8">
+    <div class="space-y-8 max-w-5xl mx-auto">
         <div>
             <div class="font-pixel text-[10px] text-primary">▶ HISTÓRICO</div>
             <h1 class="font-pixel text-xl mt-2 flex items-center gap-2">

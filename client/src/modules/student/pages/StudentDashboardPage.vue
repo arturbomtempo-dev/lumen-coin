@@ -7,9 +7,8 @@ import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import XPBar from '@/shared/components/XPBar.vue';
-import { achievements, initialBenefits, ranking } from '@/shared/data/mockData';
+import { achievements, initialBenefits } from '@/shared/data/mockData';
 import {
-    PhCrown,
     PhLightning,
     PhMagnifyingGlass,
     PhSparkle,
@@ -63,8 +62,6 @@ function confirmRedemption() {
     generatedCoupon.value = { code, name: pendingRedemption.value.name };
     pendingRedemption.value = null;
 }
-
-const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 'teal', 'teal'];
 </script>
 
 <template>
@@ -153,12 +150,13 @@ const medals: Array<'gold' | 'red' | 'blue' | 'teal'> = ['gold', 'red', 'blue', 
                         <PhMagnifyingGlass
                             weight="bold"
                             :size="16"
-                            class="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                            class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
                         />
                         <PixelInput
                             v-model="searchQuery"
                             placeholder="Buscar vantagem, empresa, descrição..."
-                            class="pl-10 pr-8"
+                            class="pr-8 w-full"
+                            style="padding-left: 2rem"
                         />
                         <button
                             v-if="searchQuery"
