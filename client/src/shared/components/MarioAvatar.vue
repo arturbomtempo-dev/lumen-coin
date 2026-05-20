@@ -19,6 +19,9 @@ const avatarSrc = computed(() => {
     if (character.value === 'mario') return '/mario.png';
     if (character.value === 'luigi') return '/luigi.png';
     if (character.value === 'peach') return '/princess-peach.png';
+    if (character.value === 'toad') return '/toad.png';
+    if (character.value === 'yoshi') return '/yoshi.png';
+    if (character.value === 'bowser') return '/bowser.png';
 
     return '';
 });
@@ -151,57 +154,6 @@ const palettes: Record<MarioCharacter, Record<string, string>> = {
             <rect x="5" y="7" width="2" height="1" fill="#1F4FD8" />
             <rect x="3" y="11" width="2" height="1" :fill="palettes.peach.shoe" />
             <rect x="7" y="11" width="2" height="1" :fill="palettes.peach.shoe" />
-        </template>
-
-        <template v-else-if="character === 'toad'">
-            <rect x="2" y="0" width="8" height="3" :fill="palettes.toad.hat" />
-            <rect x="1" y="1" width="1" height="2" :fill="palettes.toad.hat" />
-            <rect x="10" y="1" width="1" height="2" :fill="palettes.toad.hat" />
-            <rect x="3" y="1" width="2" height="1" :fill="palettes.toad.spot" />
-            <rect x="7" y="1" width="2" height="1" :fill="palettes.toad.spot" />
-            <rect x="5" y="2" width="2" height="1" :fill="palettes.toad.spot" />
-            <rect x="3" y="3" width="6" height="3" :fill="palettes.toad.skin" />
-            <rect x="4" y="4" width="1" height="1" fill="hsl(var(--border))" />
-            <rect x="7" y="4" width="1" height="1" fill="hsl(var(--border))" />
-            <rect x="5" y="5" width="2" height="1" fill="#D04060" />
-            <rect x="3" y="6" width="6" height="3" :fill="palettes.toad.shirt" />
-            <rect x="4" y="7" width="4" height="1" :fill="palettes.toad.overall" />
-            <rect x="3" y="9" width="3" height="2" :fill="palettes.toad.overall" />
-            <rect x="6" y="9" width="3" height="2" :fill="palettes.toad.overall" />
-            <rect x="3" y="11" width="3" height="1" :fill="palettes.toad.shoe" />
-            <rect x="6" y="11" width="3" height="1" :fill="palettes.toad.shoe" />
-        </template>
-
-        <template v-else-if="character === 'yoshi'">
-            <rect x="2" y="1" width="8" height="4" :fill="palettes.yoshi.hat" />
-            <rect x="3" y="0" width="2" height="1" :fill="palettes.yoshi.hat" />
-            <rect x="4" y="2" width="2" height="2" fill="#FFFFFF" />
-            <rect x="7" y="2" width="2" height="2" fill="#FFFFFF" />
-            <rect x="5" y="3" width="1" height="1" fill="hsl(var(--border))" />
-            <rect x="8" y="3" width="1" height="1" fill="hsl(var(--border))" />
-            <rect x="2" y="4" width="3" height="2" :fill="palettes.yoshi.skin" />
-            <rect x="3" y="6" width="2" height="1" :fill="palettes.yoshi.skin" />
-            <rect x="3" y="6" width="6" height="3" :fill="palettes.yoshi.hat" />
-            <rect x="4" y="7" width="4" height="2" :fill="palettes.yoshi.overall" />
-            <rect x="3" y="9" width="3" height="2" :fill="palettes.yoshi.shoe" />
-            <rect x="6" y="9" width="3" height="2" :fill="palettes.yoshi.shoe" />
-            <rect x="9" y="5" width="1" height="1" :fill="palettes.yoshi.spot" />
-            <rect x="10" y="6" width="1" height="1" :fill="palettes.yoshi.spot" />
-        </template>
-
-        <template v-else-if="character === 'bowser'">
-            <rect x="2" y="0" width="2" height="2" :fill="palettes.bowser.spot" />
-            <rect x="8" y="0" width="2" height="2" :fill="palettes.bowser.spot" />
-            <rect x="4" y="0" width="4" height="1" :fill="palettes.bowser.hair" />
-            <rect x="3" y="1" width="6" height="4" :fill="palettes.bowser.hat" />
-            <rect x="4" y="3" width="4" height="2" :fill="palettes.bowser.skin" />
-            <rect x="4" y="2" width="1" height="1" fill="hsl(var(--border))" />
-            <rect x="7" y="2" width="1" height="1" fill="hsl(var(--border))" />
-            <rect x="2" y="5" width="8" height="5" :fill="palettes.bowser.shirt" />
-            <rect x="3" y="6" width="6" height="3" :fill="palettes.bowser.hat" />
-            <rect x="5" y="7" width="2" height="1" :fill="palettes.bowser.spot" />
-            <rect x="2" y="10" width="3" height="2" :fill="palettes.bowser.shoe" />
-            <rect x="7" y="10" width="3" height="2" :fill="palettes.bowser.shoe" />
         </template>
 
         <template v-else-if="character === 'institution'">
