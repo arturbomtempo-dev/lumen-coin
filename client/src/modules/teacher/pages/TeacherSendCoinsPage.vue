@@ -63,8 +63,10 @@ async function submit(e: Event) {
         await teacherStore.loadProfile();
         const student = students.value.find((s) => s.id === studentId.value);
         toast.success(`+${v} moedas enviadas para ${student?.name ?? 'aluno'}!`);
+        studentId.value = '';
         message.value = '';
         amount.value = 50;
+        errors.value = {};
     } catch {
         errors.value.submit = 'Erro ao enviar moedas. Tente novamente.';
     } finally {
