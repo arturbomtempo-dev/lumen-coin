@@ -4,8 +4,6 @@ import br.pucminas.lumen_coin_api.security.UserPrincipal;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterTeacherRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateTeacherRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.TeacherResponse;
-import br.pucminas.lumen_coin_api.user.enums.UserRole;
-import br.pucminas.lumen_coin_api.user.exception.TeacherSelfDeleteNotAllowedException;
 import br.pucminas.lumen_coin_api.user.service.TeacherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -56,9 +54,6 @@ public class TeacherController {
     public ResponseEntity<Void> delete(
             @PathVariable UUID id,
             @AuthenticationPrincipal UserPrincipal principal) {
-        if (principal.getRole() == UserRole.TEACHER) {
-            throw new TeacherSelfDeleteNotAllowedException();
-        }
         teacherService.delete(id);
         return ResponseEntity.ok().build();
     }

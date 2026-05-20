@@ -40,7 +40,6 @@ const showDeleteConfirmation = ref(false);
 
 const {
     fields: profileData,
-    errors: profileErrors,
     isSubmitting: profileIsSubmitting,
     validate: validateProfile,
     clearErrors: clearProfileErrors,
@@ -95,10 +94,6 @@ const selectedCharacter = computed<MarioCharacter>(() => {
         ] ?? 'mario'
     );
 });
-
-const availableCourses = computed(() =>
-    courses.value.filter((course) => course.institutionId === profileData.value.institutionId)
-);
 
 const institutionName = computed(() => {
     const found = institutions.value.find(

@@ -7,7 +7,7 @@ import PixelCard from '@/shared/components/PixelCard.vue';
 import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import { useForm } from '@/shared/composables/useForm';
-import { PhArrowLeft, PhEye, PhEyeSlash, PhStorefront } from '@phosphor-icons/vue';
+import { PhArrowLeft, PhEye, PhEyeSlash } from '@phosphor-icons/vue';
 import { vMaska } from 'maska/vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';

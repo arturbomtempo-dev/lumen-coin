@@ -79,6 +79,11 @@ export const routes: RouteRecordRaw[] = [
                 component: () => import('@/modules/teacher/pages/TeacherDashboardPage.vue'),
             },
             {
+                path: 'perfil',
+                name: 'teacher-profile',
+                component: () => import('@/modules/teacher/pages/TeacherProfilePage.vue'),
+            },
+            {
                 path: 'enviar-moedas',
                 name: 'teacher-send-coins',
                 component: () => import('@/modules/teacher/pages/TeacherSendCoinsPage.vue'),

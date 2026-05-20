@@ -11,6 +11,7 @@ import {
     PhReceipt,
     PhSignOut,
     PhSun,
+    PhUser,
 } from '@phosphor-icons/vue';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
@@ -27,6 +28,7 @@ const navItems = [
     { to: '/app/professor', icon: PhGraduationCap, label: 'PAINEL' },
     { to: '/app/professor/enviar-moedas', icon: PhPaperPlaneTilt, label: 'ENVIAR' },
     { to: '/app/professor/extrato', icon: PhReceipt, label: 'EXTRATO' },
+    { to: '/app/professor/perfil', icon: PhUser, label: 'PERFIL' },
 ];
 
 async function handleLogout() {
