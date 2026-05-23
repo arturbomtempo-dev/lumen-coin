@@ -25,7 +25,16 @@ import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import { useForm } from '@/shared/composables/useForm';
 import { MARIO_CHARACTERS, type MarioCharacter } from '@/shared/data/characters';
-import { PhFloppyDisk, PhKey, PhPencilSimple, PhTrash, PhUser, PhX } from '@phosphor-icons/vue';
+import {
+    PhEye,
+    PhEyeSlash,
+    PhFloppyDisk,
+    PhKey,
+    PhPencilSimple,
+    PhTrash,
+    PhUser,
+    PhX,
+} from '@phosphor-icons/vue';
 import { vMaska } from 'maska/vue';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -40,6 +49,9 @@ const institutionName = ref('-');
 const isEditingProfile = ref(false);
 const isDeletingAccount = ref(false);
 const showDeleteConfirmation = ref(false);
+const showCurrentPassword = ref(false);
+const showNewPassword = ref(false);
+const showConfirmNewPassword = ref(false);
 
 const {
     fields: profileData,
@@ -188,7 +200,10 @@ async function submitPasswordChange() {
     passwordIsSubmitting.value = true;
 
     try {
-        await changeTeacherPassword(authStore.user.id, passwordData.value as ChangeTeacherPasswordFormData);
+        await changeTeacherPassword(
+            authStore.user.id,
+            passwordData.value as ChangeTeacherPasswordFormData
+        );
         passwordData.value = { currentPassword: '', newPassword: '', confirmNewPassword: '' };
         clearPasswordErrors();
         toast.success('Senha alterada com sucesso!');
@@ -473,13 +488,27 @@ onMounted(loadProfile);
                     <label class="font-pixel text-[9px] block mb-1" for="current-password">
                         SENHA ATUAL
                     </label>
-                    <PixelInput
-                        id="current-password"
-                        v-model="passwordData.currentPassword"
-                        type="password"
-                        placeholder="Sua senha atual"
-                    />
-                    <p v-if="passwordErrors.currentPassword" class="font-sans text-xs mt-1 text-destructive">
+                    <div class="relative">
+                        <PixelInput
+                            id="current-password"
+                            v-model="passwordData.currentPassword"
+                            :type="showCurrentPassword ? 'text' : 'password'"
+                            class="pr-10"
+                            placeholder="Sua senha atual"
+                        />
+                        <button
+                            class="absolute right-3 top-1/2 -translate-y-1/2"
+                            type="button"
+                            @click="showCurrentPassword = !showCurrentPassword"
+                        >
+                            <PhEyeSlash v-if="showCurrentPassword" :size="18" weight="bold" />
+                            <PhEye v-else :size="18" weight="bold" />
+                        </button>
+                    </div>
+                    <p
+                        v-if="passwordErrors.currentPassword"
+                        class="font-sans text-xs mt-1 text-destructive"
+                    >
                         {{ passwordErrors.currentPassword }}
                     </p>
                 </div>
@@ -488,13 +517,27 @@ onMounted(loadProfile);
                     <label class="font-pixel text-[9px] block mb-1" for="new-password">
                         NOVA SENHA
                     </label>
-                    <PixelInput
-                        id="new-password"
-                        v-model="passwordData.newPassword"
-                        type="password"
-                        placeholder="Mínimo 8 caracteres"
-                    />
-                    <p v-if="passwordErrors.newPassword" class="font-sans text-xs mt-1 text-destructive">
+                    <div class="relative">
+                        <PixelInput
+                            id="new-password"
+                            v-model="passwordData.newPassword"
+                            :type="showNewPassword ? 'text' : 'password'"
+                            class="pr-10"
+                            placeholder="Mínimo 8 caracteres"
+                        />
+                        <button
+                            class="absolute right-3 top-1/2 -translate-y-1/2"
+                            type="button"
+                            @click="showNewPassword = !showNewPassword"
+                        >
+                            <PhEyeSlash v-if="showNewPassword" :size="18" weight="bold" />
+                            <PhEye v-else :size="18" weight="bold" />
+                        </button>
+                    </div>
+                    <p
+                        v-if="passwordErrors.newPassword"
+                        class="font-sans text-xs mt-1 text-destructive"
+                    >
                         {{ passwordErrors.newPassword }}
                     </p>
                 </div>
@@ -503,13 +546,27 @@ onMounted(loadProfile);
                     <label class="font-pixel text-[9px] block mb-1" for="confirm-new-password">
                         CONFIRMAR NOVA SENHA
                     </label>
-                    <PixelInput
-                        id="confirm-new-password"
-                        v-model="passwordData.confirmNewPassword"
-                        type="password"
-                        placeholder="Repita a nova senha"
-                    />
-                    <p v-if="passwordErrors.confirmNewPassword" class="font-sans text-xs mt-1 text-destructive">
+                    <div class="relative">
+                        <PixelInput
+                            id="confirm-new-password"
+                            v-model="passwordData.confirmNewPassword"
+                            :type="showConfirmNewPassword ? 'text' : 'password'"
+                            class="pr-10"
+                            placeholder="Repita a nova senha"
+                        />
+                        <button
+                            class="absolute right-3 top-1/2 -translate-y-1/2"
+                            type="button"
+                            @click="showConfirmNewPassword = !showConfirmNewPassword"
+                        >
+                            <PhEyeSlash v-if="showConfirmNewPassword" :size="18" weight="bold" />
+                            <PhEye v-else :size="18" weight="bold" />
+                        </button>
+                    </div>
+                    <p
+                        v-if="passwordErrors.confirmNewPassword"
+                        class="font-sans text-xs mt-1 text-destructive"
+                    >
                         {{ passwordErrors.confirmNewPassword }}
                     </p>
                 </div>
