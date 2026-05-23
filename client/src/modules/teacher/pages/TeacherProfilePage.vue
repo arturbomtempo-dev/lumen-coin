@@ -2,10 +2,15 @@
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import { getInstitution } from '@/modules/institution/services/institution.service';
 import {
+    changeTeacherPasswordSchema,
+    type ChangeTeacherPasswordFormData,
+} from '@/modules/schemas/change-teacher-password.schema';
+import {
     updateTeacherProfileSchema,
     type UpdateTeacherProfileFormData,
 } from '@/modules/schemas/update-teacher-profile.schema';
 import {
+    changeTeacherPassword,
     deleteTeacher,
     getTeacher,
     updateTeacher,
@@ -20,7 +25,8 @@ import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import { useForm } from '@/shared/composables/useForm';
 import { MARIO_CHARACTERS, type MarioCharacter } from '@/shared/data/characters';
-import { PhFloppyDisk, PhPencilSimple, PhTrash, PhUser, PhX } from '@phosphor-icons/vue';
+import { PhFloppyDisk, PhKey, PhPencilSimple, PhTrash, PhUser, PhX } from '@phosphor-icons/vue';
+import { vMaska } from 'maska/vue';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
@@ -46,10 +52,23 @@ const {
 profileData.value = {
     name: '',
     email: '',
-    password: '',
     avatar: 'MARIO',
     cpf: '',
     department: '',
+};
+
+const {
+    fields: passwordData,
+    errors: passwordErrors,
+    isSubmitting: passwordIsSubmitting,
+    validate: validatePassword,
+    clearErrors: clearPasswordErrors,
+} = useForm(changeTeacherPasswordSchema);
+
+passwordData.value = {
+    currentPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
 };
 
 const characterByAvatar = {
@@ -84,7 +103,6 @@ function setProfileForm(profile: TeacherProfile) {
     profileData.value = {
         name: profile.name,
         email: profile.email,
-        password: '',
         avatar: (profile.avatar || 'MARIO') as TeacherAvatar,
         cpf: profile.cpf,
         department: profile.department ?? '',
@@ -136,16 +154,12 @@ async function submitProfileUpdate() {
         const payload: UpdateTeacherProfileFormData = {
             name: profileData.value.name.trim(),
             email: profileData.value.email.trim(),
-            password: profileData.value.password,
             avatar: profileData.value.avatar,
             cpf: digitsOnly(profileData.value.cpf),
             department: profileData.value.department.trim(),
         };
 
-        const response = await updateTeacher(authStore.user.id, {
-            ...payload,
-            password: payload.password.length > 0 ? payload.password : undefined,
-        });
+        const response = await updateTeacher(authStore.user.id, payload);
 
         teacherProfile.value = response.data;
         setProfileForm(response.data);
@@ -164,6 +178,23 @@ async function submitProfileUpdate() {
     } catch {
     } finally {
         profileIsSubmitting.value = false;
+    }
+}
+
+async function submitPasswordChange() {
+    if (!authStore.user?.id) return;
+    if (!validatePassword()) return;
+
+    passwordIsSubmitting.value = true;
+
+    try {
+        await changeTeacherPassword(authStore.user.id, passwordData.value as ChangeTeacherPasswordFormData);
+        passwordData.value = { currentPassword: '', newPassword: '', confirmNewPassword: '' };
+        clearPasswordErrors();
+        toast.success('Senha alterada com sucesso!');
+    } catch {
+    } finally {
+        passwordIsSubmitting.value = false;
     }
 }
 
@@ -320,25 +351,6 @@ onMounted(loadProfile);
                     </div>
 
                     <div>
-                        <label class="font-pixel text-[9px] block mb-1" for="teacher-password">
-                            SENHA NOVA
-                        </label>
-                        <PixelInput
-                            id="teacher-password"
-                            name="password"
-                            v-model="profileData.password"
-                            type="password"
-                            placeholder="Deixe em branco para manter"
-                        />
-                        <p
-                            v-if="profileErrors.password"
-                            class="font-sans text-xs mt-1 text-destructive"
-                        >
-                            {{ profileErrors.password }}
-                        </p>
-                    </div>
-
-                    <div>
                         <label class="font-pixel text-[9px] block mb-1" for="teacher-cpf">
                             CPF
                         </label>
@@ -346,8 +358,9 @@ onMounted(loadProfile);
                             id="teacher-cpf"
                             name="cpf"
                             v-model="profileData.cpf"
-                            maxlength="11"
-                            placeholder="Somente 11 dígitos"
+                            v-maska="'###.###.###-##'"
+                            maxlength="14"
+                            placeholder="000.000.000-00"
                         />
                         <p v-if="profileErrors.cpf" class="font-sans text-xs mt-1 text-destructive">
                             {{ profileErrors.cpf }}
@@ -453,7 +466,67 @@ onMounted(loadProfile);
         </PixelCard>
 
         <PixelCard class="p-6">
-            <div class="font-pixel text-[10px] text-destructive">▶ EXCLUIR CONTA</div>
+            <div class="font-pixel text-[10px] text-primary">&#9658; ALTERAR SENHA</div>
+
+            <form class="mt-4 space-y-3" @submit.prevent="submitPasswordChange">
+                <div>
+                    <label class="font-pixel text-[9px] block mb-1" for="current-password">
+                        SENHA ATUAL
+                    </label>
+                    <PixelInput
+                        id="current-password"
+                        v-model="passwordData.currentPassword"
+                        type="password"
+                        placeholder="Sua senha atual"
+                    />
+                    <p v-if="passwordErrors.currentPassword" class="font-sans text-xs mt-1 text-destructive">
+                        {{ passwordErrors.currentPassword }}
+                    </p>
+                </div>
+
+                <div>
+                    <label class="font-pixel text-[9px] block mb-1" for="new-password">
+                        NOVA SENHA
+                    </label>
+                    <PixelInput
+                        id="new-password"
+                        v-model="passwordData.newPassword"
+                        type="password"
+                        placeholder="Mínimo 8 caracteres"
+                    />
+                    <p v-if="passwordErrors.newPassword" class="font-sans text-xs mt-1 text-destructive">
+                        {{ passwordErrors.newPassword }}
+                    </p>
+                </div>
+
+                <div>
+                    <label class="font-pixel text-[9px] block mb-1" for="confirm-new-password">
+                        CONFIRMAR NOVA SENHA
+                    </label>
+                    <PixelInput
+                        id="confirm-new-password"
+                        v-model="passwordData.confirmNewPassword"
+                        type="password"
+                        placeholder="Repita a nova senha"
+                    />
+                    <p v-if="passwordErrors.confirmNewPassword" class="font-sans text-xs mt-1 text-destructive">
+                        {{ passwordErrors.confirmNewPassword }}
+                    </p>
+                </div>
+
+                <PixelButton
+                    type="submit"
+                    variant="success"
+                    class="flex items-center gap-2"
+                    :disabled="passwordIsSubmitting"
+                >
+                    <PhKey weight="bold" /> ATUALIZAR SENHA
+                </PixelButton>
+            </form>
+        </PixelCard>
+
+        <PixelCard class="p-6">
+            <div class="font-pixel text-[10px] text-destructive">&#9658; EXCLUIR CONTA</div>
 
             <p class="font-sans text-sm text-muted-foreground mt-3 mb-4">
                 Esta ação é permanente. Ao excluir a conta do professor, o acesso será removido e

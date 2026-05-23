@@ -1,6 +1,7 @@
 package br.pucminas.lumen_coin_api.user.controller;
 
 import br.pucminas.lumen_coin_api.security.UserPrincipal;
+import br.pucminas.lumen_coin_api.user.dto.request.ChangeTeacherPasswordRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterTeacherRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateTeacherRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.TeacherResponse;
@@ -47,6 +48,15 @@ public class TeacherController {
             @PathVariable UUID id,
             @Valid @RequestBody UpdateTeacherRequest request) {
         return ResponseEntity.ok(teacherService.update(id, request));
+    }
+
+    @PatchMapping("/{id}/password")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ResponseEntity<Void> changePassword(
+            @PathVariable UUID id,
+            @Valid @RequestBody ChangeTeacherPasswordRequest request) {
+        teacherService.changePassword(id, request);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")

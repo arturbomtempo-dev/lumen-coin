@@ -2,16 +2,16 @@
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import {
     createCourse as createCourseApi,
-    deleteInstitution,
     deleteCourse,
+    deleteInstitution,
     deleteTeacher,
     getCourses,
     getInstitution,
     getStudents,
     getTeachers,
     registerTeacher,
-    updateInstitution,
     updateCourse,
+    updateInstitution,
     updateTeacher,
 } from '@/modules/institution/services/institution.service';
 import type {
@@ -45,6 +45,7 @@ import {
     PhUser,
     PhX,
 } from '@phosphor-icons/vue';
+import { vMaska } from 'maska/vue';
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
@@ -79,15 +80,6 @@ profileData.value = {
 };
 
 const courses = ref<CourseResponse[]>([]);
-
-const TEACHER_AVATARS = [
-    { value: 'MARIO', label: 'Mario' },
-    { value: 'LUIGI', label: 'Luigi' },
-    { value: 'PEACH', label: 'Peach' },
-    { value: 'TOAD', label: 'Toad' },
-    { value: 'YOSHI', label: 'Yoshi' },
-    { value: 'BOWSER', label: 'Bowser' },
-];
 
 const tabs = [
     { id: 'courses' as Tab, label: 'CURSOS', icon: PhBookOpen },
@@ -233,7 +225,10 @@ async function submitTeacher(e: Event) {
     if (!validateTeacher()) return;
     teacherIsSubmitting.value = true;
     try {
-        const response = await registerTeacher(teacherData.value);
+        const response = await registerTeacher({
+            ...teacherData.value,
+            cpf: (teacherData.value.cpf ?? '').replace(/\D/g, ''),
+        });
         teachers.value.unshift(response.data);
         toast.success(`Professor "${response.data.name}" cadastrado!`);
         teacherData.value = {} as typeof teacherData.value;
@@ -803,8 +798,9 @@ onMounted(async () => {
                             <label class="font-pixel text-[9px] block mb-1">CPF</label>
                             <PixelInput
                                 v-model="teacherData.cpf"
-                                placeholder="Somente 11 dígitos"
-                                maxlength="11"
+                                v-maska="'###.###.###-##'"
+                                placeholder="000.000.000-00"
+                                maxlength="14"
                             />
                             <p
                                 v-if="teacherErrors.cpf"
@@ -812,44 +808,6 @@ onMounted(async () => {
                                 style="color: hsl(var(--destructive))"
                             >
                                 {{ teacherErrors.cpf }}
-                            </p>
-                        </div>
-                        <div>
-                            <label class="font-pixel text-[9px] block mb-1">SENHA</label>
-                            <PixelInput
-                                v-model="teacherData.password"
-                                type="password"
-                                placeholder="Mínimo 8 caracteres"
-                            />
-                            <p
-                                v-if="teacherErrors.password"
-                                class="font-sans text-xs mt-1"
-                                style="color: hsl(var(--destructive))"
-                            >
-                                {{ teacherErrors.password }}
-                            </p>
-                        </div>
-                        <div>
-                            <label class="font-pixel text-[9px] block mb-1">AVATAR</label>
-                            <select
-                                v-model="teacherData.avatar"
-                                class="w-full bg-input text-foreground border-2 border-border px-3 py-2 font-display text-base focus:outline-none"
-                            >
-                                <option value="" disabled>Selecione um avatar</option>
-                                <option
-                                    v-for="avatar in TEACHER_AVATARS"
-                                    :key="avatar.value"
-                                    :value="avatar.value"
-                                >
-                                    {{ avatar.label }}
-                                </option>
-                            </select>
-                            <p
-                                v-if="teacherErrors.avatar"
-                                class="font-sans text-xs mt-1"
-                                style="color: hsl(var(--destructive))"
-                            >
-                                {{ teacherErrors.avatar }}
                             </p>
                         </div>
                         <div>

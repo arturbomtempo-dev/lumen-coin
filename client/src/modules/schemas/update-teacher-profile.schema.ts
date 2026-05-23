@@ -15,12 +15,6 @@ export const updateTeacherProfileSchema = z.object({
         .trim()
         .email('E-mail inválido')
         .max(255, 'O e-mail deve ter no máximo 255 caracteres'),
-    password: z
-        .string()
-        .max(72, 'A senha deve ter no máximo 72 caracteres')
-        .refine((value) => value.length === 0 || value.length >= 8, {
-            message: 'A senha deve ter pelo menos 8 caracteres',
-        }),
     avatar: z.enum(teacherAvatars),
     cpf: z.string().refine((value) => /^\d{11}$/.test(digitsOnly(value)), {
         message: 'O CPF deve conter exatamente 11 dígitos',

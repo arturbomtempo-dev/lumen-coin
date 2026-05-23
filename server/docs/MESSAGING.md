@@ -1,4 +1,4 @@
-# Lumen Coin API — Message Queue System
+# Lumen Coin API - Message Queue System
 
 ## Overview
 
@@ -6,10 +6,10 @@ The Lumen Coin API uses **RabbitMQ** for asynchronous processing of coin transfe
 
 ### Why RabbitMQ?
 
-- **Decoupling** — The teacher who sends coins doesn't wait for the student's balance to update.
-- **Reliability** — Guaranteed delivery with dead-letter queues for failed messages.
-- **Scalability** — Multiple consumers can process messages in parallel.
-- **Resilience** — Messages are persisted; the system survives restarts.
+- **Decoupling** - The teacher who sends coins doesn't wait for the student's balance to update.
+- **Reliability** - Guaranteed delivery with dead-letter queues for failed messages.
+- **Scalability** - Multiple consumers can process messages in parallel.
+- **Resilience** - Messages are persisted; the system survives restarts.
 
 ---
 
@@ -314,18 +314,18 @@ Shows current message count in `coin.transfer` queue.
 
 1. **Always use `@Transactional`** on consumers to ensure database consistency.
 2. **Monitor the DLQ** in production; set up alerts for messages moving there.
-3. **Test failure scenarios** — what happens if the student is deleted while a message is in flight?
-4. **Scale consumers** — if coin transfers are high-volume, run multiple consumer instances.
-5. **Log significant events** — see `CoinTransferConsumer` for SLF4J logging pattern.
+3. **Test failure scenarios** - what happens if the student is deleted while a message is in flight?
+4. **Scale consumers** - if coin transfers are high-volume, run multiple consumer instances.
+5. **Log significant events** - see `CoinTransferConsumer` for SLF4J logging pattern.
 
 ---
 
 ## Related Files
 
-- `config/RabbitMQConfig.java` — Queue, exchange, binding declarations
-- `coin_transfer/messaging/CoinTransferProducer.java` — Sends messages
-- `coin_transfer/messaging/CoinTransferConsumer.java` — Consumes messages
-- `coin_transfer/messaging/CoinTransferMessage.java` — Message DTO
-- `coin_transfer/scheduler/SemesterCoinTopUpScheduler.java` — Scheduler for top-ups
-- `docker-compose.yml` — RabbitMQ service definition
-- `application.properties` — RabbitMQ connection properties
+- `config/RabbitMQConfig.java` - Queue, exchange, binding declarations
+- `coin_transfer/messaging/CoinTransferProducer.java` - Sends messages
+- `coin_transfer/messaging/CoinTransferConsumer.java` - Consumes messages
+- `coin_transfer/messaging/CoinTransferMessage.java` - Message DTO
+- `coin_transfer/scheduler/SemesterCoinTopUpScheduler.java` - Scheduler for top-ups
+- `docker-compose.yml` - RabbitMQ service definition
+- `application.properties` - RabbitMQ connection properties

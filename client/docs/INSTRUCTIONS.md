@@ -36,7 +36,7 @@ src/
 **Golden rules:**
 
 - A module must not import from another module. If something needs to be shared between modules, move it to `shared/`.
-- `shared/` is an internal library — only put things there that are genuinely reusable.
+- `shared/` is an internal library - only put things there that are genuinely reusable.
 - Page-level components live in `modules/<feature>/pages/`. Reusable UI components live in `shared/components/`.
 
 ---
@@ -45,7 +45,7 @@ src/
 
 - All code must be written in **English**: variable names, function names, type names, file names, constants, and all identifiers.
 - **UI text displayed to the user** (labels, buttons, placeholders, toast messages, headers, error messages, and any other visible text) must be written in **Portuguese**.
-- **No comments are allowed anywhere in the codebase** — no `//`, no `/* */`, no template comments. Code must be self-explanatory through naming and structure alone.
+- **No comments are allowed anywhere in the codebase** - no `//`, no `/* */`, no template comments. Code must be self-explanatory through naming and structure alone.
 - If the logic is unclear without a comment, refactor it until it is clear.
 
 ---
@@ -64,12 +64,12 @@ src/
 
 ## Vue Components
 
-- All components use `<script setup lang="ts">` — the modern Composition API syntax.
+- All components use `<script setup lang="ts">` - the modern Composition API syntax.
 - Define props with `defineProps<{}>()` using a TypeScript interface inline.
 - Define emits with `defineEmits<{}>()` using typed signatures.
-- Keep `App.vue` as a shell — no logic, no styles, only global component rendering and `<router-view />`.
+- Keep `App.vue` as a shell - no logic, no styles, only global component rendering and `<router-view />`.
 - Prefer `ref` over `reactive` for consistency. Access reactive values with `.value` in the script; the template unwraps automatically.
-- Use `computed` for derived state — never recalculate values inline in the template.
+- Use `computed` for derived state - never recalculate values inline in the template.
 
 ---
 
@@ -100,7 +100,7 @@ src/
 
 - Each module that needs state owns its store inside `modules/<feature>/stores/`.
 - Global UI state lives in `shared/stores/ui.store.ts` (loading indicator) and `shared/stores/toast.store.ts` (notifications).
-- Use the **Setup Store** pattern with `defineStore('id', () => { ... })` — mirrors the Composition API.
+- Use the **Setup Store** pattern with `defineStore('id', () => { ... })` - mirrors the Composition API.
 - Expose only what consumers need from the store's return value.
 - Never mutate another module's store directly. Go through its exposed actions.
 
@@ -110,7 +110,7 @@ src/
 
 - Always use the pre-configured Axios instance exported from `shared/services/api.ts`. Never create a new `axios.create()` instance.
 - Scope HTTP functions to their module's service file (e.g., `modules/auth/services/auth.service.ts`).
-- Service functions must be plain functions that return the Axios promise — no state management inside services.
+- Service functions must be plain functions that return the Axios promise - no state management inside services.
 - The `api.ts` interceptors automatically handle the global loading state and error toasts. Do not replicate that logic in components or stores.
 - All API base URLs come from the `VITE_API_URL` environment variable defined in `.env`. Never hardcode URLs.
 
@@ -119,7 +119,7 @@ src/
 ## Form Validation (Zod)
 
 - Define all form schemas in `modules/schemas/` using Zod.
-- Always infer the TypeScript type from the schema using `z.infer<typeof schema>` — never declare the type separately.
+- Always infer the TypeScript type from the schema using `z.infer<typeof schema>` - never declare the type separately.
 - Use the `useForm` composable from `shared/composables/useForm.ts` to handle form state and validation.
 - Validation runs on submit, not on every keystroke.
 
@@ -130,7 +130,7 @@ src/
 - Route definitions live in `src/app/router/routes.ts`.
 - Protect authenticated routes with `meta: { requiresAuth: true }`.
 - Use lazy-loaded imports (`() => import(...)`) for all page components to enable code splitting.
-- Navigate programmatically using `useRouter().push({ name: 'route-name' })` — prefer named routes over hardcoded paths.
+- Navigate programmatically using `useRouter().push({ name: 'route-name' })` - prefer named routes over hardcoded paths.
 - The navigation guard in `src/app/router/index.ts` handles auth redirects automatically based on `useAuthStore().isAuthenticated`.
 
 ---

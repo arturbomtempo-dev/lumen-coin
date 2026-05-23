@@ -506,7 +506,7 @@ lumen-coin/
 │   ├── presentation/                # 🎞️ Slides de apresentação
 │   └── user-story/                  # 📋 Histórias de usuário
 │
-├── client/                          # 💻 Front-end — Vue 3 + Vite + TypeScript
+├── client/                          # 💻 Front-end - Vue 3 + Vite + TypeScript
 │   ├── .env                         # 🔒 Variáveis de ambiente locais (não versionado)
 │   ├── .prettierrc                  # 🎨 Configuração do Prettier
 │   ├── index.html                   # 🌐 Ponto de entrada HTML
@@ -579,7 +579,7 @@ lumen-coin/
 │               ├── toast.store.ts   # 🔔 Estado global de notificações toast
 │               └── theme.store.ts   # 🌓 Estado global de tema (light/dark)
 │
-└── server/                          # 🖥️ Back-end — Spring Boot 3 + Java 21
+└── server/                          # 🖥️ Back-end - Spring Boot 3 + Java 21
     ├── .env.example                 # 🧩 Modelo de variáveis de ambiente (sem valores sensíveis)
     ├── docker-compose.yml           # 🐳 Sobe o PostgreSQL 17 em container local
     ├── mvnw / mvnw.cmd              # 🔧 Maven Wrapper (Linux/macOS e Windows)

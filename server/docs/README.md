@@ -22,7 +22,7 @@ REST API for the **Lumen Coin** gamified academic platform. Built with Spring Bo
 ### 1. Prerequisites
 
 - Java 21
-- Maven (or use the `./mvnw` wrapper — no installation needed)
+- Maven (or use the `./mvnw` wrapper - no installation needed)
 - Docker and Docker Compose
 
 ### 2. Configure environment
@@ -93,7 +93,7 @@ The cookie is cleared server-side (`Max-Age=0`).
 | ------------------ | ------------------------------- | ------------------------------- |
 | XSS risk           | None (JS cannot read)           | High (stored in `localStorage`) |
 | CSRF risk          | Mitigated via `SameSite=Strict` | None                            |
-| Browser auto-send  | Yes                             | No — must be managed manually   |
+| Browser auto-send  | Yes                             | No - must be managed manually   |
 | Mobile/API clients | Manual `Cookie` header          | Standard `Authorization` header |
 
 ---
@@ -163,11 +163,11 @@ All endpoints return `application/json`.
 | `DB_PORT`           | PostgreSQL port                                | `5432`                                        |
 | `DB_NAME`           | Database name                                  | `lumen-coin-db`                               |
 | `DB_USER`           | Database user                                  | `lumen`                                       |
-| `DB_PASSWORD`       | Database password                              | —                                             |
+| `DB_PASSWORD`       | Database password                              | -                                             |
 | `JPA_DDL_AUTO`      | Hibernate DDL strategy (`update`, `create`, …) | `update`                                      |
 | `JPA_SHOW_SQL`      | Log SQL queries                                | `false`                                       |
 | `BCRYPT_STRENGTH`   | BCrypt work factor (min 10, recommended 12+)   | `12`                                          |
-| `JWT_SECRET`        | HMAC-SHA256 signing secret (min 256 bits)      | —                                             |
+| `JWT_SECRET`        | HMAC-SHA256 signing secret (min 256 bits)      | -                                             |
 | `JWT_EXPIRATION_MS` | Token TTL in milliseconds                      | `86400000` (24 h)                             |
 | `JWT_COOKIE_NAME`   | Name of the auth cookie                        | `lumen_auth`                                  |
 | `JWT_COOKIE_SECURE` | Send cookie over HTTPS only                    | `false` (set `true` in production)            |
@@ -179,10 +179,10 @@ All endpoints return `application/json`.
 
 ```
 src/main/java/br/pucminas/lumen_coin_api/
-├── auth/            — Login / logout endpoints and JWT cookie issuance
-├── config/          — SecurityConfig, CORS, beans
-├── security/        — JwtService, JwtAuthenticationFilter, UserPrincipal
-└── user/            — Student, Teacher, Institution, Company modules
+├── auth/            - Login / logout endpoints and JWT cookie issuance
+├── config/          - SecurityConfig, CORS, beans
+├── security/        - JwtService, JwtAuthenticationFilter, UserPrincipal
+└── user/            - Student, Teacher, Institution, Company modules
 ```
 
 See [docs/INSTRUCTIONS.md](INSTRUCTIONS.md) for coding conventions and architecture guidelines.

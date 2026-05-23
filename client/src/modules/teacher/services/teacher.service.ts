@@ -18,7 +18,6 @@ export type TeacherProfile = {
 export type UpdateTeacherDto = {
     name?: string;
     email?: string;
-    password?: string;
     avatar?: TeacherAvatar;
     cpf?: string;
     department?: string;
@@ -48,4 +47,11 @@ export function deleteTeacher(id: string) {
 
 export function getStudentsByInstitution(institutionId: string) {
     return api.get<StudentSummary[]>(`/students/by-institution/${institutionId}`);
+}
+
+export function changeTeacherPassword(
+    id: string,
+    dto: { currentPassword: string; newPassword: string; confirmNewPassword: string }
+) {
+    return api.patch(`/teachers/${id}/password`, dto);
 }

@@ -7,6 +7,8 @@ import br.pucminas.lumen_coin_api.course.exception.CourseNotFoundException;
 import br.pucminas.lumen_coin_api.user.exception.CnpjAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.CpfAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
+import br.pucminas.lumen_coin_api.user.exception.IncorrectPasswordException;
+import br.pucminas.lumen_coin_api.user.exception.PasswordMismatchException;
 import br.pucminas.lumen_coin_api.user.exception.StudentInstitutionCourseMismatchException;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -96,6 +98,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNotReadable(
             HttpMessageNotReadableException ex, HttpServletRequest request) {
         return build(HttpStatus.BAD_REQUEST, "Bad Request", "Requisição inválida ou malformada.", request);
+    }
+
+    @ExceptionHandler(IncorrectPasswordException.class)
+    public ResponseEntity<ErrorResponse> handleIncorrectPassword(
+            IncorrectPasswordException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Bad Request", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ResponseEntity<ErrorResponse> handlePasswordMismatch(
+            PasswordMismatchException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Bad Request", ex.getMessage(), request);
     }
 
     @ExceptionHandler(BadCredentialsException.class)

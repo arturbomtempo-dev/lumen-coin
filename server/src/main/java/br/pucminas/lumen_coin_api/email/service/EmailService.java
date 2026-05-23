@@ -4,6 +4,8 @@ public interface EmailService {
 
     void sendWelcome(String to, String name);
 
+    void sendTeacherWelcome(String to, String name, String generatedPassword);
+
     void sendPasswordReset(String to, String name, String resetLink, Integer expirationHours);
 
     void sendCoinSent(String to, String teacherName, String studentName, int amount, String message);

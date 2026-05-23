@@ -177,7 +177,7 @@ const scrollToSection = (sectionId: string) => {
                     >
                         Lumen Coin é um sistema gamificado onde professores reconhecem alunos com
                         moedas a cada conquista acadêmica. Os alunos trocam essas moedas por
-                        vantagens reais oferecidas por empresas parceiras — tudo em um arcade
+                        vantagens reais oferecidas por empresas parceiras - tudo em um arcade
                         inspirado no Reino dos Cogumelos.
                     </p>
                     <div class="mt-6 flex flex-wrap gap-3 justify-center md:justify-start">

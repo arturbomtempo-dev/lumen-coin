@@ -1,12 +1,17 @@
 package br.pucminas.lumen_coin_api.user.service.impl;
 
+import br.pucminas.lumen_coin_api.common.util.PasswordGenerator;
 import br.pucminas.lumen_coin_api.email.service.EmailService;
+import br.pucminas.lumen_coin_api.user.dto.request.ChangeTeacherPasswordRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterTeacherRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateTeacherRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.TeacherResponse;
 import br.pucminas.lumen_coin_api.user.entity.Teacher;
+import br.pucminas.lumen_coin_api.user.enums.Avatar;
 import br.pucminas.lumen_coin_api.user.exception.CpfAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
+import br.pucminas.lumen_coin_api.user.exception.IncorrectPasswordException;
+import br.pucminas.lumen_coin_api.user.exception.PasswordMismatchException;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
 import br.pucminas.lumen_coin_api.user.mapper.UserMapper;
 import br.pucminas.lumen_coin_api.user.repository.TeacherRepository;
@@ -39,18 +44,20 @@ public class TeacherServiceImpl implements TeacherService {
             throw new CpfAlreadyInUseException(request.cpf());
         }
 
+        String generatedPassword = PasswordGenerator.generate();
+
         Teacher teacher = new Teacher();
         teacher.setName(request.name());
         teacher.setEmail(request.email());
-        teacher.setPassword(passwordEncoder.encode(request.password()));
-        teacher.setAvatar(request.avatar());
+        teacher.setPassword(passwordEncoder.encode(generatedPassword));
+        teacher.setAvatar(Avatar.MARIO);
         teacher.setCpf(request.cpf());
         teacher.setDepartment(request.department());
         teacher.setInstitutionId(institutionId);
         teacher.setBalance(1000);
 
         Teacher saved = teacherRepository.save(teacher);
-        emailService.sendWelcome(saved.getEmail(), saved.getName());
+        emailService.sendTeacherWelcome(saved.getEmail(), saved.getName(), generatedPassword);
         return mapper.toResponse(saved);
     }
 
@@ -105,6 +112,23 @@ public class TeacherServiceImpl implements TeacherService {
             teacher.setDepartment(request.department());
 
         return mapper.toResponse(teacherRepository.save(teacher));
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(UUID id, ChangeTeacherPasswordRequest request) {
+        Teacher teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        if (!passwordEncoder.matches(request.currentPassword(), teacher.getPassword())) {
+            throw new IncorrectPasswordException();
+        }
+        if (!request.newPassword().equals(request.confirmNewPassword())) {
+            throw new PasswordMismatchException();
+        }
+
+        teacher.setPassword(passwordEncoder.encode(request.newPassword()));
+        teacherRepository.save(teacher);
     }
 
     @Override

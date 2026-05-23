@@ -1,4 +1,4 @@
-# Lumen Coin API — Development Instructions
+# Lumen Coin API - Development Instructions
 
 ## Architecture
 
@@ -8,13 +8,13 @@ The API follows a strict layered architecture. Each layer has a single responsib
 Controller → Service (interface) → ServiceImpl → Repository → Entity
 ```
 
-- **Entity** — JPA-mapped domain object. Lives in `<module>/entity/`.
-- **Repository** — Spring Data JPA interface. Lives in `<module>/repository/`.
-- **Service** — Interface defining the contract. Lives in `<module>/service/`.
-- **ServiceImpl** — Concrete implementation. Lives in `<module>/service/impl/`. Annotated `@Service`.
-- **Controller** — REST endpoint. Lives in `<module>/controller/`. Annotated `@RestController`.
-- **DTO** — Data transfer objects. Lives in `<module>/dto/request/` and `<module>/dto/response/`.
-- **Mapper** — MapStruct interface. Lives in `<module>/mapper/`.
+- **Entity** - JPA-mapped domain object. Lives in `<module>/entity/`.
+- **Repository** - Spring Data JPA interface. Lives in `<module>/repository/`.
+- **Service** - Interface defining the contract. Lives in `<module>/service/`.
+- **ServiceImpl** - Concrete implementation. Lives in `<module>/service/impl/`. Annotated `@Service`.
+- **Controller** - REST endpoint. Lives in `<module>/controller/`. Annotated `@RestController`.
+- **DTO** - Data transfer objects. Lives in `<module>/dto/request/` and `<module>/dto/response/`.
+- **Mapper** - MapStruct interface. Lives in `<module>/mapper/`.
 
 ---
 
@@ -29,8 +29,8 @@ br.pucminas.lumen_coin_api
 │   │   └── response/
 │   └── service/
 │       └── impl/
-├── config/          — Spring configuration beans
-├── security/        — JWT filter, UserPrincipal, UserDetailsService, JwtService
+├── config/          - Spring configuration beans
+├── security/        - JWT filter, UserPrincipal, UserDetailsService, JwtService
 └── user/
     ├── controller/
     ├── dto/
@@ -50,7 +50,7 @@ br.pucminas.lumen_coin_api
 
 - All code, names, and documentation must be in **English**.
 - No comments of any kind in production code (no inline, block, or Javadoc comments).
-- No `System.out.println` or manual logging — use SLF4J if logging is required.
+- No `System.out.println` or manual logging - use SLF4J if logging is required.
 - No `TODO` markers in committed code.
 
 ---
@@ -76,7 +76,7 @@ br.pucminas.lumen_coin_api
 
 - All entities extend `User` (`@Inheritance(strategy = JOINED)`, table `tb_users`).
 - Use Lombok: `@Getter`, `@Setter`, `@NoArgsConstructor` on every entity.
-- Each subclass implements the abstract `getRole(): UserRole` method — do not call `setRole()`.
+- Each subclass implements the abstract `getRole(): UserRole` method - do not call `setRole()`.
 - Use `@Column` constraints to enforce field length and nullability at the DB level.
 - `createdAt` and `updatedAt` are set automatically via `@PrePersist` / `@PreUpdate` in `User`.
 
@@ -85,7 +85,7 @@ br.pucminas.lumen_coin_api
 ## DTOs
 
 - Request DTOs are Java **records** with Jakarta validation annotations.
-- Response DTOs are Java **records** — no validation annotations.
+- Response DTOs are Java **records** - no validation annotations.
 - Validation happens **only at the DTO boundary** (controller layer via `@Valid`).
 - Never expose the `password` field in any response DTO.
 - Use `Instant` for timestamp fields (`createdAt`, `updatedAt`).
@@ -103,7 +103,7 @@ br.pucminas.lumen_coin_api
 ## Services
 
 - Services must depend on the **interface**, not the concrete implementation.
-- Password encoding: always use `PasswordEncoder.encode()` — never store plaintext passwords.
+- Password encoding: always use `PasswordEncoder.encode()` - never store plaintext passwords.
 - Avatar defaults: `Company` → `Avatar.COMPANY`, `Institution` → `Avatar.INSTITUTION`.
 - Business logic and data transformation belong in the service layer.
 
@@ -115,7 +115,7 @@ br.pucminas.lumen_coin_api
 - Use `@RequestMapping("/<resource>")` at the class level (plural nouns).
 - Registration endpoints return `ResponseEntity` with status **201 Created**.
 - Use `@Valid` on all `@RequestBody` parameters backed by request DTOs.
-- Method-level security uses `@PreAuthorize` annotations — do not duplicate security logic inside service methods.
+- Method-level security uses `@PreAuthorize` annotations - do not duplicate security logic inside service methods.
 
 ---
 
@@ -125,10 +125,10 @@ The API uses **JWT stored in an HTTP-only cookie** (`lumen_auth` by default).
 
 ### Flow
 
-1. `POST /auth/login` — validates credentials, issues JWT as an HTTP-only cookie, returns `{ "message": "Logged in successfully" }`.
+1. `POST /auth/login` - validates credentials, issues JWT as an HTTP-only cookie, returns `{ "message": "Logged in successfully" }`.
 2. Every subsequent request sends the cookie automatically (browser) or manually (non-browser clients via `Cookie` header).
 3. `JwtAuthenticationFilter` reads the cookie, validates the token, and sets `SecurityContextHolder`.
-4. `POST /auth/logout` — clears the cookie (sets `Max-Age=0`), returns `{ "message": "Logged out successfully" }`.
+4. `POST /auth/logout` - clears the cookie (sets `Max-Age=0`), returns `{ "message": "Logged out successfully" }`.
 
 ### JWT Claims
 
@@ -143,7 +143,7 @@ The API uses **JWT stored in an HTTP-only cookie** (`lumen_auth` by default).
 
 | Property   | Value                          |
 | ---------- | ------------------------------ |
-| `HttpOnly` | `true` — not accessible via JS |
+| `HttpOnly` | `true` - not accessible via JS |
 | `SameSite` | `Strict`                       |
 | `Secure`   | `false` in dev, `true` in prod |
 | `Path`     | `/`                            |
@@ -181,7 +181,7 @@ The API uses **JWT stored in an HTTP-only cookie** (`lumen_auth` by default).
 
 - Use Jakarta Validation annotations on request DTO fields.
 - A `@ControllerAdvice` (`GlobalExceptionHandler`) must handle `MethodArgumentNotValidException` and return structured error responses.
-- Do not validate inside service methods — trust that the controller layer enforced the contract.
+- Do not validate inside service methods - trust that the controller layer enforced the contract.
 
 ---
 

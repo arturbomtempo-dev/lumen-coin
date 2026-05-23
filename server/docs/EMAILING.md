@@ -1,4 +1,4 @@
-# Lumen Coin API — Email System
+# Lumen Coin API - Email System
 
 The API includes a robust, asynchronous email delivery system built on **Spring Mail** and **Handlebars** templating. This guide covers how to send emails, integrate email functionality into services, and create custom email templates.
 
@@ -11,13 +11,13 @@ The email system is organized into a dedicated `email` module with the following
 ```
 br.pucminas.lumen_coin_api.email
 ├── dto/
-│   └── *EmailContext.java          — Data transfer objects for template context
+│   └── *EmailContext.java          - Data transfer objects for template context
 ├── service/
-│   ├── EmailService.java           — Service interface
+│   ├── EmailService.java           - Service interface
 │   └── impl/
-│       └── EmailServiceImpl.java    — Service implementation
+│       └── EmailServiceImpl.java    - Service implementation
 └── template/
-    └── HandlebarsTemplateEngine.java — Template rendering engine
+    └── HandlebarsTemplateEngine.java - Template rendering engine
 ```
 
 ### Components
@@ -188,7 +188,7 @@ Add the implementation in `EmailServiceImpl`:
 @Override
 public void sendPasswordReset(String to, String name, String resetLink, Integer expirationHours) {
     if (!enabled) {
-        log.debug("Mail disabled — skipping password reset email to {}", to);
+        log.debug("Mail disabled - skipping password reset email to {}", to);
         return;
     }
     try {
@@ -363,7 +363,7 @@ void sendCourseEnrollment(String to, String studentName, String courseName,
 public void sendCourseEnrollment(String to, String studentName, String courseName,
     String startDate, String instructorName) {
     if (!enabled) {
-        log.debug("Mail disabled — skipping course enrollment email to {}", to);
+        log.debug("Mail disabled - skipping course enrollment email to {}", to);
         return;
     }
     try {

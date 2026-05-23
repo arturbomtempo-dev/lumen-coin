@@ -10,9 +10,7 @@ import type {
 export type RegisterTeacherDto = {
     name: string;
     email: string;
-    password: string;
     cpf: string;
-    avatar: string;
     department?: string;
 };
 

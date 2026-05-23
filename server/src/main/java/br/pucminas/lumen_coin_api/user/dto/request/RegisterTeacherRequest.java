@@ -1,19 +1,14 @@
 package br.pucminas.lumen_coin_api.user.dto.request;
 
-import br.pucminas.lumen_coin_api.user.enums.Avatar;
 import jakarta.validation.constraints.*;
 
 public record RegisterTeacherRequest(
 
-                @NotBlank(message = "Name is required") @Size(min = 2, max = 150, message = "Name must be between 2 and 150 characters") String name,
+        @NotBlank(message = "O nome é obrigatório") @Size(min = 2, max = 150, message = "O nome deve ter entre 2 e 150 caracteres") String name,
 
-                @NotBlank(message = "Email is required") @Email(message = "Email must be a valid email address") @Size(max = 255, message = "Email must not exceed 255 characters") String email,
+        @NotBlank(message = "O e-mail é obrigatório") @Email(message = "O e-mail informado não é válido") @Size(max = 255, message = "O e-mail deve ter no máximo 255 caracteres") String email,
 
-                @NotBlank(message = "Password is required") @Size(min = 8, max = 72, message = "Password must be between 8 and 72 characters") String password,
+        @NotBlank(message = "O CPF é obrigatório") @Pattern(regexp = "\\d{11}", message = "O CPF deve conter exatamente 11 dígitos") String cpf,
 
-                @NotNull(message = "Avatar is required") Avatar avatar,
-
-                @NotBlank(message = "CPF is required") @Pattern(regexp = "\\d{11}", message = "CPF must contain exactly 11 digits") String cpf,
-
-                @Size(max = 150, message = "Department must not exceed 150 characters") String department) {
+        @Size(max = 150, message = "O departamento deve ter no máximo 150 caracteres") String department) {
 }
