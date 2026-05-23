@@ -98,7 +98,8 @@ function confirmRedemption() {
                     <div class="border-2 border-border bg-card p-3">
                         <div class="font-pixel text-[9px] text-muted-foreground">NÍVEL</div>
                         <div class="font-pixel text-md md:text-2xl mt-1 flex items-center gap-2">
-                            <PhTrophy weight="fill" class="pixel-icon text-primary" /> LV {{ level }}
+                            <PhTrophy weight="fill" class="pixel-icon text-primary" /> LV
+                            {{ level }}
                         </div>
                     </div>
                     <div class="border-2 border-border bg-card p-3">
@@ -273,7 +274,6 @@ function confirmRedemption() {
                 </PixelCard>
             </div>
         </section>
-
 
         <div
             v-if="pendingRedemption"

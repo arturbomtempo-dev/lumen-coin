@@ -180,8 +180,12 @@ const courseToDeleteId = ref<string | null>(null);
 const showDeleteTeacherModal = ref(false);
 const teacherToDeleteId = ref<string | null>(null);
 
-const courseToDeleteName = computed(() => courses.value.find((c) => c.id === courseToDeleteId.value)?.name ?? '');
-const teacherToDeleteName = computed(() => teachers.value.find((t) => t.id === teacherToDeleteId.value)?.name ?? '');
+const courseToDeleteName = computed(
+    () => courses.value.find((c) => c.id === courseToDeleteId.value)?.name ?? ''
+);
+const teacherToDeleteName = computed(
+    () => teachers.value.find((t) => t.id === teacherToDeleteId.value)?.name ?? ''
+);
 
 function confirmDeleteCourse(id: string) {
     courseToDeleteId.value = id;
@@ -464,12 +468,7 @@ const filteredStudents = computed(() => {
 });
 
 onMounted(async () => {
-    await Promise.all([
-        loadCourses(),
-        loadStudents(),
-        loadTeachers(),
-        loadInstitutionProfile(),
-    ]);
+    await Promise.all([loadCourses(), loadStudents(), loadTeachers(), loadInstitutionProfile()]);
 });
 </script>
 
@@ -518,15 +517,30 @@ onMounted(async () => {
                     class="w-full max-w-md bg-card border-4 border-border shadow-[8px_8px_0_0_hsl(var(--border))] animate-pop"
                     @click.stop
                 >
-                    <div class="bg-secondary text-secondary-foreground border-b-4 border-border px-4 py-2 font-pixel text-xs">
+                    <div
+                        class="bg-secondary text-secondary-foreground border-b-4 border-border px-4 py-2 font-pixel text-xs"
+                    >
                         ⚠ CONFIRMAR EXCLUSÃO
                     </div>
                     <div class="p-5">
-                        <p class="font-display text-xl">Excluir o curso <span class="text-primary">{{ courseToDeleteName }}</span>?</p>
-                        <p class="font-sans text-sm text-muted-foreground mt-3">Esta ação é permanente e removerá o curso.</p>
+                        <p class="font-display text-xl">
+                            Excluir o curso
+                            <span class="text-primary">{{ courseToDeleteName }}</span
+                            >?
+                        </p>
+                        <p class="font-sans text-sm text-muted-foreground mt-3">
+                            Esta ação é permanente e removerá o curso.
+                        </p>
                         <div class="mt-5 flex gap-3">
-                            <PixelButton class="flex-1" variant="ghost" @click="cancelDeleteCourse">CANCELAR</PixelButton>
-                            <PixelButton class="flex-1" variant="danger" @click="proceedDeleteCourse"><PhTrash weight="bold" /> EXCLUIR</PixelButton>
+                            <PixelButton class="flex-1" variant="ghost" @click="cancelDeleteCourse"
+                                >CANCELAR</PixelButton
+                            >
+                            <PixelButton
+                                class="flex-1"
+                                variant="danger"
+                                @click="proceedDeleteCourse"
+                                ><PhTrash weight="bold" /> EXCLUIR</PixelButton
+                            >
                         </div>
                     </div>
                 </div>
@@ -541,15 +555,30 @@ onMounted(async () => {
                     class="w-full max-w-md bg-card border-4 border-border shadow-[8px_8px_0_0_hsl(var(--border))] animate-pop"
                     @click.stop
                 >
-                    <div class="bg-secondary text-secondary-foreground border-b-4 border-border px-4 py-2 font-pixel text-xs">
+                    <div
+                        class="bg-secondary text-secondary-foreground border-b-4 border-border px-4 py-2 font-pixel text-xs"
+                    >
                         ⚠ CONFIRMAR EXCLUSÃO
                     </div>
                     <div class="p-5">
-                        <p class="font-display text-xl">Excluir o professor <span class="text-primary">{{ teacherToDeleteName }}</span>?</p>
-                        <p class="font-sans text-sm text-muted-foreground mt-3">Esta ação é permanente e removerá o professor.</p>
+                        <p class="font-display text-xl">
+                            Excluir o professor
+                            <span class="text-primary">{{ teacherToDeleteName }}</span
+                            >?
+                        </p>
+                        <p class="font-sans text-sm text-muted-foreground mt-3">
+                            Esta ação é permanente e removerá o professor.
+                        </p>
                         <div class="mt-5 flex gap-3">
-                            <PixelButton class="flex-1" variant="ghost" @click="cancelDeleteTeacher">CANCELAR</PixelButton>
-                            <PixelButton class="flex-1" variant="danger" @click="proceedDeleteTeacher"><PhTrash weight="bold" /> EXCLUIR</PixelButton>
+                            <PixelButton class="flex-1" variant="ghost" @click="cancelDeleteTeacher"
+                                >CANCELAR</PixelButton
+                            >
+                            <PixelButton
+                                class="flex-1"
+                                variant="danger"
+                                @click="proceedDeleteTeacher"
+                                ><PhTrash weight="bold" /> EXCLUIR</PixelButton
+                            >
                         </div>
                     </div>
                 </div>
@@ -602,29 +631,89 @@ onMounted(async () => {
                     <PixelCard class="p-5">
                         <form class="space-y-4" @submit.prevent="submitCourse">
                             <div>
-                                <label class="font-pixel text-[9px] block mb-1">NOME DO CURSO</label>
-                                <PixelInput v-model="courseData.name" placeholder="Ex: Engenharia Civil" />
-                                <p v-if="courseErrors.name" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ courseErrors.name }}</p>
+                                <label class="font-pixel text-[9px] block mb-1"
+                                    >NOME DO CURSO</label
+                                >
+                                <PixelInput
+                                    v-model="courseData.name"
+                                    placeholder="Ex: Engenharia Civil"
+                                />
+                                <p
+                                    v-if="courseErrors.name"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ courseErrors.name }}
+                                </p>
                             </div>
 
                             <div>
                                 <label class="font-pixel text-[9px] block mb-1">TURNO</label>
-                                <select v-model="courseData.shift" class="w-full bg-input text-foreground border-2 border-border px-3 py-2 font-display text-base focus:outline-none">
+                                <select
+                                    v-model="courseData.shift"
+                                    class="w-full bg-input text-foreground border-2 border-border px-3 py-2 font-display text-base focus:outline-none"
+                                >
                                     <option value="" disabled>Selecione um turno</option>
-                                    <option v-for="option in SHIFT_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</option>
+                                    <option
+                                        v-for="option in SHIFT_OPTIONS"
+                                        :key="option.value"
+                                        :value="option.value"
+                                    >
+                                        {{ option.label }}
+                                    </option>
                                 </select>
-                                <p v-if="courseErrors.shift" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ courseErrors.shift }}</p>
+                                <p
+                                    v-if="courseErrors.shift"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ courseErrors.shift }}
+                                </p>
                             </div>
 
                             <div>
-                                <label class="font-pixel text-[9px] block mb-1">NÚMERO DE PERÍODOS</label>
-                                <PixelInput :model-value="courseData.periods" type="number" min="1" placeholder="Ex: 8" @update:model-value="(value) => (courseData.periods = +value)" />
-                                <p v-if="courseErrors.periods" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ courseErrors.periods }}</p>
+                                <label class="font-pixel text-[9px] block mb-1"
+                                    >NÚMERO DE PERÍODOS</label
+                                >
+                                <PixelInput
+                                    :model-value="courseData.periods"
+                                    type="number"
+                                    min="1"
+                                    placeholder="Ex: 8"
+                                    @update:model-value="(value) => (courseData.periods = +value)"
+                                />
+                                <p
+                                    v-if="courseErrors.periods"
+                                    class="font-sans text-xs mt-1"
+                                    style="color: hsl(var(--destructive))"
+                                >
+                                    {{ courseErrors.periods }}
+                                </p>
                             </div>
 
                             <div class="flex gap-2 pt-1">
-                                <PixelButton type="submit" variant="success" class="flex-1" :disabled="courseIsSubmitting">{{ editingCourseId ? 'SALVAR' : 'CRIAR CURSO' }}</PixelButton>
-                                <PixelButton type="button" variant="ghost" class="flex-1" @click.prevent="() => { editingCourseId = null; courseData.name = ''; courseData.shift = ''; courseData.periods = 1; clearCourseErrors(); }">CANCELAR</PixelButton>
+                                <PixelButton
+                                    type="submit"
+                                    variant="success"
+                                    class="flex-1"
+                                    :disabled="courseIsSubmitting"
+                                    >{{ editingCourseId ? 'SALVAR' : 'CRIAR CURSO' }}</PixelButton
+                                >
+                                <PixelButton
+                                    type="button"
+                                    variant="ghost"
+                                    class="flex-1"
+                                    @click.prevent="
+                                        () => {
+                                            editingCourseId = null;
+                                            courseData.name = '';
+                                            courseData.shift = '';
+                                            courseData.periods = 1;
+                                            clearCourseErrors();
+                                        }
+                                    "
+                                    >CANCELAR</PixelButton
+                                >
                             </div>
                         </form>
                     </PixelCard>
@@ -633,17 +722,39 @@ onMounted(async () => {
                 <div>
                     <h2 class="font-pixel text-sm mb-4">Cursos cadastrados</h2>
                     <PixelCard class="p-5 space-y-3">
-                        <p v-if="courses.length === 0" class="font-display text-sm text-muted-foreground">Nenhum curso cadastrado.</p>
+                        <p
+                            v-if="courses.length === 0"
+                            class="font-display text-sm text-muted-foreground"
+                        >
+                            Nenhum curso cadastrado.
+                        </p>
 
-                        <div v-for="course in courses" :key="course.id" class="border-2 border-border bg-card p-3 shadow-[3px_3px_0_0_hsl(var(--border))]">
+                        <div
+                            v-for="course in courses"
+                            :key="course.id"
+                            class="border-2 border-border bg-card p-3 shadow-[3px_3px_0_0_hsl(var(--border))]"
+                        >
                             <div class="flex items-start justify-between gap-3">
                                 <div class="min-w-0">
                                     <div class="font-pixel text-xs">{{ course.name }}</div>
-                                    <div class="font-display text-sm text-muted-foreground mt-1">{{ SHIFT_LABELS[course.shift] }} · {{ course.periods }} período(s)</div>
+                                    <div class="font-display text-sm text-muted-foreground mt-1">
+                                        {{ SHIFT_LABELS[course.shift] }} ·
+                                        {{ course.periods }} período(s)
+                                    </div>
                                 </div>
                                 <div class="flex gap-1.5 shrink-0">
-                                    <PixelButton size="sm" variant="ghost" @click="startEditCourse(course)"><PhPencilSimple weight="bold" :size="13" /></PixelButton>
-                                    <PixelButton size="sm" variant="danger" @click="confirmDeleteCourse(course.id)"><PhTrash weight="bold" :size="13" /></PixelButton>
+                                    <PixelButton
+                                        size="sm"
+                                        variant="ghost"
+                                        @click="startEditCourse(course)"
+                                        ><PhPencilSimple weight="bold" :size="13"
+                                    /></PixelButton>
+                                    <PixelButton
+                                        size="sm"
+                                        variant="danger"
+                                        @click="confirmDeleteCourse(course.id)"
+                                        ><PhTrash weight="bold" :size="13"
+                                    /></PixelButton>
                                 </div>
                             </div>
                         </div>
@@ -659,38 +770,110 @@ onMounted(async () => {
                     <form class="space-y-3" @submit="submitTeacher">
                         <div>
                             <label class="font-pixel text-[9px] block mb-1">NOME COMPLETO</label>
-                            <PixelInput v-model="teacherData.name" placeholder="Prof. Fulano de Tal" />
-                            <p v-if="teacherErrors.name" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ teacherErrors.name }}</p>
+                            <PixelInput
+                                v-model="teacherData.name"
+                                placeholder="Prof. Fulano de Tal"
+                            />
+                            <p
+                                v-if="teacherErrors.name"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ teacherErrors.name }}
+                            </p>
                         </div>
                         <div>
-                            <label class="font-pixel text-[9px] block mb-1">E-MAIL INSTITUCIONAL</label>
-                            <PixelInput v-model="teacherData.email" type="email" placeholder="prof@unifei.edu.br" />
-                            <p v-if="teacherErrors.email" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ teacherErrors.email }}</p>
+                            <label class="font-pixel text-[9px] block mb-1"
+                                >E-MAIL INSTITUCIONAL</label
+                            >
+                            <PixelInput
+                                v-model="teacherData.email"
+                                type="email"
+                                placeholder="prof@unifei.edu.br"
+                            />
+                            <p
+                                v-if="teacherErrors.email"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ teacherErrors.email }}
+                            </p>
                         </div>
                         <div>
                             <label class="font-pixel text-[9px] block mb-1">CPF</label>
-                            <PixelInput v-model="teacherData.cpf" placeholder="Somente 11 dígitos" maxlength="11" />
-                            <p v-if="teacherErrors.cpf" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ teacherErrors.cpf }}</p>
+                            <PixelInput
+                                v-model="teacherData.cpf"
+                                placeholder="Somente 11 dígitos"
+                                maxlength="11"
+                            />
+                            <p
+                                v-if="teacherErrors.cpf"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ teacherErrors.cpf }}
+                            </p>
                         </div>
                         <div>
                             <label class="font-pixel text-[9px] block mb-1">SENHA</label>
-                            <PixelInput v-model="teacherData.password" type="password" placeholder="Mínimo 8 caracteres" />
-                            <p v-if="teacherErrors.password" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ teacherErrors.password }}</p>
+                            <PixelInput
+                                v-model="teacherData.password"
+                                type="password"
+                                placeholder="Mínimo 8 caracteres"
+                            />
+                            <p
+                                v-if="teacherErrors.password"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ teacherErrors.password }}
+                            </p>
                         </div>
                         <div>
                             <label class="font-pixel text-[9px] block mb-1">AVATAR</label>
-                            <select v-model="teacherData.avatar" class="w-full bg-input text-foreground border-2 border-border px-3 py-2 font-display text-base focus:outline-none">
+                            <select
+                                v-model="teacherData.avatar"
+                                class="w-full bg-input text-foreground border-2 border-border px-3 py-2 font-display text-base focus:outline-none"
+                            >
                                 <option value="" disabled>Selecione um avatar</option>
-                                <option v-for="avatar in TEACHER_AVATARS" :key="avatar.value" :value="avatar.value">{{ avatar.label }}</option>
+                                <option
+                                    v-for="avatar in TEACHER_AVATARS"
+                                    :key="avatar.value"
+                                    :value="avatar.value"
+                                >
+                                    {{ avatar.label }}
+                                </option>
                             </select>
-                            <p v-if="teacherErrors.avatar" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ teacherErrors.avatar }}</p>
+                            <p
+                                v-if="teacherErrors.avatar"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ teacherErrors.avatar }}
+                            </p>
                         </div>
                         <div>
-                            <label class="font-pixel text-[9px] block mb-1">DEPARTAMENTO (OPCIONAL)</label>
-                            <PixelInput v-model="teacherData.department" placeholder="Ex: Engenharia de Software" />
-                            <p v-if="teacherErrors.department" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ teacherErrors.department }}</p>
+                            <label class="font-pixel text-[9px] block mb-1"
+                                >DEPARTAMENTO (OPCIONAL)</label
+                            >
+                            <PixelInput
+                                v-model="teacherData.department"
+                                placeholder="Ex: Engenharia de Software"
+                            />
+                            <p
+                                v-if="teacherErrors.department"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ teacherErrors.department }}
+                            </p>
                         </div>
-                        <PixelButton type="submit" variant="success" class="w-full" :disabled="teacherIsSubmitting">
+                        <PixelButton
+                            type="submit"
+                            variant="success"
+                            class="w-full"
+                            :disabled="teacherIsSubmitting"
+                        >
                             <PhPlus weight="bold" /> CADASTRAR
                         </PixelButton>
                     </form>
@@ -699,45 +882,106 @@ onMounted(async () => {
                 <PixelCard class="p-5">
                     <h2 class="font-pixel text-sm mb-4">PROFESSORES CADASTRADOS</h2>
                     <div class="space-y-3">
-                        <p v-if="teachers.length === 0" class="font-display text-sm text-muted-foreground">Nenhum professor cadastrado.</p>
-                        <div v-for="teacher in teachers" :key="teacher.id" class="border-2 border-border bg-card p-3">
+                        <p
+                            v-if="teachers.length === 0"
+                            class="font-display text-sm text-muted-foreground"
+                        >
+                            Nenhum professor cadastrado.
+                        </p>
+                        <div
+                            v-for="teacher in teachers"
+                            :key="teacher.id"
+                            class="border-2 border-border bg-card p-3"
+                        >
                             <template v-if="editingTeacherId !== teacher.id">
                                 <div class="flex items-start justify-between gap-2">
                                     <div class="min-w-0">
                                         <div class="font-pixel text-xs">{{ teacher.name }}</div>
-                                        <div class="font-sans text-xs text-muted-foreground mt-0.5">{{ teacher.email }} · {{ teacher.cpf }}</div>
+                                        <div class="font-sans text-xs text-muted-foreground mt-0.5">
+                                            {{ teacher.email }} · {{ teacher.cpf }}
+                                        </div>
                                         <div class="flex flex-wrap gap-1.5 mt-2">
-                                            <PixelBadge tone="blue">{{ teacher.avatar }}</PixelBadge>
-                                            <PixelBadge v-if="teacher.department" tone="teal">{{ teacher.department }}</PixelBadge>
+                                            <PixelBadge tone="blue">{{
+                                                teacher.avatar
+                                            }}</PixelBadge>
+                                            <PixelBadge v-if="teacher.department" tone="teal">{{
+                                                teacher.department
+                                            }}</PixelBadge>
                                         </div>
                                     </div>
                                     <div class="flex gap-1.5 shrink-0">
-                                        <PixelButton size="sm" variant="ghost" @click="startEditTeacher(teacher)"><PhPencilSimple weight="bold" :size="13" /></PixelButton>
-                                        <PixelButton size="sm" variant="danger" @click="confirmDeleteTeacher(teacher.id)"><PhTrash weight="bold" :size="13" /></PixelButton>
+                                        <PixelButton
+                                            size="sm"
+                                            variant="ghost"
+                                            @click="startEditTeacher(teacher)"
+                                            ><PhPencilSimple weight="bold" :size="13"
+                                        /></PixelButton>
+                                        <PixelButton
+                                            size="sm"
+                                            variant="danger"
+                                            @click="confirmDeleteTeacher(teacher.id)"
+                                            ><PhTrash weight="bold" :size="13"
+                                        /></PixelButton>
                                     </div>
                                 </div>
                             </template>
                             <template v-else>
                                 <form class="space-y-2" @submit="submitEditTeacher">
-                                    <div class="font-pixel text-[9px] text-primary mb-2">EDITANDO: {{ teacher.name }}</div>
+                                    <div class="font-pixel text-[9px] text-primary mb-2">
+                                        EDITANDO: {{ teacher.name }}
+                                    </div>
                                     <div>
                                         <label class="font-pixel text-[9px] block mb-1">NOME</label>
                                         <PixelInput v-model="editTeacherData.name" />
-                                        <p v-if="editTeacherErrors.name" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ editTeacherErrors.name }}</p>
+                                        <p
+                                            v-if="editTeacherErrors.name"
+                                            class="font-sans text-xs mt-1"
+                                            style="color: hsl(var(--destructive))"
+                                        >
+                                            {{ editTeacherErrors.name }}
+                                        </p>
                                     </div>
                                     <div>
-                                        <label class="font-pixel text-[9px] block mb-1">E-MAIL</label>
+                                        <label class="font-pixel text-[9px] block mb-1"
+                                            >E-MAIL</label
+                                        >
                                         <PixelInput v-model="editTeacherData.email" type="email" />
-                                        <p v-if="editTeacherErrors.email" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ editTeacherErrors.email }}</p>
+                                        <p
+                                            v-if="editTeacherErrors.email"
+                                            class="font-sans text-xs mt-1"
+                                            style="color: hsl(var(--destructive))"
+                                        >
+                                            {{ editTeacherErrors.email }}
+                                        </p>
                                     </div>
                                     <div>
-                                        <label class="font-pixel text-[9px] block mb-1">DEPARTAMENTO</label>
+                                        <label class="font-pixel text-[9px] block mb-1"
+                                            >DEPARTAMENTO</label
+                                        >
                                         <PixelInput v-model="editTeacherData.department" />
-                                        <p v-if="editTeacherErrors.department" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ editTeacherErrors.department }}</p>
+                                        <p
+                                            v-if="editTeacherErrors.department"
+                                            class="font-sans text-xs mt-1"
+                                            style="color: hsl(var(--destructive))"
+                                        >
+                                            {{ editTeacherErrors.department }}
+                                        </p>
                                     </div>
                                     <div class="flex gap-2 pt-1">
-                                        <PixelButton type="submit" variant="success" size="sm" :disabled="editTeacherIsSubmitting">SALVAR</PixelButton>
-                                        <PixelButton type="button" variant="ghost" size="sm" @click="cancelEditTeacher"><PhX weight="bold" :size="13" /> CANCELAR</PixelButton>
+                                        <PixelButton
+                                            type="submit"
+                                            variant="success"
+                                            size="sm"
+                                            :disabled="editTeacherIsSubmitting"
+                                            >SALVAR</PixelButton
+                                        >
+                                        <PixelButton
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            @click="cancelEditTeacher"
+                                            ><PhX weight="bold" :size="13" /> CANCELAR</PixelButton
+                                        >
                                     </div>
                                 </form>
                             </template>
@@ -780,7 +1024,7 @@ onMounted(async () => {
                             </div>
                         </div>
                         <div class="border-2 border-border bg-card p-3 md:col-span-2">
-                            <div class="font-pixel text-[9px] text-muted-foreground ">E-MAIL</div>
+                            <div class="font-pixel text-[9px] text-muted-foreground">E-MAIL</div>
                             <div class="font-sans text-sm mt-1 break-all">
                                 {{ institutionProfile?.email ?? authStore.user?.email ?? '-' }}
                             </div>
@@ -807,32 +1051,86 @@ onMounted(async () => {
 
                     <form v-else class="space-y-4" @submit.prevent="handleUpdateInstitutionProfile">
                         <div>
-                            <label class="font-pixel text-[9px] block mb-1">NOME DA INSTITUIÇÃO</label>
-                            <PixelInput v-model="profileData.name" placeholder="Nome da instituição" />
-                            <p v-if="profileErrors.name" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ profileErrors.name }}</p>
+                            <label class="font-pixel text-[9px] block mb-1"
+                                >NOME DA INSTITUIÇÃO</label
+                            >
+                            <PixelInput
+                                v-model="profileData.name"
+                                placeholder="Nome da instituição"
+                            />
+                            <p
+                                v-if="profileErrors.name"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ profileErrors.name }}
+                            </p>
                         </div>
 
                         <div>
                             <label class="font-pixel text-[9px] block mb-1">E-MAIL</label>
-                            <PixelInput v-model="profileData.email" type="email" placeholder="contato@instituicao.com" />
-                            <p v-if="profileErrors.email" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ profileErrors.email }}</p>
+                            <PixelInput
+                                v-model="profileData.email"
+                                type="email"
+                                placeholder="contato@instituicao.com"
+                            />
+                            <p
+                                v-if="profileErrors.email"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ profileErrors.email }}
+                            </p>
                         </div>
 
                         <div>
                             <label class="font-pixel text-[9px] block mb-1">CNPJ</label>
-                            <PixelInput v-model="profileData.cnpj" maxlength="18" placeholder="00.000.000/0000-00" />
-                            <p v-if="profileErrors.cnpj" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ profileErrors.cnpj }}</p>
+                            <PixelInput
+                                v-model="profileData.cnpj"
+                                maxlength="18"
+                                placeholder="00.000.000/0000-00"
+                            />
+                            <p
+                                v-if="profileErrors.cnpj"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ profileErrors.cnpj }}
+                            </p>
                         </div>
 
                         <div>
-                            <label class="font-pixel text-[9px] block mb-1">ENDEREÇO COMPLETO</label>
-                            <PixelInput v-model="profileData.address" placeholder="Rua, número, bairro, cidade" />
-                            <p v-if="profileErrors.address" class="font-sans text-xs mt-1" style="color: hsl(var(--destructive))">{{ profileErrors.address }}</p>
+                            <label class="font-pixel text-[9px] block mb-1"
+                                >ENDEREÇO COMPLETO</label
+                            >
+                            <PixelInput
+                                v-model="profileData.address"
+                                placeholder="Rua, número, bairro, cidade"
+                            />
+                            <p
+                                v-if="profileErrors.address"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ profileErrors.address }}
+                            </p>
                         </div>
 
                         <div class="flex gap-2 pt-1">
-                            <PixelButton type="submit" variant="success" class="flex-1" :disabled="profileIsSubmitting"><PhPencilSimple weight="bold" /> SALVAR ALTERAÇÕES</PixelButton>
-                            <PixelButton type="button" variant="ghost" class="flex-1" @click.prevent="cancelEditInstitutionProfile">CANCELAR</PixelButton>
+                            <PixelButton
+                                type="submit"
+                                variant="success"
+                                class="flex-1"
+                                :disabled="profileIsSubmitting"
+                                ><PhPencilSimple weight="bold" /> SALVAR ALTERAÇÕES</PixelButton
+                            >
+                            <PixelButton
+                                type="button"
+                                variant="ghost"
+                                class="flex-1"
+                                @click.prevent="cancelEditInstitutionProfile"
+                                >CANCELAR</PixelButton
+                            >
                         </div>
                     </form>
                 </PixelCard>
@@ -932,7 +1230,8 @@ onMounted(async () => {
                     <div class="p-5">
                         <p class="font-display text-xl">
                             Excluir a conta da instituição
-                            <span class="text-primary">{{ institutionName }}</span>?
+                            <span class="text-primary">{{ institutionName }}</span
+                            >?
                         </p>
                         <p class="font-sans text-sm text-muted-foreground mt-3">
                             Esta ação é permanente e remove todos os dados vinculados ao acesso.

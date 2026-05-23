@@ -296,9 +296,7 @@ onMounted(async () => {
                                 ).toUpperCase()
                             }}
                         </div>
-                        <div class="font-sans md text-muted-foreground mt-1">
-                            Perfil de aluno
-                        </div>
+                        <div class="font-sans md text-muted-foreground mt-1">Perfil de aluno</div>
                     </div>
                 </div>
 

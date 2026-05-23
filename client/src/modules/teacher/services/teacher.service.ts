@@ -1,12 +1,6 @@
 import { api } from '@/shared/services/api';
 
-export type TeacherAvatar =
-    | 'MARIO'
-    | 'LUIGI'
-    | 'PEACH'
-    | 'TOAD'
-    | 'YOSHI'
-    | 'BOWSER';
+export type TeacherAvatar = 'MARIO' | 'LUIGI' | 'PEACH' | 'TOAD' | 'YOSHI' | 'BOWSER';
 
 export type TeacherProfile = {
     id: string;

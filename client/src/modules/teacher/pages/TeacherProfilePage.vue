@@ -212,7 +212,13 @@ onMounted(loadProfile);
 
                     <div>
                         <div class="font-pixel text-xl">
-                            {{ (teacherProfile?.name ?? authStore.user?.name ?? 'PROFESSOR').toUpperCase() }}
+                            {{
+                                (
+                                    teacherProfile?.name ??
+                                    authStore.user?.name ??
+                                    'PROFESSOR'
+                                ).toUpperCase()
+                            }}
                         </div>
                         <div class="font-sans text-sm text-muted-foreground mt-1">
                             {{ teacherProfile?.department ?? 'Departamento não informado' }}
@@ -261,7 +267,9 @@ onMounted(loadProfile);
             <div v-if="!isEditingProfile" class="grid gap-3 lg:grid-cols-2">
                 <div class="border-2 border-border bg-card p-3">
                     <div class="font-pixel text-[9px] text-muted-foreground">DEPARTAMENTO</div>
-                    <div class="font-sans text-sm mt-1">{{ teacherProfile?.department ?? '-' }}</div>
+                    <div class="font-sans text-sm mt-1">
+                        {{ teacherProfile?.department ?? '-' }}
+                    </div>
                 </div>
 
                 <div class="border-2 border-border bg-card p-3">
@@ -284,7 +292,10 @@ onMounted(loadProfile);
                             v-model="profileData.name"
                             placeholder="Nome completo"
                         />
-                        <p v-if="profileErrors.name" class="font-sans text-xs mt-1 text-destructive">
+                        <p
+                            v-if="profileErrors.name"
+                            class="font-sans text-xs mt-1 text-destructive"
+                        >
                             {{ profileErrors.name }}
                         </p>
                     </div>
@@ -300,7 +311,10 @@ onMounted(loadProfile);
                             type="email"
                             placeholder="contato@escola.com"
                         />
-                        <p v-if="profileErrors.email" class="font-sans text-xs mt-1 text-destructive">
+                        <p
+                            v-if="profileErrors.email"
+                            class="font-sans text-xs mt-1 text-destructive"
+                        >
                             {{ profileErrors.email }}
                         </p>
                     </div>
@@ -363,7 +377,9 @@ onMounted(loadProfile);
                                 "
                                 @click="selectAvatar(c.id as TeacherCharacter)"
                             >
-                                <div class="flex justify-center bg-hud py-2 border-2 border-border p-1">
+                                <div
+                                    class="flex justify-center bg-hud py-2 border-2 border-border p-1"
+                                >
                                     <MarioAvatar :character="c.id" :size="36" />
                                 </div>
 
@@ -414,9 +430,8 @@ onMounted(loadProfile);
                             name="institution"
                             :model-value="institutionName"
                             disabled
-                            class=" opacity-90 cursor-not-allowed"
+                            class="opacity-90 cursor-not-allowed"
                         />
-                        
                     </div>
                 </div>
 
@@ -441,7 +456,8 @@ onMounted(loadProfile);
             <div class="font-pixel text-[10px] text-destructive">▶ EXCLUIR CONTA</div>
 
             <p class="font-sans text-sm text-muted-foreground mt-3 mb-4">
-                Esta ação é permanente. Ao excluir a conta do professor, o acesso será removido e não será possível recuperar os dados.
+                Esta ação é permanente. Ao excluir a conta do professor, o acesso será removido e
+                não será possível recuperar os dados.
             </p>
 
             <div v-if="!showDeleteConfirmation">
