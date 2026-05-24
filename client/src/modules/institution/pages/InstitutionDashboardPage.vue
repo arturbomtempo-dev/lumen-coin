@@ -296,6 +296,11 @@ async function proceedDeleteTeacher() {
     cancelDeleteTeacher();
 }
 
+function formatCpf(cpf: string): string {
+    const digits = cpf.replace(/\D/g, '');
+    return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+}
+
 const allStudents = ref<StudentResponse[]>([]);
 
 async function loadStudents() {
@@ -856,12 +861,9 @@ onMounted(async () => {
                                     <div class="min-w-0">
                                         <div class="font-pixel text-xs">{{ teacher.name }}</div>
                                         <div class="font-sans text-xs text-muted-foreground mt-0.5">
-                                            {{ teacher.email }} · {{ teacher.cpf }}
+                                            {{ teacher.email }} · {{ formatCpf(teacher.cpf) }}
                                         </div>
                                         <div class="flex flex-wrap gap-1.5 mt-2">
-                                            <PixelBadge tone="blue">{{
-                                                teacher.avatar
-                                            }}</PixelBadge>
                                             <PixelBadge v-if="teacher.department" tone="teal">{{
                                                 teacher.department
                                             }}</PixelBadge>
