@@ -47,7 +47,7 @@ onMounted(async () => {
 
         <PixelCard class="overflow-hidden">
             <div
-                class="bg-hud text-hud-foreground px-4 py-2 font-pixel text-[10px] grid grid-cols-[1fr_auto] sm:grid-cols-[1.5fr_2fr_auto_auto] gap-2"
+                class="bg-hud text-hud-foreground px-4 py-2 font-pixel text-[10px] grid grid-cols-[1fr_auto] sm:grid-cols-4 gap-6"
             >
                 <span>PROFESSOR</span>
                 <span class="hidden sm:block">MOTIVO</span>
@@ -66,7 +66,7 @@ onMounted(async () => {
             <div
                 v-for="t in transfers"
                 :key="t.id"
-                class="px-4 py-3 border-t-2 border-border grid grid-cols-[1fr_auto] sm:grid-cols-[1.5fr_2fr_auto_auto] gap-2 items-center"
+                class="px-4 py-3 border-t-2 border-border grid grid-cols-[1fr_auto] sm:grid-cols-4 gap-6 items-center"
             >
                 <div>
                     <div class="font-pixel text-[10px]">{{ t.senderName }}</div>

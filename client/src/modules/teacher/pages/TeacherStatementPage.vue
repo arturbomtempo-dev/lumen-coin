@@ -41,7 +41,7 @@ onMounted(async () => {
 
         <PixelCard class="overflow-hidden">
             <div
-                class="bg-hud text-hud-foreground px-4 py-2 font-pixel text-[10px] grid grid-cols-[1fr_2fr_auto_auto] gap-2"
+                class="bg-hud text-hud-foreground px-4 py-2 font-pixel text-[10px] grid grid-cols-4 gap-6"
             >
                 <span>ALUNO</span>
                 <span class="hidden sm:block">MOTIVO</span>
@@ -60,7 +60,7 @@ onMounted(async () => {
             <div
                 v-for="t in transfers"
                 :key="t.id"
-                class="px-4 py-3 border-t-2 border-border grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_2fr_auto_auto] gap-2 items-center"
+                class="px-4 py-3 border-t-2 border-border grid grid-cols-[1fr_auto] sm:grid-cols-4 gap-6 items-center"
             >
                 <div>
                     <div class="font-pixel text-[10px]">{{ t.recipientName }}</div>
@@ -75,8 +75,8 @@ onMounted(async () => {
                 <div class="hidden sm:block font-pixel text-[9px] text-muted-foreground">
                     {{ formatDate(t.sentAt) }}
                 </div>
-                <div class="font-pixel text-sm flex items-center gap-1 text-success">
-                    +<CoinIcon :size="12" /> {{ t.amount }}
+                <div class="font-pixel text-sm flex items-center gap-1 text-destructive">
+                    -<CoinIcon :size="12" /> {{ t.amount }}
                 </div>
             </div>
         </PixelCard>
