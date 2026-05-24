@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import {
+    changeCompanyPassword,
     deleteCompany,
     getCompany,
     updateCompany,
 } from '@/modules/company/services/company.service';
+import {
+    changeCompanyPasswordSchema,
+    type ChangeCompanyPasswordFormData,
+} from '@/modules/schemas/change-company-password.schema';
 import { updateCompanySchema } from '@/modules/schemas/update-company.schema';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
+import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
@@ -19,7 +25,9 @@ import {
     PhCheckCircle,
     PhEye,
     PhEyeSlash,
+    PhFloppyDisk,
     PhGameController,
+    PhKey,
     PhMoon,
     PhPlus,
     PhSignOut,
@@ -30,6 +38,7 @@ import {
     PhUser,
     PhXCircle,
 } from '@phosphor-icons/vue';
+import { vMaska } from 'maska/vue';
 import { onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
@@ -101,6 +110,33 @@ const {
     clearErrors: clearProfileErrors,
 } = useForm(updateCompanySchema);
 
+const {
+    fields: passwordData,
+    errors: passwordErrors,
+    isSubmitting: passwordIsSubmitting,
+    validate: validatePassword,
+    clearErrors: clearPasswordErrors,
+} = useForm(changeCompanyPasswordSchema);
+
+passwordData.value = {
+    currentPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
+};
+
+const showCurrentPassword = ref(false);
+const showNewPassword = ref(false);
+const showConfirmNewPassword = ref(false);
+
+function digitsOnly(value: string): string {
+    return value.replace(/\D/g, '');
+}
+
+function formatCnpj(cnpj: string): string {
+    const digits = cnpj.replace(/\D/g, '');
+    return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+}
+
 async function loadProfile() {
     if (!authStore.user?.id) return;
     try {
@@ -108,7 +144,7 @@ async function loadProfile() {
         profileData.value = {
             name: response.data.name,
             email: response.data.email,
-            cnpj: response.data.cnpj,
+            cnpj: formatCnpj(response.data.cnpj),
         };
     } catch {}
 }
@@ -118,12 +154,36 @@ async function handleUpdateProfile(e: Event) {
     if (!validateProfile() || !authStore.user?.id) return;
     profileIsSubmitting.value = true;
     try {
-        await updateCompany(authStore.user.id, profileData.value);
+        await updateCompany(authStore.user.id, {
+            name: profileData.value.name.trim(),
+            email: profileData.value.email.trim(),
+            cnpj: digitsOnly(profileData.value.cnpj),
+        });
         toast.success('Perfil atualizado com sucesso!');
         clearProfileErrors();
     } catch {
     } finally {
         profileIsSubmitting.value = false;
+    }
+}
+
+async function submitPasswordChange() {
+    if (!authStore.user?.id) return;
+    if (!validatePassword()) return;
+
+    passwordIsSubmitting.value = true;
+
+    try {
+        await changeCompanyPassword(
+            authStore.user.id,
+            passwordData.value as ChangeCompanyPasswordFormData
+        );
+        passwordData.value = { currentPassword: '', newPassword: '', confirmNewPassword: '' };
+        clearPasswordErrors();
+        toast.success('Senha alterada com sucesso!');
+    } catch {
+    } finally {
+        passwordIsSubmitting.value = false;
     }
 }
 
@@ -396,74 +456,189 @@ onMounted(() => {
             </template>
 
             <template v-if="tab === 'account'">
-                <div class="grid lg:grid-cols-2 gap-6 items-start">
+                <div class="space-y-6">
+                    <div class="grid lg:grid-cols-2 gap-6 items-start">
+                        <PixelCard class="p-6">
+                            <h2 class="font-pixel text-sm mb-4 flex items-center gap-2">
+                                <PhUser weight="fill" /> EDITAR PERFIL
+                            </h2>
+                            <form class="space-y-4" @submit="handleUpdateProfile">
+                                <div>
+                                    <label class="font-pixel text-[9px] block mb-2"
+                                        >NOME DA EMPRESA</label
+                                    >
+                                    <PixelInput v-model="profileData.name" />
+                                    <p
+                                        v-if="profileErrors.name"
+                                        class="font-sans text-xs mt-1"
+                                        style="color: hsl(var(--destructive))"
+                                    >
+                                        {{ profileErrors.name }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <label class="font-pixel text-[9px] block mb-2">E-MAIL</label>
+                                    <PixelInput v-model="profileData.email" type="email" />
+                                    <p
+                                        v-if="profileErrors.email"
+                                        class="font-sans text-xs mt-1"
+                                        style="color: hsl(var(--destructive))"
+                                    >
+                                        {{ profileErrors.email }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <label class="font-pixel text-[9px] block mb-2">CNPJ</label>
+                                    <PixelInput
+                                        v-model="profileData.cnpj"
+                                        v-maska="'##.###.###/####-##'"
+                                        maxlength="18"
+                                        placeholder="00.000.000/0000-00"
+                                    />
+                                    <p
+                                        v-if="profileErrors.cnpj"
+                                        class="font-sans text-xs mt-1"
+                                        style="color: hsl(var(--destructive))"
+                                    >
+                                        {{ profileErrors.cnpj }}
+                                    </p>
+                                </div>
+                                <PixelButton
+                                    type="submit"
+                                    variant="success"
+                                    class="w-full flex items-center gap-2"
+                                    :disabled="profileIsSubmitting"
+                                >
+                                    <PhFloppyDisk weight="bold" /> SALVAR ALTERAÇÕES
+                                </PixelButton>
+                            </form>
+                        </PixelCard>
+
+                        <PixelCard class="p-6">
+                            <h2 class="font-pixel text-sm mb-4 flex items-center gap-2">
+                                <PhTrash weight="fill" /> EXCLUIR CONTA
+                            </h2>
+                            <p class="font-sans text-sm text-muted-foreground mb-6">
+                                Esta ação é permanente e não pode ser desfeita. Todas as vantagens
+                                publicadas serão removidas.
+                            </p>
+                            <PixelButton
+                                variant="danger"
+                                class="w-full"
+                                :disabled="isDeletingAccount"
+                                @click="handleDeleteAccount"
+                            >
+                                <PhTrash weight="fill" /> EXCLUIR MINHA CONTA
+                            </PixelButton>
+                        </PixelCard>
+                    </div>
+
                     <PixelCard class="p-6">
-                        <h2 class="font-pixel text-sm mb-4 flex items-center gap-2">
-                            <PhUser weight="fill" /> EDITAR PERFIL
-                        </h2>
-                        <form class="space-y-4" @submit="handleUpdateProfile">
+                        <div class="font-pixel text-[10px] text-primary">&#9658; ALTERAR SENHA</div>
+
+                        <form class="mt-4 space-y-3" @submit.prevent="submitPasswordChange">
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2"
-                                    >NOME DA EMPRESA</label
-                                >
-                                <PixelInput v-model="profileData.name" />
+                                <label class="font-pixel text-[9px] block mb-1">SENHA ATUAL</label>
+                                <div class="relative">
+                                    <PixelInput
+                                        v-model="passwordData.currentPassword"
+                                        :type="showCurrentPassword ? 'text' : 'password'"
+                                        class="pr-10"
+                                        placeholder="Sua senha atual"
+                                    />
+                                    <button
+                                        class="absolute right-3 top-1/2 -translate-y-1/2"
+                                        type="button"
+                                        @click="showCurrentPassword = !showCurrentPassword"
+                                    >
+                                        <PhEyeSlash
+                                            v-if="showCurrentPassword"
+                                            :size="18"
+                                            weight="bold"
+                                        />
+                                        <PhEye v-else :size="18" weight="bold" />
+                                    </button>
+                                </div>
                                 <p
-                                    v-if="profileErrors.name"
-                                    class="font-sans text-xs mt-1"
-                                    style="color: hsl(var(--destructive))"
+                                    v-if="passwordErrors.currentPassword"
+                                    class="font-sans text-xs mt-1 text-destructive"
                                 >
-                                    {{ profileErrors.name }}
+                                    {{ passwordErrors.currentPassword }}
                                 </p>
                             </div>
+
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2">E-MAIL</label>
-                                <PixelInput v-model="profileData.email" type="email" />
+                                <label class="font-pixel text-[9px] block mb-1">NOVA SENHA</label>
+                                <div class="relative">
+                                    <PixelInput
+                                        v-model="passwordData.newPassword"
+                                        :type="showNewPassword ? 'text' : 'password'"
+                                        class="pr-10"
+                                        placeholder="Mínimo 8 caracteres"
+                                    />
+                                    <button
+                                        class="absolute right-3 top-1/2 -translate-y-1/2"
+                                        type="button"
+                                        @click="showNewPassword = !showNewPassword"
+                                    >
+                                        <PhEyeSlash
+                                            v-if="showNewPassword"
+                                            :size="18"
+                                            weight="bold"
+                                        />
+                                        <PhEye v-else :size="18" weight="bold" />
+                                    </button>
+                                </div>
+                                <PasswordStrengthHint :password="passwordData.newPassword" />
                                 <p
-                                    v-if="profileErrors.email"
-                                    class="font-sans text-xs mt-1"
-                                    style="color: hsl(var(--destructive))"
+                                    v-if="passwordErrors.newPassword"
+                                    class="font-sans text-xs mt-1 text-destructive"
                                 >
-                                    {{ profileErrors.email }}
+                                    {{ passwordErrors.newPassword }}
                                 </p>
                             </div>
+
                             <div>
-                                <label class="font-pixel text-[9px] block mb-2">CNPJ</label>
-                                <PixelInput v-model="profileData.cnpj" maxlength="14" />
-                                <p
-                                    v-if="profileErrors.cnpj"
-                                    class="font-sans text-xs mt-1"
-                                    style="color: hsl(var(--destructive))"
+                                <label class="font-pixel text-[9px] block mb-1"
+                                    >CONFIRMAR NOVA SENHA</label
                                 >
-                                    {{ profileErrors.cnpj }}
+                                <div class="relative">
+                                    <PixelInput
+                                        v-model="passwordData.confirmNewPassword"
+                                        :type="showConfirmNewPassword ? 'text' : 'password'"
+                                        class="pr-10"
+                                        placeholder="Repita a nova senha"
+                                    />
+                                    <button
+                                        class="absolute right-3 top-1/2 -translate-y-1/2"
+                                        type="button"
+                                        @click="showConfirmNewPassword = !showConfirmNewPassword"
+                                    >
+                                        <PhEyeSlash
+                                            v-if="showConfirmNewPassword"
+                                            :size="18"
+                                            weight="bold"
+                                        />
+                                        <PhEye v-else :size="18" weight="bold" />
+                                    </button>
+                                </div>
+                                <p
+                                    v-if="passwordErrors.confirmNewPassword"
+                                    class="font-sans text-xs mt-1 text-destructive"
+                                >
+                                    {{ passwordErrors.confirmNewPassword }}
                                 </p>
                             </div>
+
                             <PixelButton
                                 type="submit"
                                 variant="success"
-                                class="w-full"
-                                :disabled="profileIsSubmitting"
+                                class="flex items-center gap-2"
+                                :disabled="passwordIsSubmitting"
                             >
-                                SALVAR ALTERAÇÕES
+                                <PhKey weight="bold" /> ATUALIZAR SENHA
                             </PixelButton>
                         </form>
-                    </PixelCard>
-
-                    <PixelCard class="p-6">
-                        <h2 class="font-pixel text-sm mb-4 flex items-center gap-2">
-                            <PhTrash weight="fill" /> EXCLUIR CONTA
-                        </h2>
-                        <p class="font-sans text-sm text-muted-foreground mb-6">
-                            Esta ação é permanente e não pode ser desfeita. Todas as vantagens
-                            publicadas serão removidas.
-                        </p>
-                        <PixelButton
-                            variant="danger"
-                            class="w-full"
-                            :disabled="isDeletingAccount"
-                            @click="handleDeleteAccount"
-                        >
-                            <PhTrash weight="fill" /> EXCLUIR MINHA CONTA
-                        </PixelButton>
                     </PixelCard>
                 </div>
             </template>

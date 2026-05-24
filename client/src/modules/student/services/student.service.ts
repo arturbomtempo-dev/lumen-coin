@@ -37,6 +37,13 @@ export function updateStudent(id: string, dto: UpdateStudentDto) {
     return api.put<StudentProfile>(`/students/${id}`, dto);
 }
 
+export function changeStudentPassword(
+    id: string,
+    dto: { currentPassword: string; newPassword: string; confirmNewPassword: string }
+) {
+    return api.patch(`/students/${id}/password`, dto);
+}
+
 export function deleteStudent(id: string) {
     return api.delete(`/students/${id}`);
 }

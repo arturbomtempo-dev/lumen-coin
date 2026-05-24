@@ -19,6 +19,7 @@ import {
 } from '@/modules/teacher/services/teacher.service';
 import { useTeacherStore } from '@/modules/teacher/stores/teacher.store';
 import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
+import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
@@ -534,6 +535,7 @@ onMounted(loadProfile);
                             <PhEye v-else :size="18" weight="bold" />
                         </button>
                     </div>
+                    <PasswordStrengthHint :password="passwordData.newPassword" />
                     <p
                         v-if="passwordErrors.newPassword"
                         class="font-sans text-xs mt-1 text-destructive"

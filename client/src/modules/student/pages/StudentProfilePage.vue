@@ -2,10 +2,15 @@
 import { getPublicCourses, getPublicInstitutions } from '@/modules/auth/services/auth.service';
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import {
+    changeStudentPasswordSchema,
+    type ChangeStudentPasswordFormData,
+} from '@/modules/schemas/change-student-password.schema';
+import {
     updateStudentSchema,
     type UpdateStudentFormData,
 } from '@/modules/schemas/update-student.schema';
 import {
+    changeStudentPassword,
     deleteStudent,
     getStudent,
     updateStudent,
@@ -15,13 +20,25 @@ import {
 import { useStudentStore } from '@/modules/student/stores/student.store';
 import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
+import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import { useForm } from '@/shared/composables/useForm';
 import { MARIO_CHARACTERS, type MarioCharacter } from '@/shared/data/characters';
-import { PhFloppyDisk, PhPalette, PhPencilSimple, PhTrash, PhUser, PhX } from '@phosphor-icons/vue';
+import {
+    PhEye,
+    PhEyeSlash,
+    PhFloppyDisk,
+    PhKey,
+    PhPalette,
+    PhPencilSimple,
+    PhTrash,
+    PhUser,
+    PhX,
+} from '@phosphor-icons/vue';
+import { vMaska } from 'maska/vue';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
@@ -37,9 +54,13 @@ const isEditingProfile = ref(false);
 const isUpdatingAvatar = ref(false);
 const isDeletingAccount = ref(false);
 const showDeleteConfirmation = ref(false);
+const showCurrentPassword = ref(false);
+const showNewPassword = ref(false);
+const showConfirmNewPassword = ref(false);
 
 const {
     fields: profileData,
+    errors: profileErrors,
     isSubmitting: profileIsSubmitting,
     validate: validateProfile,
     clearErrors: clearProfileErrors,
@@ -48,13 +69,26 @@ const {
 profileData.value = {
     name: '',
     email: '',
-    password: '',
     cpf: '',
     rg: '',
     zipCode: '',
     address: '',
     institutionId: '',
     courseId: '',
+};
+
+const {
+    fields: passwordData,
+    errors: passwordErrors,
+    isSubmitting: passwordIsSubmitting,
+    validate: validatePassword,
+    clearErrors: clearPasswordErrors,
+} = useForm(changeStudentPasswordSchema);
+
+passwordData.value = {
+    currentPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
 };
 
 type StudentAvatar = NonNullable<UpdateStudentDto['avatar']>;
@@ -115,6 +149,32 @@ function alphaNumericOnly(value: string) {
     return value.replace(/[^A-Za-z0-9]/g, '');
 }
 
+const rgMaskOptions = {
+    mask: 'AA-##.###.###',
+    tokens: {
+        A: {
+            pattern: /[A-Za-z]/,
+            transform: (char: string) => char.toUpperCase(),
+        },
+    },
+};
+
+function formatCpf(cpf: string): string {
+    const digits = cpf.replace(/\D/g, '');
+    return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+}
+
+function formatRg(rg: string): string {
+    const clean = rg.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+    if (!/^[A-Z]{2}\d{8}$/.test(clean)) return rg;
+    return `${clean.slice(0, 2)}-${clean.slice(2, 4)}.${clean.slice(4, 7)}.${clean.slice(7)}`;
+}
+
+function formatZipCode(zipCode: string): string {
+    const digits = zipCode.replace(/\D/g, '');
+    return digits.replace(/(\d{5})(\d{3})/, '$1-$2');
+}
+
 function syncStudentStore(profile: StudentProfile) {
     studentStore.setName(profile.name);
     studentStore.setBalance(profile.balance);
@@ -128,10 +188,9 @@ function setProfileForm(profile: StudentProfile) {
     profileData.value = {
         name: profile.name,
         email: profile.email,
-        password: '',
-        cpf: profile.cpf,
-        rg: profile.rg,
-        zipCode: profile.zipCode ?? '',
+        cpf: formatCpf(profile.cpf),
+        rg: formatRg(profile.rg),
+        zipCode: formatZipCode(profile.zipCode ?? ''),
         address: profile.address ?? '',
         institutionId: profile.institutionId,
         courseId: profile.courseId,
@@ -189,7 +248,6 @@ async function submitProfileUpdate() {
         const payload: UpdateStudentFormData = {
             name: profileData.value.name.trim(),
             email: profileData.value.email.trim(),
-            password: profileData.value.password,
             cpf: digitsOnly(profileData.value.cpf),
             rg: alphaNumericOnly(profileData.value.rg).toUpperCase(),
             zipCode: digitsOnly(profileData.value.zipCode),
@@ -198,10 +256,7 @@ async function submitProfileUpdate() {
             courseId: profileData.value.courseId,
         };
 
-        const response = await updateStudent(authStore.user.id, {
-            ...payload,
-            password: payload.password.length > 0 ? payload.password : undefined,
-        });
+        const response = await updateStudent(authStore.user.id, payload);
 
         studentProfile.value = response.data;
         setProfileForm(response.data);
@@ -220,6 +275,26 @@ async function submitProfileUpdate() {
     } catch {
     } finally {
         profileIsSubmitting.value = false;
+    }
+}
+
+async function submitPasswordChange() {
+    if (!authStore.user?.id) return;
+    if (!validatePassword()) return;
+
+    passwordIsSubmitting.value = true;
+
+    try {
+        await changeStudentPassword(
+            authStore.user.id,
+            passwordData.value as ChangeStudentPasswordFormData
+        );
+        passwordData.value = { currentPassword: '', newPassword: '', confirmNewPassword: '' };
+        clearPasswordErrors();
+        toast.success('Senha alterada com sucesso!');
+    } catch {
+    } finally {
+        passwordIsSubmitting.value = false;
     }
 }
 
@@ -317,14 +392,9 @@ onMounted(async () => {
             </div>
 
             <div class="space-y-3">
-                <div class="flex items-center justify-between">
-                    <div class="font-pixel md flex items-center gap-2">
-                        <PhPalette weight="fill" class="pixel-icon text-accent" />
-                        AVATAR
-                    </div>
-                    <PixelBadge tone="teal">
-                        {{ studentCharacters.length }}
-                    </PixelBadge>
+                <div class="font-pixel md flex items-center gap-2">
+                    <PhPalette weight="fill" class="pixel-icon text-accent" />
+                    AVATAR
                 </div>
 
                 <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
@@ -373,17 +443,23 @@ onMounted(async () => {
             <div v-if="!isEditingProfile" class="grid md:grid-cols-2 gap-3">
                 <div class="border-2 border-border bg-card p-3">
                     <div class="font-pixel text-[9px] text-muted-foreground">CPF</div>
-                    <div class="font-sans md">{{ studentProfile?.cpf ?? '-' }}</div>
+                    <div class="font-sans md">
+                        {{ studentProfile?.cpf ? formatCpf(studentProfile.cpf) : '-' }}
+                    </div>
                 </div>
 
                 <div class="border-2 border-border bg-card p-3">
                     <div class="font-pixel text-[9px] text-muted-foreground">RG</div>
-                    <div class="font-sans md">{{ studentProfile?.rg ?? '-' }}</div>
+                    <div class="font-sans md">
+                        {{ studentProfile?.rg ? formatRg(studentProfile.rg) : '-' }}
+                    </div>
                 </div>
 
                 <div class="border-2 border-border bg-card p-3">
                     <div class="font-pixel text-[9px] text-muted-foreground">CEP</div>
-                    <div class="font-sans md">{{ studentProfile?.zipCode ?? '-' }}</div>
+                    <div class="font-sans md">
+                        {{ studentProfile?.zipCode ? formatZipCode(studentProfile.zipCode) : '-' }}
+                    </div>
                 </div>
 
                 <div class="border-2 border-border bg-card p-3">
@@ -404,20 +480,158 @@ onMounted(async () => {
 
             <form v-else class="space-y-4" @submit.prevent="submitProfileUpdate">
                 <div class="grid md:grid-cols-2 gap-3">
-                    <PixelInput v-model="profileData.name" placeholder="NOME" />
-                    <PixelInput v-model="profileData.email" type="email" placeholder="EMAIL" />
-                    <PixelInput
-                        v-model="profileData.password"
-                        type="password"
-                        placeholder="SENHA"
-                    />
-                    <PixelInput v-model="profileData.cpf" placeholder="CPF" />
-                    <PixelInput v-model="profileData.rg" placeholder="RG" />
-                    <PixelInput v-model="profileData.zipCode" placeholder="CEP" />
+                    <div>
+                        <label class="font-pixel text-[9px] block mb-1" for="student-name">
+                            NOME
+                        </label>
+                        <PixelInput
+                            id="student-name"
+                            name="name"
+                            v-model="profileData.name"
+                            placeholder="Nome completo"
+                        />
+                        <p
+                            v-if="profileErrors.name"
+                            class="font-sans text-xs mt-1 text-destructive"
+                        >
+                            {{ profileErrors.name }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="font-pixel text-[9px] block mb-1" for="student-email">
+                            E-MAIL
+                        </label>
+                        <PixelInput
+                            id="student-email"
+                            name="email"
+                            v-model="profileData.email"
+                            type="email"
+                            placeholder="aluno@email.com"
+                        />
+                        <p
+                            v-if="profileErrors.email"
+                            class="font-sans text-xs mt-1 text-destructive"
+                        >
+                            {{ profileErrors.email }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="font-pixel text-[9px] block mb-1" for="student-cpf">
+                            CPF
+                        </label>
+                        <PixelInput
+                            id="student-cpf"
+                            name="cpf"
+                            v-model="profileData.cpf"
+                            v-maska="'###.###.###-##'"
+                            maxlength="14"
+                            placeholder="000.000.000-00"
+                        />
+                        <p
+                            v-if="profileErrors.cpf"
+                            class="font-sans text-xs mt-1 text-destructive"
+                        >
+                            {{ profileErrors.cpf }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="font-pixel text-[9px] block mb-1" for="student-rg">
+                            RG
+                        </label>
+                        <PixelInput
+                            id="student-rg"
+                            name="rg"
+                            v-model="profileData.rg"
+                            v-maska="rgMaskOptions"
+                            maxlength="13"
+                            placeholder="AA-00.000.000"
+                        />
+                        <p
+                            v-if="profileErrors.rg"
+                            class="font-sans text-xs mt-1 text-destructive"
+                        >
+                            {{ profileErrors.rg }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="font-pixel text-[9px] block mb-1" for="student-zipcode">
+                            CEP
+                        </label>
+                        <PixelInput
+                            id="student-zipcode"
+                            name="zipCode"
+                            v-model="profileData.zipCode"
+                            v-maska="'#####-###'"
+                            maxlength="9"
+                            placeholder="00000-000"
+                        />
+                        <p
+                            v-if="profileErrors.zipCode"
+                            class="font-sans text-xs mt-1 text-destructive"
+                        >
+                            {{ profileErrors.zipCode }}
+                        </p>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="font-pixel text-[9px] block mb-1" for="student-address">
+                            ENDEREÇO
+                        </label>
+                        <PixelInput
+                            id="student-address"
+                            name="address"
+                            v-model="profileData.address"
+                            placeholder="Rua, número, bairro, cidade"
+                        />
+                        <p
+                            v-if="profileErrors.address"
+                            class="font-sans text-xs mt-1 text-destructive"
+                        >
+                            {{ profileErrors.address }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <label
+                            class="font-pixel text-[9px] block mb-1"
+                            for="student-institution"
+                        >
+                            INSTITUIÇÃO
+                        </label>
+                        <PixelInput
+                            id="student-institution"
+                            name="institution"
+                            :model-value="institutionName"
+                            disabled
+                            class="opacity-90 cursor-not-allowed"
+                        />
+                    </div>
+
+                    <div>
+                        <label class="font-pixel text-[9px] block mb-1" for="student-course">
+                            CURSO
+                        </label>
+                        <PixelInput
+                            id="student-course"
+                            name="course"
+                            :model-value="courseName"
+                            disabled
+                            class="opacity-90 cursor-not-allowed"
+                        />
+                    </div>
                 </div>
 
                 <div class="flex gap-2">
-                    <PixelButton type="submit" variant="success">
+                    <PixelButton
+                        type="submit"
+                        variant="success"
+                        class="flex items-center gap-2"
+                        :disabled="profileIsSubmitting"
+                    >
                         <PhFloppyDisk weight="bold" /> SALVAR
                     </PixelButton>
 
@@ -425,6 +639,118 @@ onMounted(async () => {
                         CANCELAR
                     </PixelButton>
                 </div>
+            </form>
+        </PixelCard>
+
+        <PixelCard class="p-6">
+            <div class="font-pixel text-[10px] text-primary">&#9658; ALTERAR SENHA</div>
+
+            <form class="mt-4 space-y-3" @submit.prevent="submitPasswordChange">
+                <div>
+                    <label
+                        class="font-pixel text-[9px] block mb-1"
+                        for="student-current-password"
+                    >
+                        SENHA ATUAL
+                    </label>
+                    <div class="relative">
+                        <PixelInput
+                            id="student-current-password"
+                            v-model="passwordData.currentPassword"
+                            :type="showCurrentPassword ? 'text' : 'password'"
+                            class="pr-10"
+                            placeholder="Sua senha atual"
+                        />
+                        <button
+                            class="absolute right-3 top-1/2 -translate-y-1/2"
+                            type="button"
+                            @click="showCurrentPassword = !showCurrentPassword"
+                        >
+                            <PhEyeSlash v-if="showCurrentPassword" :size="18" weight="bold" />
+                            <PhEye v-else :size="18" weight="bold" />
+                        </button>
+                    </div>
+                    <p
+                        v-if="passwordErrors.currentPassword"
+                        class="font-sans text-xs mt-1 text-destructive"
+                    >
+                        {{ passwordErrors.currentPassword }}
+                    </p>
+                </div>
+
+                <div>
+                    <label
+                        class="font-pixel text-[9px] block mb-1"
+                        for="student-new-password"
+                    >
+                        NOVA SENHA
+                    </label>
+                    <div class="relative">
+                        <PixelInput
+                            id="student-new-password"
+                            v-model="passwordData.newPassword"
+                            :type="showNewPassword ? 'text' : 'password'"
+                            class="pr-10"
+                            placeholder="Mínimo 8 caracteres"
+                        />
+                        <button
+                            class="absolute right-3 top-1/2 -translate-y-1/2"
+                            type="button"
+                            @click="showNewPassword = !showNewPassword"
+                        >
+                            <PhEyeSlash v-if="showNewPassword" :size="18" weight="bold" />
+                            <PhEye v-else :size="18" weight="bold" />
+                        </button>
+                    </div>
+                    <PasswordStrengthHint :password="passwordData.newPassword" />
+                    <p
+                        v-if="passwordErrors.newPassword"
+                        class="font-sans text-xs mt-1 text-destructive"
+                    >
+                        {{ passwordErrors.newPassword }}
+                    </p>
+                </div>
+
+                <div>
+                    <label
+                        class="font-pixel text-[9px] block mb-1"
+                        for="student-confirm-new-password"
+                    >
+                        CONFIRMAR NOVA SENHA
+                    </label>
+                    <div class="relative">
+                        <PixelInput
+                            id="student-confirm-new-password"
+                            v-model="passwordData.confirmNewPassword"
+                            :type="showConfirmNewPassword ? 'text' : 'password'"
+                            class="pr-10"
+                            placeholder="Repita a nova senha"
+                        />
+                        <button
+                            class="absolute right-3 top-1/2 -translate-y-1/2"
+                            type="button"
+                            @click="showConfirmNewPassword = !showConfirmNewPassword"
+                        >
+                            <PhEyeSlash v-if="showConfirmNewPassword" :size="18" weight="bold" />
+                            <PhEye v-else :size="18" weight="bold" />
+                        </button>
+                    </div>
+                    <p
+                        v-if="passwordErrors.confirmNewPassword"
+                        class="font-sans text-xs mt-1 text-destructive"
+                    >
+                        {{ passwordErrors.confirmNewPassword }}
+                    </p>
+                </div>
+
+                <PixelButton
+                    type="submit"
+                    variant="success"
+                    class="flex items-center gap-2"
+                    :disabled="passwordIsSubmitting"
+                >
+                    <PhKey weight="bold" /> ATUALIZAR SENHA
+                </PixelButton>
             </form>
         </PixelCard>
 

@@ -24,6 +24,13 @@ export function updateCompany(id: string, dto: UpdateCompanyDto) {
     return api.put<CompanyProfile>(`/companies/${id}`, dto);
 }
 
+export function changeCompanyPassword(
+    id: string,
+    dto: { currentPassword: string; newPassword: string; confirmNewPassword: string }
+) {
+    return api.patch(`/companies/${id}/password`, dto);
+}
+
 export function deleteCompany(id: string) {
     return api.delete(`/companies/${id}`);
 }

@@ -53,6 +53,13 @@ export function updateInstitution(id: string, dto: UpdateInstitutionDto) {
     return api.put<InstitutionProfile>(`/institutions/${id}`, dto);
 }
 
+export function changeInstitutionPassword(
+    id: string,
+    dto: { currentPassword: string; newPassword: string; confirmNewPassword: string }
+) {
+    return api.patch(`/institutions/${id}/password`, dto);
+}
+
 export function deleteInstitution(id: string) {
     return api.delete(`/institutions/${id}`);
 }

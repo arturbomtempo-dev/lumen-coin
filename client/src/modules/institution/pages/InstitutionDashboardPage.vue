@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import {
+    changeInstitutionPassword,
     createCourse as createCourseApi,
     deleteCourse,
     deleteInstitution,
@@ -20,11 +21,16 @@ import type {
     StudentResponse,
     TeacherResponse,
 } from '@/modules/institution/services/institution.types';
+import {
+    changeInstitutionPasswordSchema,
+    type ChangeInstitutionPasswordFormData,
+} from '@/modules/schemas/change-institution-password.schema';
 import { registerCourseSchema } from '@/modules/schemas/register-course.schema';
 import { registerTeacherSchema } from '@/modules/schemas/register-teacher.schema';
 import { updateInstitutionSchema } from '@/modules/schemas/update-institution.schema';
 import { updateTeacherSchema } from '@/modules/schemas/update-teacher.schema';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
+import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
@@ -34,7 +40,10 @@ import { useThemeStore } from '@/shared/stores/theme.store';
 import {
     PhBookOpen,
     PhBuildings,
+    PhEye,
+    PhEyeSlash,
     PhGraduationCap,
+    PhKey,
     PhMoon,
     PhPencilSimple,
     PhPlus,
@@ -62,6 +71,9 @@ const institutionProfile = ref<InstitutionProfile | null>(null);
 const institutionName = ref('INSTITUIÇÃO');
 const isEditingProfile = ref(false);
 const showDeleteConfirmation = ref(false);
+const showCurrentPassword = ref(false);
+const showNewPassword = ref(false);
+const showConfirmNewPassword = ref(false);
 
 const {
     fields: profileData,
@@ -77,6 +89,20 @@ profileData.value = {
     cnpj: '',
     zipCode: '',
     address: '',
+};
+
+const {
+    fields: passwordData,
+    errors: passwordErrors,
+    isSubmitting: passwordIsSubmitting,
+    validate: validatePassword,
+    clearErrors: clearPasswordErrors,
+} = useForm(changeInstitutionPasswordSchema);
+
+passwordData.value = {
+    currentPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
 };
 
 const courses = ref<CourseResponse[]>([]);
@@ -315,6 +341,16 @@ function formatDate(value: string) {
     }).format(new Date(value));
 }
 
+function formatCnpj(cnpj: string): string {
+    const digits = cnpj.replace(/\D/g, '');
+    return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+}
+
+function formatZipCode(zipCode: string): string {
+    const digits = zipCode.replace(/\D/g, '');
+    return digits.replace(/(\d{5})(\d{3})/, '$1-$2');
+}
+
 async function loadInstitutionProfile() {
     if (!authStore.user?.id) return;
 
@@ -325,9 +361,9 @@ async function loadInstitutionProfile() {
         profileData.value = {
             name: response.data.name,
             email: response.data.email,
-            cnpj: response.data.cnpj,
-            zipCode: response.data.zipCode,
-            address: response.data.address,
+            cnpj: formatCnpj(response.data.cnpj),
+            zipCode: formatZipCode(response.data.zipCode ?? ''),
+            address: response.data.address ?? '',
         };
     } catch {}
 }
@@ -337,9 +373,9 @@ function startEditInstitutionProfile() {
     profileData.value = {
         name: institutionProfile.value.name,
         email: institutionProfile.value.email,
-        cnpj: institutionProfile.value.cnpj,
-        zipCode: institutionProfile.value.zipCode,
-        address: institutionProfile.value.address,
+        cnpj: formatCnpj(institutionProfile.value.cnpj),
+        zipCode: formatZipCode(institutionProfile.value.zipCode ?? ''),
+        address: institutionProfile.value.address ?? '',
     };
     clearProfileErrors();
     isEditingProfile.value = true;
@@ -350,9 +386,9 @@ function cancelEditInstitutionProfile() {
     profileData.value = {
         name: institutionProfile.value.name,
         email: institutionProfile.value.email,
-        cnpj: institutionProfile.value.cnpj,
-        zipCode: institutionProfile.value.zipCode,
-        address: institutionProfile.value.address,
+        cnpj: formatCnpj(institutionProfile.value.cnpj),
+        zipCode: formatZipCode(institutionProfile.value.zipCode ?? ''),
+        address: institutionProfile.value.address ?? '',
     };
     clearProfileErrors();
     isEditingProfile.value = false;
@@ -379,9 +415,9 @@ async function handleUpdateInstitutionProfile(e: Event) {
         profileData.value = {
             name: response.data.name,
             email: response.data.email,
-            cnpj: response.data.cnpj,
-            zipCode: response.data.zipCode,
-            address: response.data.address,
+            cnpj: formatCnpj(response.data.cnpj),
+            zipCode: formatZipCode(response.data.zipCode ?? ''),
+            address: response.data.address ?? '',
         };
 
         authStore.setUser({
@@ -397,6 +433,26 @@ async function handleUpdateInstitutionProfile(e: Event) {
     } catch {
     } finally {
         profileIsSubmitting.value = false;
+    }
+}
+
+async function submitPasswordChange() {
+    if (!authStore.user?.id) return;
+    if (!validatePassword()) return;
+
+    passwordIsSubmitting.value = true;
+
+    try {
+        await changeInstitutionPassword(
+            authStore.user.id,
+            passwordData.value as ChangeInstitutionPasswordFormData
+        );
+        passwordData.value = { currentPassword: '', newPassword: '', confirmNewPassword: '' };
+        clearPasswordErrors();
+        toast.success('Senha alterada com sucesso!');
+    } catch {
+    } finally {
+        passwordIsSubmitting.value = false;
     }
 }
 
@@ -992,13 +1048,13 @@ onMounted(async () => {
                         <div class="border-2 border-border bg-card p-3">
                             <div class="font-pixel text-[9px] text-muted-foreground">CNPJ</div>
                             <div class="font-sans text-sm mt-1">
-                                {{ institutionProfile?.cnpj ?? '-' }}
+                                {{ institutionProfile?.cnpj ? formatCnpj(institutionProfile.cnpj) : '-' }}
                             </div>
                         </div>
                         <div class="border-2 border-border bg-card p-3">
                             <div class="font-pixel text-[9px] text-muted-foreground">CEP</div>
                             <div class="font-sans text-sm mt-1">
-                                {{ institutionProfile?.zipCode ?? '-' }}
+                                {{ institutionProfile?.zipCode ? formatZipCode(institutionProfile.zipCode) : '-' }}
                             </div>
                         </div>
                         <div class="border-2 border-border bg-card p-3 md:col-span-2">
@@ -1047,6 +1103,7 @@ onMounted(async () => {
                             <label class="font-pixel text-[9px] block mb-1">CNPJ</label>
                             <PixelInput
                                 v-model="profileData.cnpj"
+                                v-maska="'##.###.###/####-##'"
                                 maxlength="18"
                                 placeholder="00.000.000/0000-00"
                             />
@@ -1056,6 +1113,23 @@ onMounted(async () => {
                                 style="color: hsl(var(--destructive))"
                             >
                                 {{ profileErrors.cnpj }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="font-pixel text-[9px] block mb-1">CEP</label>
+                            <PixelInput
+                                v-model="profileData.zipCode"
+                                v-maska="'#####-###'"
+                                maxlength="9"
+                                placeholder="00000-000"
+                            />
+                            <p
+                                v-if="profileErrors.zipCode"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ profileErrors.zipCode }}
                             </p>
                         </div>
 
@@ -1095,6 +1169,100 @@ onMounted(async () => {
                     </form>
                 </PixelCard>
 
+                <PixelCard class="p-5">
+                    <div class="font-pixel text-[10px] text-primary">&#9658; ALTERAR SENHA</div>
+
+                    <form class="mt-4 space-y-3" @submit.prevent="submitPasswordChange">
+                        <div>
+                            <label class="font-pixel text-[9px] block mb-1">SENHA ATUAL</label>
+                            <div class="relative">
+                                <PixelInput
+                                    v-model="passwordData.currentPassword"
+                                    :type="showCurrentPassword ? 'text' : 'password'"
+                                    class="pr-10"
+                                    placeholder="Sua senha atual"
+                                />
+                                <button
+                                    class="absolute right-3 top-1/2 -translate-y-1/2"
+                                    type="button"
+                                    @click="showCurrentPassword = !showCurrentPassword"
+                                >
+                                    <PhEyeSlash v-if="showCurrentPassword" :size="18" weight="bold" />
+                                    <PhEye v-else :size="18" weight="bold" />
+                                </button>
+                            </div>
+                            <p
+                                v-if="passwordErrors.currentPassword"
+                                class="font-sans text-xs mt-1 text-destructive"
+                            >
+                                {{ passwordErrors.currentPassword }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="font-pixel text-[9px] block mb-1">NOVA SENHA</label>
+                            <div class="relative">
+                                <PixelInput
+                                    v-model="passwordData.newPassword"
+                                    :type="showNewPassword ? 'text' : 'password'"
+                                    class="pr-10"
+                                    placeholder="Mínimo 8 caracteres"
+                                />
+                                <button
+                                    class="absolute right-3 top-1/2 -translate-y-1/2"
+                                    type="button"
+                                    @click="showNewPassword = !showNewPassword"
+                                >
+                                    <PhEyeSlash v-if="showNewPassword" :size="18" weight="bold" />
+                                    <PhEye v-else :size="18" weight="bold" />
+                                </button>
+                            </div>
+                            <PasswordStrengthHint :password="passwordData.newPassword" />
+                            <p
+                                v-if="passwordErrors.newPassword"
+                                class="font-sans text-xs mt-1 text-destructive"
+                            >
+                                {{ passwordErrors.newPassword }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="font-pixel text-[9px] block mb-1">CONFIRMAR NOVA SENHA</label>
+                            <div class="relative">
+                                <PixelInput
+                                    v-model="passwordData.confirmNewPassword"
+                                    :type="showConfirmNewPassword ? 'text' : 'password'"
+                                    class="pr-10"
+                                    placeholder="Repita a nova senha"
+                                />
+                                <button
+                                    class="absolute right-3 top-1/2 -translate-y-1/2"
+                                    type="button"
+                                    @click="showConfirmNewPassword = !showConfirmNewPassword"
+                                >
+                                    <PhEyeSlash v-if="showConfirmNewPassword" :size="18" weight="bold" />
+                                    <PhEye v-else :size="18" weight="bold" />
+                                </button>
+                            </div>
+                            <p
+                                v-if="passwordErrors.confirmNewPassword"
+                                class="font-sans text-xs mt-1 text-destructive"
+                            >
+                                {{ passwordErrors.confirmNewPassword }}
+                            </p>
+                        </div>
+
+                        <PixelButton
+                            type="submit"
+                            variant="success"
+                            class="flex items-center gap-2"
+                            :disabled="passwordIsSubmitting"
+                        >
+                            <PhKey weight="bold" /> ATUALIZAR SENHA
+                        </PixelButton>
+                    </form>
+                </PixelCard>
+
                 <PixelCard class="p-5 space-y-4">
                     <h2 class="font-pixel text-sm flex items-center gap-2">
                         <PhBuildings weight="fill" class="pixel-icon" /> DADOS DA CONTA
@@ -1123,10 +1291,10 @@ onMounted(async () => {
 
                         <div class="flex flex-wrap gap-2">
                             <PixelBadge tone="blue">
-                                CNPJ: {{ institutionProfile?.cnpj ?? '-' }}
+                                CNPJ: {{ institutionProfile?.cnpj ? formatCnpj(institutionProfile.cnpj) : '-' }}
                             </PixelBadge>
                             <PixelBadge tone="green">
-                                CEP: {{ institutionProfile?.zipCode ?? '-' }}
+                                CEP: {{ institutionProfile?.zipCode ? formatZipCode(institutionProfile.zipCode) : '-' }}
                             </PixelBadge>
                         </div>
 
