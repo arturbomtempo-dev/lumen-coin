@@ -1,5 +1,6 @@
 package br.pucminas.lumen_coin_api.user.controller;
 
+import br.pucminas.lumen_coin_api.user.dto.request.ChangeInstitutionPasswordRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterInstitutionRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateInstitutionRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.InstitutionResponse;
@@ -42,6 +43,15 @@ public class InstitutionController {
             @PathVariable UUID id,
             @Valid @RequestBody UpdateInstitutionRequest request) {
         return ResponseEntity.ok(institutionService.update(id, request));
+    }
+
+    @PatchMapping("/{id}/password")
+    @PreAuthorize("hasRole('INSTITUTION')")
+    public ResponseEntity<Void> changePassword(
+            @PathVariable UUID id,
+            @Valid @RequestBody ChangeInstitutionPasswordRequest request) {
+        institutionService.changePassword(id, request);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")

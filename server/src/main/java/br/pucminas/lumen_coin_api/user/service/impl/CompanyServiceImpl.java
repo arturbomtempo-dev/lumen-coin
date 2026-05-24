@@ -1,6 +1,7 @@
 package br.pucminas.lumen_coin_api.user.service.impl;
 
 import br.pucminas.lumen_coin_api.email.service.EmailService;
+import br.pucminas.lumen_coin_api.user.dto.request.ChangeCompanyPasswordRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterCompanyRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateCompanyRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.CompanyResponse;
@@ -8,6 +9,8 @@ import br.pucminas.lumen_coin_api.user.entity.Company;
 import br.pucminas.lumen_coin_api.user.enums.Avatar;
 import br.pucminas.lumen_coin_api.user.exception.CnpjAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
+import br.pucminas.lumen_coin_api.user.exception.IncorrectPasswordException;
+import br.pucminas.lumen_coin_api.user.exception.PasswordMismatchException;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
 import br.pucminas.lumen_coin_api.user.mapper.UserMapper;
 import br.pucminas.lumen_coin_api.user.repository.CompanyRepository;
@@ -100,6 +103,23 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         return mapper.toResponse(companyRepository.save(company));
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(UUID id, ChangeCompanyPasswordRequest request) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        if (!passwordEncoder.matches(request.currentPassword(), company.getPassword())) {
+            throw new IncorrectPasswordException();
+        }
+        if (!request.newPassword().equals(request.confirmNewPassword())) {
+            throw new PasswordMismatchException();
+        }
+
+        company.setPassword(passwordEncoder.encode(request.newPassword()));
+        companyRepository.save(company);
     }
 
     @Override

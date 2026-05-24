@@ -1,5 +1,6 @@
 package br.pucminas.lumen_coin_api.user.service;
 
+import br.pucminas.lumen_coin_api.user.dto.request.ChangeInstitutionPasswordRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterInstitutionRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateInstitutionRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.InstitutionResponse;
@@ -15,6 +16,8 @@ public interface InstitutionService {
     InstitutionResponse findById(UUID id);
 
     InstitutionResponse update(UUID id, UpdateInstitutionRequest request);
+
+    void changePassword(UUID id, ChangeInstitutionPasswordRequest request);
 
     void delete(UUID id);
 }

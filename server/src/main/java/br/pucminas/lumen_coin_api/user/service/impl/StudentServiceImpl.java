@@ -4,12 +4,15 @@ import br.pucminas.lumen_coin_api.course.entity.Course;
 import br.pucminas.lumen_coin_api.course.exception.CourseNotFoundException;
 import br.pucminas.lumen_coin_api.course.repository.CourseRepository;
 import br.pucminas.lumen_coin_api.email.service.EmailService;
+import br.pucminas.lumen_coin_api.user.dto.request.ChangeStudentPasswordRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterStudentRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateStudentRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.StudentResponse;
 import br.pucminas.lumen_coin_api.user.entity.Student;
 import br.pucminas.lumen_coin_api.user.exception.CpfAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
+import br.pucminas.lumen_coin_api.user.exception.IncorrectPasswordException;
+import br.pucminas.lumen_coin_api.user.exception.PasswordMismatchException;
 import br.pucminas.lumen_coin_api.user.exception.StudentInstitutionCourseMismatchException;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
 import br.pucminas.lumen_coin_api.user.mapper.UserMapper;
@@ -155,6 +158,23 @@ public class StudentServiceImpl implements StudentService {
         }
 
         return mapper.toResponse(studentRepository.save(student));
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(UUID id, ChangeStudentPasswordRequest request) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        if (!passwordEncoder.matches(request.currentPassword(), student.getPassword())) {
+            throw new IncorrectPasswordException();
+        }
+        if (!request.newPassword().equals(request.confirmNewPassword())) {
+            throw new PasswordMismatchException();
+        }
+
+        student.setPassword(passwordEncoder.encode(request.newPassword()));
+        studentRepository.save(student);
     }
 
     @Override

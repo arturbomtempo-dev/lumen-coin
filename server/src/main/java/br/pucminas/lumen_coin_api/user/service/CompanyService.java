@@ -1,5 +1,6 @@
 package br.pucminas.lumen_coin_api.user.service;
 
+import br.pucminas.lumen_coin_api.user.dto.request.ChangeCompanyPasswordRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterCompanyRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateCompanyRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.CompanyResponse;
@@ -15,6 +16,8 @@ public interface CompanyService {
     CompanyResponse findById(UUID id);
 
     CompanyResponse update(UUID id, UpdateCompanyRequest request);
+
+    void changePassword(UUID id, ChangeCompanyPasswordRequest request);
 
     void delete(UUID id);
 }

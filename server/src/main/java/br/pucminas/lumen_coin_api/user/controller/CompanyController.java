@@ -1,5 +1,6 @@
 package br.pucminas.lumen_coin_api.user.controller;
 
+import br.pucminas.lumen_coin_api.user.dto.request.ChangeCompanyPasswordRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterCompanyRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateCompanyRequest;
 import br.pucminas.lumen_coin_api.user.dto.response.CompanyResponse;
@@ -42,6 +43,15 @@ public class CompanyController {
             @PathVariable UUID id,
             @Valid @RequestBody UpdateCompanyRequest request) {
         return ResponseEntity.ok(companyService.update(id, request));
+    }
+
+    @PatchMapping("/{id}/password")
+    @PreAuthorize("hasRole('COMPANY')")
+    public ResponseEntity<Void> changePassword(
+            @PathVariable UUID id,
+            @Valid @RequestBody ChangeCompanyPasswordRequest request) {
+        companyService.changePassword(id, request);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
