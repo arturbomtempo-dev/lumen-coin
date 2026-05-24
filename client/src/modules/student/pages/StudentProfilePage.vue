@@ -13,8 +13,8 @@ import {
     type UpdateStudentDto,
 } from '@/modules/student/services/student.service';
 import { useStudentStore } from '@/modules/student/stores/student.store';
+import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
-import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
@@ -283,7 +283,7 @@ onMounted(async () => {
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div class="flex items-center gap-4">
                     <div class="border-2 border-border bg-hud p-2">
-                        <MarioAvatar :character="selectedCharacter" :size="64" />
+                        <CharacterAvatar :character="selectedCharacter" :size="64" />
                     </div>
 
                     <div>
@@ -343,7 +343,7 @@ onMounted(async () => {
                         "
                     >
                         <div class="flex justify-center bg-hud py-2 border-2 border-border p-1">
-                            <MarioAvatar :character="c.id" :size="36" />
+                            <CharacterAvatar :character="c.id" :size="32" />
                         </div>
 
                         <div class="font-pixel text-[8px] mt-1 leading-none">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MarioAvatar from '@/shared/components/MarioAvatar.vue';
+import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
@@ -336,8 +336,8 @@ function navigateTo(path: string) {
                         </h1>
                         <p class="font-display text-lg md:text-xl text-foreground/85 max-w-2xl">
                             A página mostra exatamente os elementos que a interface usa hoje:
-                            avatares do <span class="text-primary">MarioAvatar</span>, cores, ícones
-                            Phosphor e componentes pixelados com contraste real.
+                            avatares do <span class="text-primary">CharacterAvatar</span>, cores,
+                            ícones Phosphor e componentes pixelados com contraste real.
                         </p>
                     </div>
 
@@ -381,7 +381,7 @@ function navigateTo(path: string) {
                         <div
                             class="border-2 border-border bg-hud p-3 flex items-center justify-center"
                         >
-                            <MarioAvatar character="mario" :size="88" />
+                            <CharacterAvatar character="mario" :size="88" />
                         </div>
                         <div class="space-y-3">
                             <div class="border-2 border-border bg-card p-3">
@@ -410,7 +410,7 @@ function navigateTo(path: string) {
                             :key="character"
                             class="border-2 border-border bg-hud p-2 flex items-center justify-center"
                         >
-                            <MarioAvatar :character="character as MarioCharacter" :size="48" />
+                            <CharacterAvatar :character="character as MarioCharacter" :size="48" />
                         </div>
                     </div>
                 </PixelCard>
@@ -564,17 +564,17 @@ function navigateTo(path: string) {
                                 <div
                                     class="border-2 border-border bg-hud p-3 flex items-center justify-center"
                                 >
-                                    <MarioAvatar character="institution" :size="56" />
+                                    <CharacterAvatar character="institution" :size="56" />
                                 </div>
                                 <div
                                     class="border-2 border-border bg-hud p-3 flex items-center justify-center"
                                 >
-                                    <MarioAvatar character="company" :size="56" />
+                                    <CharacterAvatar character="company" :size="56" />
                                 </div>
                                 <div
                                     class="border-2 border-border bg-hud p-3 flex items-center justify-center"
                                 >
-                                    <MarioAvatar character="mario" :size="56" />
+                                    <CharacterAvatar character="mario" :size="56" />
                                 </div>
                             </div>
                         </PixelCard>
@@ -590,8 +590,9 @@ function navigateTo(path: string) {
                     </div>
                     <p class="font-display text-lg text-muted-foreground max-w-3xl mb-8">
                         O design system deve mostrar exatamente os avatares que a aplicação usa.
-                        Aqui estão os personagens do <span class="text-primary">MarioAvatar</span>,
-                        incluindo os perfis especiais de instituição e empresa.
+                        Aqui estão os personagens do
+                        <span class="text-primary">CharacterAvatar</span>, incluindo os perfis
+                        especiais de instituição e empresa.
                     </p>
 
                     <div v-for="group in avatarGroups" :key="group.title" class="mb-8 last:mb-0">
@@ -616,7 +617,7 @@ function navigateTo(path: string) {
                                 <div
                                     class="border-2 border-border bg-hud p-4 flex items-center justify-center mb-4"
                                 >
-                                    <MarioAvatar :character="character" :size="88" />
+                                    <CharacterAvatar :character="character" :size="88" />
                                 </div>
                                 <div class="flex items-start justify-between gap-3">
                                     <div>

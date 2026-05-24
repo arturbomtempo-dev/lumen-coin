@@ -12,12 +12,12 @@
                             : 'transform: translateY(0); transition: transform 350ms ease-in;'
                     "
                 >
-                    <MarioAvatar character="mario" :size="84" />
+                    <CharacterAvatar character="mario" :size="80" />
                 </div>
             </div>
 
             <div class="absolute -bottom-20 sm:-bottom-5 right-8 flex flex-col items-center">
-                <MarioAvatar character="luigi" :size="84" class="animate-bounce" />
+                <CharacterAvatar character="luigi" :size="80" class="animate-bounce" />
             </div>
         </div>
 
@@ -42,7 +42,7 @@
         </div>
 
         <div class="absolute bottom-26 left-1/2 -translate-x-1/2 flex flex-col items-center">
-            <MarioAvatar character="yoshi" :size="74" class="animate-bounce" />
+            <CharacterAvatar character="yoshi" :size="88" class="animate-bounce" />
         </div>
 
         <div class="absolute bottom-0 left-0 right-0 h-6 bg-red-800 border-t-4 border-border" />
@@ -54,10 +54,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import CoinIcon from '@/shared/components/CoinIcon.vue';
-import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import Cloud from '@/modules/auth/pages/_components/Cloud.vue';
+import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
+import CoinIcon from '@/shared/components/CoinIcon.vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 const isJumping = ref(false);
 const coinVisible = ref(false);

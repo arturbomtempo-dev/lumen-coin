@@ -10,7 +10,7 @@ import {
     registerStudentSchema,
     type RegisterStudentFormData,
 } from '@/modules/schemas/register-student.schema';
-import MarioAvatar from '@/shared/components/MarioAvatar.vue';
+import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
 import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
@@ -369,7 +369,7 @@ onMounted(async () => {
                         <div
                             class="bg-hud border-2 border-border p-2 shadow-[4px_4px_0px_hsl(var(--border))]"
                         >
-                            <MarioAvatar :character="character" :size="56" />
+                            <CharacterAvatar :character="character" :size="56" />
                         </div>
 
                         <div>
@@ -452,7 +452,7 @@ onMounted(async () => {
                                     <div
                                         class="bg-hud border-2 border-border p-3 flex justify-center mb-3"
                                     >
-                                        <MarioAvatar :character="item.id" :size="56" />
+                                        <CharacterAvatar :character="item.id" :size="56" />
                                     </div>
 
                                     <p class="font-pixel text-[10px]">

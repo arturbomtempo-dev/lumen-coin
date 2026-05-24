@@ -8,8 +8,8 @@ import {
     type StudentSummary,
 } from '@/modules/teacher/services/teacher.service';
 import { useTeacherStore } from '@/modules/teacher/stores/teacher.store';
+import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
-import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
@@ -173,7 +173,7 @@ onMounted(async () => {
             <div v-else class="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 <PixelCard v-for="s in students" :key="s.id" class="p-3 flex items-center gap-3">
                     <div class="border-2 border-border bg-hud p-0.5 shrink-0">
-                        <MarioAvatar :character="avatarFor(s.avatar)" :size="36" />
+                        <CharacterAvatar :character="avatarFor(s.avatar)" :size="36" />
                     </div>
                     <div class="min-w-0">
                         <div class="font-pixel text-[10px] truncate">{{ s.name }}</div>

@@ -4,7 +4,7 @@ import {
     registerInstitutionSchema,
     type RegisterInstitutionFormData,
 } from '@/modules/schemas/register-institution.schema';
-import MarioAvatar from '@/shared/components/MarioAvatar.vue';
+import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
 import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
@@ -218,7 +218,7 @@ watch(
                         <div
                             class="bg-hud border-2 border-border p-2 shadow-[4px_4px_0px_hsl(var(--border))]"
                         >
-                            <MarioAvatar character="institution" :size="56" />
+                            <CharacterAvatar character="institution" :size="56" />
                         </div>
 
                         <div>

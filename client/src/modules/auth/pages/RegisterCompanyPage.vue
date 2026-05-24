@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { registerCompanyRequest } from '@/modules/auth/services/auth.service';
 import { registerCompanySchema } from '@/modules/schemas/register-company.schema';
+import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
 import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
-import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import { useForm } from '@/shared/composables/useForm';
 import { PhArrowLeft, PhEye, PhEyeSlash } from '@phosphor-icons/vue';
@@ -71,7 +71,7 @@ async function handleSubmit(e: Event) {
                 <div
                     class="bg-hud border-2 border-border p-2 shadow-[4px_4px_0px_hsl(var(--border))]"
                 >
-                    <MarioAvatar character="company" :size="56" />
+                    <CharacterAvatar character="company" :size="56" />
                 </div>
                 <div>
                     <div class="font-pixel text-[9px] text-primary mb-1">▶ CADASTRO</div>

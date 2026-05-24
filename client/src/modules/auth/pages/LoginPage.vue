@@ -2,8 +2,8 @@
 import { loginRequest, meRequest } from '@/modules/auth/services/auth.service';
 import type { UserRole } from '@/modules/auth/stores/auth.store';
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
+import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
-import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
@@ -92,7 +92,7 @@ async function handleLogin(e: Event) {
                 <div class="w-16 h-16 bg-success border-4 border-t-0 border-border ml-2" />
             </div>
             <div class="absolute bottom-24 right-1/4 block animate-bob z-0">
-                <MarioAvatar character="mario" :size="72" />
+                <CharacterAvatar character="mario" :size="72" />
             </div>
 
             <div

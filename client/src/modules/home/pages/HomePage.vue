@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
-import {
-    PhSun,
-    PhMoon,
-    PhSparkle,
-    PhTrophy,
-    PhCoin,
-    PhStorefront,
-    PhBuildings,
-    PhGraduationCap,
-    PhStudent,
-    PhLightning,
-    PhTicket,
-    PhChartBar,
-    PhCrown,
-    PhList,
-    PhX,
-} from '@phosphor-icons/vue';
+import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
+import HeroScenario from '@/shared/components/HeroScenario.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
-import MarioAvatar from '@/shared/components/MarioAvatar.vue';
-import { computed, ref } from 'vue';
-import HeroScenario from '@/shared/components/HeroScenario.vue';
 import { MARIO_CHARACTERS } from '@/shared/data/characters';
 import { useThemeStore } from '@/shared/stores/theme.store';
+import {
+    PhBuildings,
+    PhChartBar,
+    PhCoin,
+    PhCrown,
+    PhGraduationCap,
+    PhLightning,
+    PhList,
+    PhMoon,
+    PhSparkle,
+    PhStorefront,
+    PhStudent,
+    PhSun,
+    PhTicket,
+    PhTrophy,
+    PhX,
+} from '@phosphor-icons/vue';
+import { computed, ref } from 'vue';
+import { RouterLink } from 'vue-router';
 
 const themeStore = useThemeStore();
 const VISIBLE_CHARACTERS = computed(() =>
@@ -600,7 +600,7 @@ const scrollToSection = (sectionId: string) => {
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-8">
                 <PixelCard v-for="c in VISIBLE_CHARACTERS" :key="c.id" class="p-4 text-center">
                     <div class="border-2 border-border bg-hud p-3 flex items-center justify-center">
-                        <MarioAvatar :character="c.id" :size="72" />
+                        <CharacterAvatar :character="c.id" :size="72" />
                     </div>
                     <div class="font-pixel text-[10px] mt-3">{{ c.name.toUpperCase() }}</div>
                     <div class="font-sans text-xs text-muted-foreground mt-1">{{ c.title }}</div>

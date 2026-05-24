@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useStudentStore } from '@/modules/student/stores/student.store';
+import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
-import MarioAvatar from '@/shared/components/MarioAvatar.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
@@ -77,7 +77,7 @@ function confirmRedemption() {
                         </div>
                     </div>
                     <div class="border-2 border-border bg-hud p-1">
-                        <MarioAvatar :character="character" :size="64" />
+                        <CharacterAvatar :character="character" :size="64" />
                     </div>
                 </div>
 
