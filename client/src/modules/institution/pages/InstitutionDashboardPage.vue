@@ -1048,13 +1048,21 @@ onMounted(async () => {
                         <div class="border-2 border-border bg-card p-3">
                             <div class="font-pixel text-[9px] text-muted-foreground">CNPJ</div>
                             <div class="font-sans text-sm mt-1">
-                                {{ institutionProfile?.cnpj ? formatCnpj(institutionProfile.cnpj) : '-' }}
+                                {{
+                                    institutionProfile?.cnpj
+                                        ? formatCnpj(institutionProfile.cnpj)
+                                        : '-'
+                                }}
                             </div>
                         </div>
                         <div class="border-2 border-border bg-card p-3">
                             <div class="font-pixel text-[9px] text-muted-foreground">CEP</div>
                             <div class="font-sans text-sm mt-1">
-                                {{ institutionProfile?.zipCode ? formatZipCode(institutionProfile.zipCode) : '-' }}
+                                {{
+                                    institutionProfile?.zipCode
+                                        ? formatZipCode(institutionProfile.zipCode)
+                                        : '-'
+                                }}
                             </div>
                         </div>
                         <div class="border-2 border-border bg-card p-3 md:col-span-2">
@@ -1187,7 +1195,11 @@ onMounted(async () => {
                                     type="button"
                                     @click="showCurrentPassword = !showCurrentPassword"
                                 >
-                                    <PhEyeSlash v-if="showCurrentPassword" :size="18" weight="bold" />
+                                    <PhEyeSlash
+                                        v-if="showCurrentPassword"
+                                        :size="18"
+                                        weight="bold"
+                                    />
                                     <PhEye v-else :size="18" weight="bold" />
                                 </button>
                             </div>
@@ -1227,7 +1239,9 @@ onMounted(async () => {
                         </div>
 
                         <div>
-                            <label class="font-pixel text-[9px] block mb-1">CONFIRMAR NOVA SENHA</label>
+                            <label class="font-pixel text-[9px] block mb-1"
+                                >CONFIRMAR NOVA SENHA</label
+                            >
                             <div class="relative">
                                 <PixelInput
                                     v-model="passwordData.confirmNewPassword"
@@ -1240,7 +1254,11 @@ onMounted(async () => {
                                     type="button"
                                     @click="showConfirmNewPassword = !showConfirmNewPassword"
                                 >
-                                    <PhEyeSlash v-if="showConfirmNewPassword" :size="18" weight="bold" />
+                                    <PhEyeSlash
+                                        v-if="showConfirmNewPassword"
+                                        :size="18"
+                                        weight="bold"
+                                    />
                                     <PhEye v-else :size="18" weight="bold" />
                                 </button>
                             </div>
@@ -1291,10 +1309,20 @@ onMounted(async () => {
 
                         <div class="flex flex-wrap gap-2">
                             <PixelBadge tone="blue">
-                                CNPJ: {{ institutionProfile?.cnpj ? formatCnpj(institutionProfile.cnpj) : '-' }}
+                                CNPJ:
+                                {{
+                                    institutionProfile?.cnpj
+                                        ? formatCnpj(institutionProfile.cnpj)
+                                        : '-'
+                                }}
                             </PixelBadge>
                             <PixelBadge tone="green">
-                                CEP: {{ institutionProfile?.zipCode ? formatZipCode(institutionProfile.zipCode) : '-' }}
+                                CEP:
+                                {{
+                                    institutionProfile?.zipCode
+                                        ? formatZipCode(institutionProfile.zipCode)
+                                        : '-'
+                                }}
                             </PixelBadge>
                         </div>
 

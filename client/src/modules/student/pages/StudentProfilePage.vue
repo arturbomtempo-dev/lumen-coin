@@ -537,10 +537,7 @@ onMounted(async () => {
                             maxlength="14"
                             placeholder="000.000.000-00"
                         />
-                        <p
-                            v-if="profileErrors.cpf"
-                            class="font-sans text-xs mt-1 text-destructive"
-                        >
+                        <p v-if="profileErrors.cpf" class="font-sans text-xs mt-1 text-destructive">
                             {{ profileErrors.cpf }}
                         </p>
                     </div>
@@ -557,10 +554,7 @@ onMounted(async () => {
                             maxlength="13"
                             placeholder="AA-00.000.000"
                         />
-                        <p
-                            v-if="profileErrors.rg"
-                            class="font-sans text-xs mt-1 text-destructive"
-                        >
+                        <p v-if="profileErrors.rg" class="font-sans text-xs mt-1 text-destructive">
                             {{ profileErrors.rg }}
                         </p>
                     </div>
@@ -604,10 +598,7 @@ onMounted(async () => {
                     </div>
 
                     <div>
-                        <label
-                            class="font-pixel text-[9px] block mb-1"
-                            for="student-institution"
-                        >
+                        <label class="font-pixel text-[9px] block mb-1" for="student-institution">
                             INSTITUIÇÃO
                         </label>
                         <PixelInput
@@ -757,10 +748,7 @@ onMounted(async () => {
 
             <form class="mt-4 space-y-3" @submit.prevent="submitPasswordChange">
                 <div>
-                    <label
-                        class="font-pixel text-[9px] block mb-1"
-                        for="student-current-password"
-                    >
+                    <label class="font-pixel text-[9px] block mb-1" for="student-current-password">
                         SENHA ATUAL
                     </label>
                     <div class="relative">
@@ -789,10 +777,7 @@ onMounted(async () => {
                 </div>
 
                 <div>
-                    <label
-                        class="font-pixel text-[9px] block mb-1"
-                        for="student-new-password"
-                    >
+                    <label class="font-pixel text-[9px] block mb-1" for="student-new-password">
                         NOVA SENHA
                     </label>
                     <div class="relative">

@@ -21,12 +21,8 @@ import { storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
 
 const store = useStudentStore();
-const { balance, name, character, courseName, institutionName, transactions } =
-    storeToRefs(store);
-const { currentLevel, progressPercent, medalsWithStatus } = useGamification(
-    balance,
-    transactions
-);
+const { balance, name, character, courseName, institutionName, transactions } = storeToRefs(store);
+const { currentLevel, progressPercent, medalsWithStatus } = useGamification(balance, transactions);
 
 const pendingRedemption = ref<{ name: string; cost: number } | null>(null);
 const generatedCoupon = ref<{ code: string; name: string } | null>(null);
