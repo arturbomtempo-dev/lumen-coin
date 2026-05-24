@@ -1,3 +1,4 @@
+import { useTeacherStore } from '@/modules/teacher/stores/teacher.store';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { logoutRequest, meRequest } from '../services/auth.service';
@@ -41,6 +42,7 @@ export const useAuthStore = defineStore('auth', () => {
             isAuthenticated.value = false;
             user.value = null;
             isLoading.value = false;
+            useTeacherStore().reset();
         }
     }
 
