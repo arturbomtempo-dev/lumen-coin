@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useStudentStore } from '@/modules/student/stores/student.store';
+import { useGamification } from '@/shared/composables/useGamification';
 import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
@@ -7,7 +8,7 @@ import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import XPBar from '@/shared/components/XPBar.vue';
-import { achievements, initialBenefits } from '@/shared/data/mockData';
+import { initialBenefits } from '@/shared/data/mockData';
 import {
     PhLightning,
     PhMagnifyingGlass,
@@ -20,7 +21,12 @@ import { storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
 
 const store = useStudentStore();
-const { balance, level, xp, name, character, courseName, institutionName } = storeToRefs(store);
+const { balance, name, character, courseName, institutionName, transactions } =
+    storeToRefs(store);
+const { currentLevel, progressPercent, medalsWithStatus } = useGamification(
+    balance,
+    transactions
+);
 
 const pendingRedemption = ref<{ name: string; cost: number } | null>(null);
 const generatedCoupon = ref<{ code: string; name: string } | null>(null);
@@ -99,12 +105,18 @@ function confirmRedemption() {
                         <div class="font-pixel text-[9px] text-muted-foreground">NÍVEL</div>
                         <div class="font-pixel text-md md:text-2xl mt-1 flex items-center gap-2">
                             <PhTrophy weight="fill" class="pixel-icon text-primary" /> LV
-                            {{ level }}
+                            {{ currentLevel.level }}
+                        </div>
+                        <div class="font-pixel text-[9px] text-muted-foreground mt-1">
+                            {{ currentLevel.name.toUpperCase() }}
                         </div>
                     </div>
                     <div class="border-2 border-border bg-card p-3">
                         <div class="font-pixel text-[9px] text-muted-foreground">PRÓXIMO NÍVEL</div>
-                        <div class="mt-2"><XPBar :value="xp" /></div>
+                        <div class="mt-2"><XPBar :value="progressPercent" /></div>
+                        <div class="font-pixel text-[9px] text-muted-foreground mt-1">
+                            {{ progressPercent }}%
+                        </div>
                     </div>
                 </div>
             </PixelCard>
@@ -114,18 +126,17 @@ function confirmRedemption() {
                 <div class="font-pixel text-sm mt-1 mb-4">MEDALHAS</div>
                 <div class="grid grid-cols-2 gap-3">
                     <div
-                        v-for="achievement in achievements"
-                        :key="achievement.id"
+                        v-for="medal in medalsWithStatus"
+                        :key="medal.id"
                         class="border-2 border-border p-3"
-                        :class="achievement.unlocked ? 'bg-card' : 'bg-muted opacity-50'"
+                        :class="medal.unlocked ? 'bg-card' : 'bg-muted opacity-50'"
                     >
-                        <PixelBadge
-                            :tone="achievement.tone as 'gold' | 'blue' | 'green' | 'red' | 'teal'"
-                            >{{ achievement.unlocked ? '✓' : '?' }}
-                            {{ achievement.name.toUpperCase() }}</PixelBadge
+                        <PixelBadge :tone="medal.tone"
+                            >{{ medal.unlocked ? '✓' : '?' }}
+                            {{ medal.name.toUpperCase() }}</PixelBadge
                         >
                         <p class="font-sans text-xs text-foreground/75 mt-2">
-                            {{ achievement.description }}
+                            {{ medal.description }}
                         </p>
                     </div>
                 </div>

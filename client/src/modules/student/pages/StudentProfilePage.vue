@@ -18,6 +18,7 @@ import {
     type UpdateStudentDto,
 } from '@/modules/student/services/student.service';
 import { useStudentStore } from '@/modules/student/stores/student.store';
+import { useGamification } from '@/shared/composables/useGamification';
 import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
@@ -27,6 +28,7 @@ import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import { useForm } from '@/shared/composables/useForm';
 import { MARIO_CHARACTERS, type MarioCharacter } from '@/shared/data/characters';
+import { storeToRefs } from 'pinia';
 import {
     PhEye,
     PhEyeSlash,
@@ -35,6 +37,7 @@ import {
     PhPalette,
     PhPencilSimple,
     PhTrash,
+    PhTrophy,
     PhUser,
     PhX,
 } from '@phosphor-icons/vue';
@@ -340,6 +343,11 @@ async function confirmDeleteAccount() {
     }
 }
 
+const { transactions } = storeToRefs(studentStore);
+const balance = computed(() => studentProfile.value?.balance ?? 0);
+const { currentLevel, nextLevel, progressPercent, coinsToNextLevel, medalsWithStatus } =
+    useGamification(balance, transactions);
+
 onMounted(async () => {
     await Promise.all([loadProfile(), loadFormOptions()]);
 });
@@ -641,6 +649,108 @@ onMounted(async () => {
                 </div>
             </form>
         </PixelCard>
+
+        <div class="grid lg:grid-cols-2 gap-5">
+            <!-- Level Progress Card -->
+            <PixelCard class="p-6">
+                <div class="font-pixel text-[10px] text-primary">▶ PROGRESSO</div>
+                <div class="font-pixel text-sm mt-1 mb-5 flex items-center gap-2">
+                    <PhTrophy weight="fill" class="pixel-icon" /> NÍVEL
+                </div>
+
+                <div class="border-2 border-border bg-hud text-hud-foreground p-4 space-y-4">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <div class="font-pixel text-[9px] text-muted-foreground mb-1">
+                                NÍVEL ATUAL
+                            </div>
+                            <div class="font-pixel text-3xl flex items-center gap-2">
+                                <PhTrophy weight="fill" class="text-primary" />
+                                LV {{ currentLevel.level }}
+                            </div>
+                        </div>
+                        <PixelBadge tone="gold">{{ currentLevel.name.toUpperCase() }}</PixelBadge>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between font-pixel text-[9px] mb-2">
+                            <span>PROGRESSO</span>
+                            <span>{{ progressPercent }}%</span>
+                        </div>
+                        <div class="relative h-5 border-2 border-border bg-card overflow-hidden">
+                            <div
+                                class="h-full transition-all duration-700 ease-out"
+                                :style="{
+                                    width: `${progressPercent}%`,
+                                    backgroundImage:
+                                        'repeating-linear-gradient(90deg, hsl(var(--primary)) 0, hsl(var(--primary)) 6px, hsl(var(--primary-shadow)) 6px, hsl(var(--primary-shadow)) 8px)',
+                                }"
+                            />
+                        </div>
+                    </div>
+
+                    <div
+                        v-if="nextLevel"
+                        class="font-pixel text-[9px] text-center text-muted-foreground"
+                    >
+                        Faltam
+                        <span class="text-foreground">{{
+                            coinsToNextLevel.toLocaleString('pt-BR')
+                        }}</span>
+                        moedas para alcançar
+                        <span class="text-primary">{{ nextLevel.name.toUpperCase() }}</span>
+                    </div>
+                    <div v-else class="font-pixel text-[9px] text-center text-primary">
+                        ★ NÍVEL MÁXIMO ALCANÇADO! ★
+                    </div>
+                </div>
+
+                <div
+                    v-if="nextLevel"
+                    class="mt-4 border-2 border-border bg-muted opacity-60 p-3 flex items-center gap-3"
+                >
+                    <div
+                        class="border-2 border-border bg-card px-3 py-2 font-pixel text-[12px] shrink-0"
+                    >
+                        ?
+                    </div>
+                    <div>
+                        <div class="font-pixel text-[9px] text-muted-foreground">
+                            PRÓXIMA CONQUISTA
+                        </div>
+                        <div class="font-pixel text-xs mt-1">
+                            LV {{ nextLevel.level }} · {{ nextLevel.name.toUpperCase() }}
+                        </div>
+                        <div class="font-pixel text-[9px] text-muted-foreground mt-1">
+                            {{ nextLevel.minCoins.toLocaleString('pt-BR') }} moedas necessárias
+                        </div>
+                    </div>
+                </div>
+            </PixelCard>
+
+            <!-- Medals Card -->
+            <PixelCard class="p-6">
+                <div class="font-pixel text-[10px] text-primary">▶ CONQUISTAS</div>
+                <div class="font-pixel text-sm mt-1 mb-5">MEDALHAS</div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div
+                        v-for="medal in medalsWithStatus"
+                        :key="medal.id"
+                        class="border-2 border-border p-3 transition-all"
+                        :class="medal.unlocked ? 'bg-card' : 'bg-muted opacity-50'"
+                    >
+                        <PixelBadge :tone="medal.tone">
+                            {{ medal.unlocked ? '✓' : '?' }}
+                            {{ medal.name.toUpperCase() }}
+                        </PixelBadge>
+                        <p class="font-sans text-xs text-foreground/75 mt-2">
+                            {{ medal.description }}
+                        </p>
+                    </div>
+                </div>
+            </PixelCard>
+        </div>
 
         <PixelCard class="p-6">
             <div class="font-pixel text-[10px] text-primary">&#9658; ALTERAR SENHA</div>
