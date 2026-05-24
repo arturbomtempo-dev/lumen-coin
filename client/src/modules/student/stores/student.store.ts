@@ -1,6 +1,7 @@
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
 import { getCourse, getInstitution } from '@/modules/institution/services/institution.service';
 import { getStudent } from '@/modules/student/services/student.service';
+import { getReceivedTransfers } from '@/modules/coin-transfer/services/coin-transfer.service';
 import type { MarioCharacter } from '@/shared/data/characters';
 import {
     initialNotifications,
@@ -109,12 +110,22 @@ export const useStudentStore = defineStore('student', () => {
         name.value = data.name;
         balance.value = data.balance;
         character.value = data.avatar.toLowerCase() as MarioCharacter;
-        const [courseRes, institutionRes] = await Promise.all([
+        const [courseRes, institutionRes, transfersRes] = await Promise.all([
             getCourse(data.courseId),
             getInstitution(data.institutionId),
+            getReceivedTransfers(),
         ]);
         courseName.value = courseRes.data.name;
         institutionName.value = institutionRes.data.name;
+        transactions.value = transfersRes.data.map((t) => ({
+            id: t.id,
+            student: t.recipientName,
+            teacher: t.senderName,
+            senderId: t.senderId,
+            amount: t.amount,
+            reason: t.message,
+            date: new Date(t.sentAt).toISOString().slice(0, 10),
+        }));
     }
 
     return {

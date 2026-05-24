@@ -4,6 +4,7 @@ export interface Transaction {
     id: string;
     student: string;
     teacher: string;
+    senderId: string;
     amount: number;
     reason: string;
     date: string;
@@ -146,6 +147,7 @@ export const initialTransactions: Transaction[] = [
         id: 't1',
         student: 'Maria Luiza Souza',
         teacher: 'Prof. Carlos M.',
+        senderId: 'teacher-1',
         amount: 150,
         reason: 'Liderança no projeto de ciências',
         date: '2025-04-22',
@@ -154,6 +156,7 @@ export const initialTransactions: Transaction[] = [
         id: 't2',
         student: 'João Pedro Alves',
         teacher: 'Prof. Carlos M.',
+        senderId: 'teacher-2',
         amount: 80,
         reason: 'Entrega antecipada do trabalho final',
         date: '2025-04-21',
@@ -162,6 +165,7 @@ export const initialTransactions: Transaction[] = [
         id: 't3',
         student: 'Amina Kassab',
         teacher: 'Prof. Carlos M.',
+        senderId: 'teacher-3',
         amount: 200,
         reason: 'Ajudou colegas com dúvidas de cálculo',
         date: '2025-04-20',
@@ -170,6 +174,7 @@ export const initialTransactions: Transaction[] = [
         id: 't4',
         student: 'Rafael Costa',
         teacher: 'Prof. Carlos M.',
+        senderId: 'teacher-4',
         amount: 50,
         reason: 'Participação excepcional em aula',
         date: '2025-04-19',

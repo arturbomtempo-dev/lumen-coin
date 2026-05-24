@@ -50,8 +50,8 @@ export function useGamification(balance: Ref<number>, transactions: Ref<Transact
     });
 
     const hasParticipative = computed(() => {
-        const teachers = new Set(transactions.value.map((t) => t.teacher));
-        return teachers.size >= 3;
+        const uniqueSenders = new Set(transactions.value.map((t) => t.senderId));
+        return uniqueSenders.size >= 3;
     });
 
     const hasAccumulator = computed(() => balance.value >= 1000);
