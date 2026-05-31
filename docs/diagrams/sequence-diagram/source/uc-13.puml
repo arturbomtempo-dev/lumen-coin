@@ -1,0 +1,45 @@
+@startuml
+title UC13 - Realizar Cadastro (Auto-cadastro do Aluno)
+actor Aluno as A
+participant "Tela do Sistema" as Tela
+participant "ControleAluno" as CA
+database "PostgreSQL\nUsuarios" as DBUsuario
+database "PostgreSQL\nAlunos" as DBAluno
+
+A -> Tela : realizarCadastro(nome, email, senha,\ncpf, rg, cep, endereço)
+activate Tela
+
+Tela -> CA : solicitarAutoCadastro(dadosAluno)
+activate CA
+
+CA -> DBUsuario : verificarEmailExistente(email)
+activate DBUsuario
+DBUsuario --> CA : emailDisponivel()
+deactivate DBUsuario
+
+CA -> DBAluno : verificarCpfExistente(cpf)
+activate DBAluno
+DBAluno --> CA : cpfDisponivel()
+deactivate DBAluno
+
+alt Email e CPF disponíveis
+    CA -> DBUsuario : salvarUsuario(nome, email, senha)
+    activate DBUsuario
+    DBUsuario --> CA : usuarioCriado(usuarioID)
+    deactivate DBUsuario
+
+    CA -> DBAluno : salvarAluno(cpf, rg, cep, endereço,\nsaldo=0, usuarioID)
+    activate DBAluno
+    DBAluno --> CA : alunoCadastrado(aluno)
+    deactivate DBAluno
+
+    CA --> Tela : cadastroRealizado()
+    Tela --> A : cadastroConcluidoComSucesso()
+else Email ou CPF já cadastrado
+    CA --> Tela : erroCadastro()
+    Tela --> A : exibirMensagemErro()
+end
+
+deactivate CA
+deactivate Tela
+@enduml
