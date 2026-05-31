@@ -1,0 +1,75 @@
+@startuml
+title UC12 - Resgatar Vantagem
+actor Aluno as A
+participant "Tela do Sistema" as Tela
+participant "ControleResgate" as CR
+participant "ControleVantagem" as CV
+database "PostgreSQL\nAlunos" as DBAluno
+database "PostgreSQL\nVantagens" as DBVantagem
+database "PostgreSQL\nResgates" as DBResgate
+queue "Fila de Resgate\nVantagem (SQS)" as SQS
+participant "Worker Vantagem" as WV
+participant "Serviço de\nNotificação" as SN
+
+A -> Tela : resgatarVantagem(alunoID, vantagemID)
+activate Tela
+
+Tela -> CR : solicitarResgate(alunoID, vantagemID)
+activate CR
+
+CR -> DBAluno : buscarAluno(alunoID)
+activate DBAluno
+DBAluno --> CR : alunoEncontrado(saldo)
+deactivate DBAluno
+
+CR -> CV : buscarVantagem(vantagemID)
+activate CV
+CV -> DBVantagem : buscarVantagem(vantagemID)
+activate DBVantagem
+DBVantagem --> CV : vantagemEncontrada(custo)
+deactivate DBVantagem
+CV --> CR : vantagemEncontrada(custo)
+deactivate CV
+
+alt Saldo suficiente
+    CR -> DBAluno : atualizarSaldo(alunoID, saldo - custo)
+    activate DBAluno
+    DBAluno --> CR : saldoAtualizado()
+    deactivate DBAluno
+
+    CR -> DBResgate : salvarResgate(alunoID, vantagemID,\nstatus=PENDENTE)
+    activate DBResgate
+    DBResgate --> CR : resgateCriado(codigo)
+    deactivate DBResgate
+
+    CR -> SQS : publicarMensagem(alunoID, vantagemID, codigo)
+    activate SQS
+    SQS --> CR : mensagemEnfileirada()
+    deactivate SQS
+
+    CR --> Tela : resgateRealizado(codigo)
+    Tela --> A : vantagemResgatada(codigo)
+
+    SQS -> WV : consumirMensagem()
+    activate WV
+    WV -> DBResgate : atualizarStatus(codigo, status=CONFIRMADO)
+    activate DBResgate
+    DBResgate --> WV : statusAtualizado()
+    deactivate DBResgate
+
+    WV -> SN : enviarNotificacaoEmail(emailAluno,\nemailEmpresa, codigo)
+    activate SN
+    SN --> WV : emailEnviado()
+    deactivate SN
+    deactivate WV
+else Saldo insuficiente
+    CR --> Tela : erroSaldoInsuficiente()
+    Tela --> A : exibirMensagemErro()
+else Aluno ou Vantagem não encontrado
+    CR --> Tela : erroEntidadeNaoEncontrada()
+    Tela --> A : exibirMensagemErro()
+end
+
+deactivate CR
+deactivate Tela
+@enduml
