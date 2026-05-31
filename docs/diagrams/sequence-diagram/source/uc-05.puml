@@ -1,0 +1,46 @@
+@startuml
+title UC05 - Realizar Cadastro (Aluno)
+actor "Funcionário Instituição" as FI
+participant "Tela do Sistema" as Tela
+participant "ControleAluno" as CA
+database "PostgreSQL\nUsuarios" as DBUsuario
+database "PostgreSQL\nAlunos" as DBAluno
+database "PostgreSQL\nInstituicao" as DBInstituicao
+
+FI -> Tela : cadastrarAluno(nome, email, senha,\ncpf, rg, cep, endereço, instituicaoID)
+activate Tela
+
+Tela -> CA : solicitarCadastroAluno(dadosAluno)
+activate CA
+
+CA -> DBInstituicao : buscarInstituicao(instituicaoID)
+activate DBInstituicao
+DBInstituicao --> CA : instituicaoEncontrada()
+deactivate DBInstituicao
+
+CA -> DBUsuario : verificarEmailExistente(email)
+activate DBUsuario
+DBUsuario --> CA : emailDisponivel()
+deactivate DBUsuario
+
+alt Email disponível
+    CA -> DBUsuario : salvarUsuario(nome, email, senha)
+    activate DBUsuario
+    DBUsuario --> CA : usuarioCriado(usuarioID)
+    deactivate DBUsuario
+
+    CA -> DBAluno : salvarAluno(cpf, rg, cep, endereço,\nsaldo=0, usuarioID, instituicaoID)
+    activate DBAluno
+    DBAluno --> CA : alunoCadastrado(aluno)
+    deactivate DBAluno
+
+    CA --> Tela : cadastroRealizado()
+    Tela --> FI : alunoCadastrado()
+else Email já cadastrado
+    CA --> Tela : erroCadastro()
+    Tela --> FI : exibirMensagemErro()
+end
+
+deactivate CA
+deactivate Tela
+@enduml
