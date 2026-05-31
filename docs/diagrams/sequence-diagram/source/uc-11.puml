@@ -1,0 +1,56 @@
+@startuml
+title UC11 - Visualizar Transações
+actor Professor as P
+actor Aluno as A
+participant "Tela do Sistema" as Tela
+participant "ControleTransacao" as CT
+database "PostgreSQL\nTransacoes" as DBTransacao
+
+group Visualização realizada pelo Professor
+    P -> Tela : visualizarTransacoes(professorID)
+    activate Tela
+
+    Tela -> CT : solicitarTransacoes(professorID)
+    activate CT
+
+    CT -> DBTransacao : buscarTransacoesPorRemetente(professorID)
+    activate DBTransacao
+    DBTransacao --> CT : listaTransacoes
+    deactivate DBTransacao
+
+    alt Transações encontradas
+        CT --> Tela : transacoesEncontradas(listaTransacoes)
+        Tela --> P : exibirTransacoes()
+    else Nenhuma transação encontrada
+        CT --> Tela : listaNaoEncontrada()
+        Tela --> P : exibirMensagemVazia()
+    end
+
+    deactivate CT
+    deactivate Tela
+end
+
+group Visualização realizada pelo Aluno
+    A -> Tela : visualizarTransacoes(alunoID)
+    activate Tela
+
+    Tela -> CT : solicitarTransacoes(alunoID)
+    activate CT
+
+    CT -> DBTransacao : buscarTransacoesPorDestinatario(alunoID)
+    activate DBTransacao
+    DBTransacao --> CT : listaTransacoes
+    deactivate DBTransacao
+
+    alt Transações encontradas
+        CT --> Tela : transacoesEncontradas(listaTransacoes)
+        Tela --> A : exibirTransacoes()
+    else Nenhuma transação encontrada
+        CT --> Tela : listaNaoEncontrada()
+        Tela --> A : exibirMensagemVazia()
+    end
+
+    deactivate CT
+    deactivate Tela
+end
+@enduml
