@@ -1,0 +1,45 @@
+@startuml
+title UC06 - Realizar Cadastro (Empresa Parceira)
+actor "Funcionário Empresa Parceira" as FEP
+participant "Tela do Sistema" as Tela
+participant "ControleEmpresa" as CE
+database "PostgreSQL\nUsuarios" as DBUsuario
+database "PostgreSQL\nEmpresas" as DBEmpresa
+
+FEP -> Tela : cadastrarEmpresa(nome, email, senha, cnpj)
+activate Tela
+
+Tela -> CE : solicitarCadastroEmpresa(dadosEmpresa)
+activate CE
+
+CE -> DBUsuario : verificarEmailExistente(email)
+activate DBUsuario
+DBUsuario --> CE : emailDisponivel()
+deactivate DBUsuario
+
+CE -> DBEmpresa : verificarCnpjExistente(cnpj)
+activate DBEmpresa
+DBEmpresa --> CE : cnpjDisponivel()
+deactivate DBEmpresa
+
+alt Email e CNPJ disponíveis
+    CE -> DBUsuario : salvarUsuario(nome, email, senha)
+    activate DBUsuario
+    DBUsuario --> CE : usuarioCriado(usuarioID)
+    deactivate DBUsuario
+
+    CE -> DBEmpresa : salvarEmpresa(cnpj, usuarioID)
+    activate DBEmpresa
+    DBEmpresa --> CE : empresaCadastrada(empresa)
+    deactivate DBEmpresa
+
+    CE --> Tela : cadastroRealizado()
+    Tela --> FEP : empresaCadastrada()
+else Email ou CNPJ já cadastrado
+    CE --> Tela : erroCadastro()
+    Tela --> FEP : exibirMensagemErro()
+end
+
+deactivate CE
+deactivate Tela
+@enduml
