@@ -1,0 +1,35 @@
+@startuml
+title UC07 - Cadastrar Vantagem
+actor "Funcionário Empresa Parceira" as FEP
+participant "Tela do Sistema" as Tela
+participant "ControleVantagem" as CV
+database "PostgreSQL\nVantagens" as DBVantagem
+database "PostgreSQL\nEmpresas" as DBEmpresa
+
+FEP -> Tela : cadastrarVantagem(nome, descricao,\nimagem, custo, empresaID)
+activate Tela
+
+Tela -> CV : solicitarCadastroVantagem(dadosVantagem)
+activate CV
+
+CV -> DBEmpresa : buscarEmpresa(empresaID)
+activate DBEmpresa
+DBEmpresa --> CV : empresaEncontrada()
+deactivate DBEmpresa
+
+alt Empresa encontrada
+    CV -> DBVantagem : salvarVantagem(nome, descricao,\nimagem, custo, empresaID)
+    activate DBVantagem
+    DBVantagem --> CV : vantagemCadastrada(vantagem)
+    deactivate DBVantagem
+
+    CV --> Tela : cadastroRealizado()
+    Tela --> FEP : vantagemCadastrada()
+else Empresa não encontrada
+    CV --> Tela : erroCadastro()
+    Tela --> FEP : exibirMensagemErro()
+end
+
+deactivate CV
+deactivate Tela
+@enduml
