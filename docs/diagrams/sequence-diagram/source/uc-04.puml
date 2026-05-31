@@ -1,0 +1,49 @@
+@startuml
+
+title UC04 - Cadastrar Curso
+
+actor "Funcionário Instituição" as FI
+
+participant "Tela do Sistema" as Tela
+participant "ControleCurso" as CC
+participant "ControleInstituicao" as CI
+
+database "PostgreSQL\nCursos" as DBCurso
+database "PostgreSQL\nInstituicao" as DBInstituicao
+
+FI -> Tela : cadastrarCurso(nome, turno,\nquantidadePeriodos, instituicaoID)
+activate Tela
+
+Tela -> CC : solicitarCadastroCurso(dadosCurso)
+activate CC
+
+CC -> DBInstituicao : buscarInstituicao(instituicaoID)
+activate DBInstituicao
+
+DBInstituicao --> CC : instituicaoEncontrada()
+deactivate DBInstituicao
+
+alt Instituição válida
+
+    CC -> DBCurso : salvarCurso(dadosCurso)
+    activate DBCurso
+
+    DBCurso --> CC : cursoCadastrado(curso)
+    deactivate DBCurso
+
+    CC --> Tela : cadastroRealizado()
+
+    Tela --> FI : cursoCadastrado()
+
+else Instituição não encontrada
+
+    CC --> Tela : erroCadastro()
+
+    Tela --> FI : exibirMensagemErro()
+
+end
+
+deactivate CC
+deactivate Tela
+
+@enduml

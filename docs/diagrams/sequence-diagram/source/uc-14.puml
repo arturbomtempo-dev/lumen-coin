@@ -1,0 +1,31 @@
+@startuml
+
+title UC14 - Visualizar Vantagens
+
+actor Aluno as A
+
+participant "Tela do Sistema" as Tela
+participant "ControleVantagem" as CV
+
+database "PostgreSQL\nVantagens" as DBVantagem
+
+A -> Tela : visualizarVantagens()
+activate Tela
+
+Tela -> CV : listarVantagensDisponiveis()
+activate CV
+
+CV -> DBVantagem : buscarVantagens()
+activate DBVantagem
+
+DBVantagem --> CV : listaVantagens
+deactivate DBVantagem
+
+CV --> Tela : vantagensEncontradas()
+
+Tela --> A : exibirVantagens()
+
+deactivate CV
+deactivate Tela
+
+@enduml

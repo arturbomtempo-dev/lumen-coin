@@ -1,0 +1,56 @@
+@startuml
+
+title UC03 - Cadastrar Professor
+
+actor "Funcionário Instituição" as FI
+
+participant "Tela do Sistema" as Tela
+participant "ControleProfessor" as CP
+participant "ControleInstituicao" as CI
+
+database "PostgreSQL\nUsuarios" as DBUsuario
+database "PostgreSQL\nProfessores" as DBProfessor
+database "PostgreSQL\nInstituicao" as DBInstituicao
+
+FI -> Tela : cadastrarProfessor(nome, email, cpf,\ndepartamento, instituicaoID)
+activate Tela
+
+Tela -> CP : solicitarCadastroProfessor(dadosProfessor)
+activate CP
+
+CP -> DBInstituicao : buscarInstituicao(instituicaoID)
+activate DBInstituicao
+
+DBInstituicao --> CP : instituicaoEncontrada()
+deactivate DBInstituicao
+
+CP -> DBUsuario : verificarEmailExistente(email)
+activate DBUsuario
+
+DBUsuario --> CP : emailDisponivel()
+deactivate DBUsuario
+
+alt Dados válidos
+
+    CP -> DBProfessor : salvarProfessor(dadosProfessor)
+    activate DBProfessor
+
+    DBProfessor --> CP : professorCadastrado(professor)
+    deactivate DBProfessor
+
+    CP --> Tela : cadastroRealizado()
+
+    Tela --> FI : professorCadastrado()
+
+else Email já cadastrado
+
+    CP --> Tela : erroCadastro()
+
+    Tela --> FI : exibirMensagemErro()
+
+end
+
+deactivate CP
+deactivate Tela
+
+@enduml

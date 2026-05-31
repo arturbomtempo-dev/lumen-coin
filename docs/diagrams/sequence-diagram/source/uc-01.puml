@@ -1,0 +1,43 @@
+@startuml
+
+title UC01 - Realizar Login
+
+actor Usuario as U
+
+participant "Tela do Sistema" as Tela
+participant "ControleUsuario" as CU
+
+database "PostgreSQL\nUsuarios" as DBUsuario
+
+U -> Tela : realizarLogin(email, senha)
+activate Tela
+
+Tela -> CU : autenticarUsuario(email, senha)
+activate CU
+
+CU -> DBUsuario : buscarUsuarioPorEmail(email)
+activate DBUsuario
+
+DBUsuario --> CU : usuarioEncontrado(usuario)
+deactivate DBUsuario
+
+CU -> CU : validarSenha(senha)
+
+alt Credenciais válidas
+
+    CU --> Tela : loginAutorizado(usuario)
+
+    Tela --> U : acessoLiberado()
+
+else Credenciais inválidas
+
+    CU --> Tela : erroAutenticacao()
+
+    Tela --> U : exibirMensagemErro()
+
+end
+
+deactivate CU
+deactivate Tela
+
+@enduml
