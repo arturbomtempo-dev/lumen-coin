@@ -1,0 +1,75 @@
+@startuml
+title UC09 - Enviar Moedas ao Aluno
+actor Professor as P
+participant "Tela do Sistema" as Tela
+participant "ControleEnvioMoeda" as CEM
+participant "ControleTransacao" as CT
+database "PostgreSQL\nProfessores" as DBProfessor
+database "PostgreSQL\nAlunos" as DBAluno
+database "PostgreSQL\nTransacoes" as DBTransacao
+queue "Fila de Envio\nMoeda (SQS)" as SQS
+participant "Worker Moedas" as WM
+participant "Serviço de\nNotificação" as SN
+
+P -> Tela : enviarMoedas(alunoID, quantidade, mensagem)
+activate Tela
+
+Tela -> CEM : solicitarEnvioMoeda(professorID, alunoID,\nquantidade, mensagem)
+activate CEM
+
+CEM -> DBProfessor : buscarProfessor(professorID)
+activate DBProfessor
+DBProfessor --> CEM : professorEncontrado(saldo)
+deactivate DBProfessor
+
+CEM -> DBAluno : buscarAluno(alunoID)
+activate DBAluno
+DBAluno --> CEM : alunoEncontrado()
+deactivate DBAluno
+
+alt Saldo suficiente
+    CEM -> DBProfessor : atualizarSaldo(professorID, saldo - quantidade)
+    activate DBProfessor
+    DBProfessor --> CEM : saldoAtualizado()
+    deactivate DBProfessor
+
+    CEM -> DBAluno : atualizarSaldo(alunoID, saldo + quantidade)
+    activate DBAluno
+    DBAluno --> CEM : saldoAtualizado()
+    deactivate DBAluno
+
+    CEM -> CT : registrarTransacao(professorID, alunoID,\nquantidade, mensagem)
+    activate CT
+    CT -> DBTransacao : salvarTransacao(dadosTransacao)
+    activate DBTransacao
+    DBTransacao --> CT : transacaoRegistrada(codigo)
+    deactivate DBTransacao
+    CT --> CEM : transacaoRegistrada()
+    deactivate CT
+
+    CEM -> SQS : publicarMensagem(alunoID, quantidade, mensagem)
+    activate SQS
+    SQS --> CEM : mensagemEnfileirada()
+    deactivate SQS
+
+    CEM --> Tela : envioRealizado()
+    Tela --> P : moedasEnviadas()
+
+    SQS -> WM : consumirMensagem()
+    activate WM
+    WM -> SN : enviarNotificacaoEmail(emailAluno,\nquantidade, mensagem)
+    activate SN
+    SN --> WM : emailEnviado()
+    deactivate SN
+    deactivate WM
+else Saldo insuficiente
+    CEM --> Tela : erroSaldoInsuficiente()
+    Tela --> P : exibirMensagemErro()
+else Aluno ou Professor não encontrado
+    CEM --> Tela : erroEntidadeNaoEncontrada()
+    Tela --> P : exibirMensagemErro()
+end
+
+deactivate CEM
+deactivate Tela
+@enduml
