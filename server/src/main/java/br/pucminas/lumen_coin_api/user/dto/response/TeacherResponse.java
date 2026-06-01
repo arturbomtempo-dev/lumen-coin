@@ -6,14 +6,15 @@ import java.time.Instant;
 import java.util.UUID;
 
 public record TeacherResponse(
-                UUID id,
-                String name,
-                String email,
-                Avatar avatar,
-                String cpf,
-                String department,
-                int balance,
-                UUID institutionId,
-                Instant createdAt,
-                Instant updatedAt) {
+        UUID id,
+        String name,
+        String email,
+        String phone,
+        Avatar avatar,
+        String cpf,
+        String department,
+        int balance,
+        UUID institutionId,
+        Instant createdAt,
+        Instant updatedAt) {
 }

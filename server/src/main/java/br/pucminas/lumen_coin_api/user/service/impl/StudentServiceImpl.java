@@ -4,6 +4,7 @@ import br.pucminas.lumen_coin_api.course.entity.Course;
 import br.pucminas.lumen_coin_api.course.exception.CourseNotFoundException;
 import br.pucminas.lumen_coin_api.course.repository.CourseRepository;
 import br.pucminas.lumen_coin_api.email.service.EmailService;
+import br.pucminas.lumen_coin_api.whatsapp.service.WhatsAppService;
 import br.pucminas.lumen_coin_api.user.dto.request.ChangeStudentPasswordRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterStudentRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateStudentRequest;
@@ -38,6 +39,7 @@ public class StudentServiceImpl implements StudentService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
     private final EmailService emailService;
+    private final WhatsAppService whatsAppService;
 
     @Override
     @Transactional
@@ -58,6 +60,7 @@ public class StudentServiceImpl implements StudentService {
         student.setRg(request.rg());
         student.setZipCode(request.zipCode());
         student.setAddress(request.address());
+        student.setPhone(request.phone());
 
         if (!institutionRepository.existsById(request.institutionId())) {
             throw new UserNotFoundException(request.institutionId());
@@ -75,6 +78,7 @@ public class StudentServiceImpl implements StudentService {
 
         Student saved = studentRepository.save(student);
         emailService.sendWelcome(saved.getEmail(), saved.getName());
+        whatsAppService.sendWelcome(saved.getPhone(), saved.getName());
         return mapper.toResponse(saved);
     }
 
@@ -131,6 +135,9 @@ public class StudentServiceImpl implements StudentService {
             student.setZipCode(request.zipCode());
         if (request.address() != null)
             student.setAddress(request.address());
+
+        if (request.phone() != null)
+            student.setPhone(request.phone());
 
         if (request.institutionId() != null) {
             if (!institutionRepository.existsById(request.institutionId())) {

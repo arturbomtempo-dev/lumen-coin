@@ -32,6 +32,9 @@ public abstract class User {
     @Column(name = "email", nullable = false, unique = true, length = 255)
     private String email;
 
+    @Column(name = "phone", length = 11)
+    private String phone;
+
     @Column(name = "password", nullable = false)
     private String password;
 

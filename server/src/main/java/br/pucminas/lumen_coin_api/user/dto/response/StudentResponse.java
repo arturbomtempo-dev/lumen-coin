@@ -6,17 +6,18 @@ import java.time.Instant;
 import java.util.UUID;
 
 public record StudentResponse(
-                UUID id,
-                String name,
-                String email,
-                Avatar avatar,
-                String cpf,
-                String rg,
-                String zipCode,
-                String address,
-                int balance,
-                UUID institutionId,
-                UUID courseId,
-                Instant createdAt,
-                Instant updatedAt) {
+        UUID id,
+        String name,
+        String email,
+        String phone,
+        Avatar avatar,
+        String cpf,
+        String rg,
+        String zipCode,
+        String address,
+        int balance,
+        UUID institutionId,
+        UUID courseId,
+        Instant createdAt,
+        Instant updatedAt) {
 }

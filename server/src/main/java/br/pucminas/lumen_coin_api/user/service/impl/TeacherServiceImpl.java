@@ -2,6 +2,7 @@ package br.pucminas.lumen_coin_api.user.service.impl;
 
 import br.pucminas.lumen_coin_api.common.util.PasswordGenerator;
 import br.pucminas.lumen_coin_api.email.service.EmailService;
+import br.pucminas.lumen_coin_api.whatsapp.service.WhatsAppService;
 import br.pucminas.lumen_coin_api.user.dto.request.ChangeTeacherPasswordRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterTeacherRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateTeacherRequest;
@@ -33,6 +34,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
     private final EmailService emailService;
+    private final WhatsAppService whatsAppService;
 
     @Override
     @Transactional
@@ -54,10 +56,12 @@ public class TeacherServiceImpl implements TeacherService {
         teacher.setCpf(request.cpf());
         teacher.setDepartment(request.department());
         teacher.setInstitutionId(institutionId);
+        teacher.setPhone(request.phone());
         teacher.setBalance(1000);
 
         Teacher saved = teacherRepository.save(teacher);
         emailService.sendTeacherWelcome(saved.getEmail(), saved.getName(), generatedPassword);
+        whatsAppService.sendTeacherWelcome(saved.getPhone(), saved.getName());
         return mapper.toResponse(saved);
     }
 
@@ -110,6 +114,9 @@ public class TeacherServiceImpl implements TeacherService {
 
         if (request.department() != null)
             teacher.setDepartment(request.department());
+
+        if (request.phone() != null)
+            teacher.setPhone(request.phone());
 
         return mapper.toResponse(teacherRepository.save(teacher));
     }

@@ -5,23 +5,25 @@ import jakarta.validation.constraints.*;
 
 public record UpdateStudentRequest(
 
-        @Size(min = 2, max = 150, message = "Name must be between 2 and 150 characters") String name,
+                @Size(min = 2, max = 150, message = "Name must be between 2 and 150 characters") String name,
 
-        @Email(message = "Email must be a valid email address") @Size(max = 255, message = "Email must not exceed 255 characters") String email,
+                @Email(message = "Email must be a valid email address") @Size(max = 255, message = "Email must not exceed 255 characters") String email,
 
-        @Size(min = 8, max = 72, message = "Password must be between 8 and 72 characters") String password,
+                @Pattern(regexp = "\\d{10,11}", message = "Phone must contain 10 or 11 digits") String phone,
 
-        Avatar avatar,
+                @Size(min = 8, max = 72, message = "Password must be between 8 and 72 characters") String password,
 
-        @Pattern(regexp = "\\d{11}", message = "CPF must contain exactly 11 digits") String cpf,
+                Avatar avatar,
 
-        @Pattern(regexp = "[A-Z]{2}\\d{8}", message = "RG must follow the format XX00000000 (2 letters + 8 digits)") String rg,
+                @Pattern(regexp = "\\d{11}", message = "CPF must contain exactly 11 digits") String cpf,
 
-        @Pattern(regexp = "\\d{8}", message = "Zip code must contain exactly 8 digits") String zipCode,
+                @Pattern(regexp = "[A-Z]{2}\\d{8}", message = "RG must follow the format XX00000000 (2 letters + 8 digits)") String rg,
 
-        @Size(max = 300, message = "Address must not exceed 300 characters") String address,
+                @Pattern(regexp = "\\d{8}", message = "Zip code must contain exactly 8 digits") String zipCode,
 
-        java.util.UUID institutionId,
+                @Size(max = 300, message = "Address must not exceed 300 characters") String address,
 
-        java.util.UUID courseId) {
+                java.util.UUID institutionId,
+
+                java.util.UUID courseId) {
 }

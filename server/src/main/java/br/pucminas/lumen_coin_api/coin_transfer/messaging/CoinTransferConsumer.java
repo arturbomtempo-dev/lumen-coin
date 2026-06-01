@@ -2,6 +2,7 @@ package br.pucminas.lumen_coin_api.coin_transfer.messaging;
 
 import br.pucminas.lumen_coin_api.config.RabbitMQConfig;
 import br.pucminas.lumen_coin_api.email.service.EmailService;
+import br.pucminas.lumen_coin_api.whatsapp.service.WhatsAppService;
 import br.pucminas.lumen_coin_api.user.entity.Student;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
 import br.pucminas.lumen_coin_api.user.repository.StudentRepository;
@@ -18,6 +19,7 @@ public class CoinTransferConsumer {
 
     private final StudentRepository studentRepository;
     private final EmailService emailService;
+    private final WhatsAppService whatsAppService;
 
     @RabbitListener(queues = RabbitMQConfig.COIN_TRANSFER_QUEUE)
     @Transactional
@@ -33,7 +35,13 @@ public class CoinTransferConsumer {
                 message.recipientName(),
                 message.senderName(),
                 message.amount(),
-                message.transferMessage()
-        );
+                message.transferMessage());
+
+        whatsAppService.sendCoinReceived(
+                message.recipientPhone(),
+                message.recipientName(),
+                message.senderName(),
+                message.amount(),
+                message.transferMessage());
     }
 }

@@ -19,6 +19,7 @@ public class UserMapperImpl implements UserMapper {
                 student.getId(),
                 student.getName(),
                 student.getEmail(),
+                student.getPhone(),
                 student.getAvatar(),
                 student.getCpf(),
                 student.getRg(),
@@ -28,8 +29,7 @@ public class UserMapperImpl implements UserMapper {
                 student.getInstitutionId(),
                 student.getCourseId(),
                 student.getCreatedAt(),
-                student.getUpdatedAt()
-        );
+                student.getUpdatedAt());
     }
 
     @Override
@@ -38,14 +38,14 @@ public class UserMapperImpl implements UserMapper {
                 teacher.getId(),
                 teacher.getName(),
                 teacher.getEmail(),
+                teacher.getPhone(),
                 teacher.getAvatar(),
                 teacher.getCpf(),
                 teacher.getDepartment(),
                 teacher.getBalance(),
                 teacher.getInstitutionId(),
                 teacher.getCreatedAt(),
-                teacher.getUpdatedAt()
-        );
+                teacher.getUpdatedAt());
     }
 
     @Override
@@ -59,8 +59,7 @@ public class UserMapperImpl implements UserMapper {
                 institution.getZipCode(),
                 institution.getAddress(),
                 institution.getCreatedAt(),
-                institution.getUpdatedAt()
-        );
+                institution.getUpdatedAt());
     }
 
     @Override
@@ -72,7 +71,6 @@ public class UserMapperImpl implements UserMapper {
                 company.getAvatar(),
                 company.getCnpj(),
                 company.getCreatedAt(),
-                company.getUpdatedAt()
-        );
+                company.getUpdatedAt());
     }
 }
