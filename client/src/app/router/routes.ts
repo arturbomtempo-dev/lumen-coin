@@ -66,6 +66,11 @@ export const routes: RouteRecordRaw[] = [
                 name: 'student-profile',
                 component: () => import('@/modules/student/pages/StudentProfilePage.vue'),
             },
+            {
+                path: 'vantagens',
+                name: 'student-advantages',
+                component: () => import('@/modules/student/pages/StudentAdvantagesPage.vue'),
+            },
         ],
     },
     {

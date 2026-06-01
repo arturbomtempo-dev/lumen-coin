@@ -9,6 +9,7 @@ import {
     PhMoon,
     PhReceipt,
     PhSignOut,
+    PhStorefront,
     PhSun,
     PhUser,
 } from '@phosphor-icons/vue';
@@ -27,6 +28,7 @@ const navItems = [
     { to: '/app/aluno', icon: PhHouse, label: 'INÍCIO', badge: 0 },
     { to: '/app/aluno/extrato', icon: PhReceipt, label: 'EXTRATO', badge: 0 },
     { to: '/app/aluno/perfil', icon: PhUser, label: 'PERFIL', badge: 0 },
+    { to: '/app/aluno/vantagens', icon: PhStorefront, label: 'VANTAGENS', badge: 0 },
 ];
 
 onMounted(() => {
