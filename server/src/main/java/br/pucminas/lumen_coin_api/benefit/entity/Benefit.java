@@ -37,7 +37,7 @@ public class Benefit {
     @Column(name = "description", nullable = false, length = 2000)
     private String description;
 
-    @Column(name = "image_url", nullable = false, length = 500)
+    @Column(name = "image_url", nullable = false, length = 2000)
     private String imageUrl;
 
     @Column(name = "cost", nullable = false)

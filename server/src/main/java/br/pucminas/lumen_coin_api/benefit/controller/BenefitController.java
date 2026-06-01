@@ -7,9 +7,11 @@ import br.pucminas.lumen_coin_api.benefit.service.BenefitService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,13 +23,14 @@ public class BenefitController {
 
     private final BenefitService benefitService;
 
-    @PostMapping("/{companyId}")
+    @PostMapping(value = "/{companyId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('COMPANY')")
     public ResponseEntity<BenefitResponse> create(
             @PathVariable UUID companyId,
-            @Valid @RequestBody CreateBenefitRequest request) {
+            @RequestPart("data") @Valid CreateBenefitRequest request,
+            @RequestPart("image") MultipartFile image) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(benefitService.create(request, companyId));
+                .body(benefitService.create(request, companyId, image));
     }
 
     @GetMapping("/company/{companyId}")
@@ -41,12 +44,13 @@ public class BenefitController {
         return ResponseEntity.ok(benefitService.findById(id));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('COMPANY')")
     public ResponseEntity<BenefitResponse> update(
             @PathVariable UUID id,
-            @Valid @RequestBody UpdateBenefitRequest request) {
-        return ResponseEntity.ok(benefitService.update(id, request));
+            @RequestPart("data") @Valid UpdateBenefitRequest request,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+        return ResponseEntity.ok(benefitService.update(id, request, image));
     }
 
     @DeleteMapping("/{id}")

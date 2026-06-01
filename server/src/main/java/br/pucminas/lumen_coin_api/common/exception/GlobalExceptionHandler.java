@@ -5,6 +5,7 @@ import br.pucminas.lumen_coin_api.coin_transfer.exception.InsufficientBalanceExc
 import br.pucminas.lumen_coin_api.common.dto.ErrorResponse;
 import br.pucminas.lumen_coin_api.benefit.exception.BenefitNotFoundException;
 import br.pucminas.lumen_coin_api.course.exception.CourseNotFoundException;
+import br.pucminas.lumen_coin_api.storage.exception.StorageException;
 import br.pucminas.lumen_coin_api.user.exception.CompanyNotFoundException;
 import br.pucminas.lumen_coin_api.user.exception.CnpjAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.CpfAlreadyInUseException;
@@ -52,6 +53,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBenefitNotFound(
             BenefitNotFoundException ex, HttpServletRequest request) {
         return build(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(StorageException.class)
+    public ResponseEntity<ErrorResponse> handleStorage(
+            StorageException ex, HttpServletRequest request) {
+        return build(HttpStatus.UNPROCESSABLE_ENTITY, "Unprocessable Entity", ex.getMessage(), request);
     }
 
     @ExceptionHandler(CompanyNotFoundException.class)

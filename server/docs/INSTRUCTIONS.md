@@ -310,3 +310,75 @@ WAHA_ENABLED=true
 **5. Disable for testing**
 
 Set `WAHA_ENABLED=false` in `.env` to suppress all WhatsApp calls without removing the integration. The service will log debug messages and return immediately.
+
+---
+
+## Image Storage (Cloudinary)
+
+The API stores benefit images via **Cloudinary**, a cloud-based media management service. Images are uploaded as `multipart/form-data` and only the resulting secure URL is persisted in the database.
+
+### Architecture
+
+```
+br.pucminas.lumen_coin_api.storage
+├── exception/
+│   └── StorageException.java                     - Thrown on invalid file type or upload failure
+├── service/
+│   ├── StorageService.java                        - Interface defining the upload contract
+│   └── impl/
+│       └── CloudinaryStorageServiceImpl.java      - Cloudinary implementation
+```
+
+`CloudinaryConfig` (in `config/`) creates the `Cloudinary` bean from environment variables.
+
+### When images are uploaded
+
+| Endpoint                     | Operation | Image field    |
+| ---------------------------- | --------- | -------------- |
+| `POST /benefits/{companyId}` | Required  | `image` (part) |
+| `PUT /benefits/{id}`         | Optional  | `image` (part) |
+
+If `image` is omitted on update, the existing URL is kept unchanged.
+
+### Request format
+
+Both create and update endpoints use `multipart/form-data` with two parts:
+
+| Part    | Content-Type       | Description                       |
+| ------- | ------------------ | --------------------------------- |
+| `data`  | `application/json` | JSON with the benefit fields      |
+| `image` | image/\*           | Image file (JPEG, PNG, WebP, GIF) |
+
+### Allowed file types
+
+`image/jpeg`, `image/png`, `image/webp`, `image/gif`. Any other MIME type returns `422 Unprocessable Entity`.
+
+### Environment variables
+
+| Variable                | Purpose                                  |
+| ----------------------- | ---------------------------------------- |
+| `CLOUDINARY_CLOUD_NAME` | Your Cloudinary cloud name               |
+| `CLOUDINARY_API_KEY`    | API key from the Cloudinary dashboard    |
+| `CLOUDINARY_API_SECRET` | API secret from the Cloudinary dashboard |
+
+### Local setup with Cloudinary
+
+**1. Create a free account**
+
+Go to [https://cloudinary.com](https://cloudinary.com) and sign up. No credit card required for the free tier.
+
+**2. Get your credentials**
+
+After logging in, open the [Cloudinary Console Dashboard](https://console.cloudinary.com/). You will see your **Cloud name**, **API Key**, and **API Secret** at the top of the page.
+
+**3. Configure the application**
+
+Add the following to your `.env` file:
+
+```env
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+```
+
+Replace the placeholder values with the credentials from the dashboard.
