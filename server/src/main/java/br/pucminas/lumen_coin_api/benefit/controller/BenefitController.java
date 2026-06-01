@@ -4,12 +4,14 @@ import br.pucminas.lumen_coin_api.benefit.dto.request.CreateBenefitRequest;
 import br.pucminas.lumen_coin_api.benefit.dto.request.UpdateBenefitRequest;
 import br.pucminas.lumen_coin_api.benefit.dto.response.BenefitResponse;
 import br.pucminas.lumen_coin_api.benefit.service.BenefitService;
+import br.pucminas.lumen_coin_api.security.UserPrincipal;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,14 +25,14 @@ public class BenefitController {
 
     private final BenefitService benefitService;
 
-    @PostMapping(value = "/{companyId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('COMPANY')")
     public ResponseEntity<BenefitResponse> create(
-            @PathVariable UUID companyId,
-            @RequestPart("data") @Valid CreateBenefitRequest request,
-            @RequestPart("image") MultipartFile image) {
+            @AuthenticationPrincipal UserPrincipal principal,
+            @ModelAttribute @Valid CreateBenefitRequest request,
+            @RequestParam("image") MultipartFile image) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(benefitService.create(request, companyId, image));
+                .body(benefitService.create(request, principal.getUserId(), image));
     }
 
     @GetMapping("/company/{companyId}")
@@ -48,8 +50,8 @@ public class BenefitController {
     @PreAuthorize("hasRole('COMPANY')")
     public ResponseEntity<BenefitResponse> update(
             @PathVariable UUID id,
-            @RequestPart("data") @Valid UpdateBenefitRequest request,
-            @RequestPart(value = "image", required = false) MultipartFile image) {
+            @ModelAttribute @Valid UpdateBenefitRequest request,
+            @RequestParam(value = "image", required = false) MultipartFile image) {
         return ResponseEntity.ok(benefitService.update(id, request, image));
     }
 
