@@ -1,4 +1,7 @@
 @startuml
+
+autonumber
+
 title UC08 - Confirmar Vantagem
 
 actor "Funcionário Empresa Parceira" as FEP

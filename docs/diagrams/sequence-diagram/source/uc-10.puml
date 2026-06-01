@@ -1,5 +1,7 @@
 @startuml
 
+autonumber
+
 title UC10 - Consultar Extrato
 
 actor Professor as P
@@ -24,9 +26,13 @@ activate DBTransacao
 DBTransacao --> CT : listaTransacoes
 deactivate DBTransacao
 
-CT --> Tela : extratoGerado()
-
-Tela --> P : exibirExtrato()
+alt Transações encontradas
+    CT --> Tela : extratoGerado(listaTransacoes)
+    Tela --> P : exibirExtrato()
+else Nenhuma transação encontrada
+    CT --> Tela : listaNaoEncontrada()
+    Tela --> P : exibirMensagemVazia()
+end
 
 deactivate CT
 deactivate Tela
@@ -47,9 +53,13 @@ activate DBTransacao
 DBTransacao --> CT : listaTransacoes
 deactivate DBTransacao
 
-CT --> Tela : extratoGerado()
-
-Tela --> A : exibirExtrato()
+alt Transações encontradas
+    CT --> Tela : extratoGerado(listaTransacoes)
+    Tela --> A : exibirExtrato()
+else Nenhuma transação encontrada
+    CT --> Tela : listaNaoEncontrada()
+    Tela --> A : exibirMensagemVazia()
+end
 
 deactivate CT
 deactivate Tela

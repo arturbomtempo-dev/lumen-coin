@@ -1,4 +1,7 @@
 @startuml
+
+autonumber
+
 title UC02 - Recuperar Senha
 
 actor Usuario as U

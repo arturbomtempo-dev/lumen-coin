@@ -1,5 +1,7 @@
 @startuml
 
+autonumber
+
 title UC04 - Cadastrar Curso
 
 actor "Funcionário Instituição" as FI

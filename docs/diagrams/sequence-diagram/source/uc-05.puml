@@ -1,4 +1,7 @@
 @startuml
+
+autonumber
+
 title UC05 - Realizar Cadastro (Aluno)
 actor "Funcionário Instituição" as FI
 participant "Tela do Sistema" as Tela

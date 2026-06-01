@@ -1,5 +1,7 @@
 @startuml
 
+autonumber
+
 title UC01 - Realizar Login
 
 actor Usuario as U

@@ -1,5 +1,7 @@
 @startuml
 
+autonumber
+
 title UC14 - Visualizar Vantagens
 
 actor Aluno as A
@@ -21,9 +23,13 @@ activate DBVantagem
 DBVantagem --> CV : listaVantagens
 deactivate DBVantagem
 
-CV --> Tela : vantagensEncontradas()
-
-Tela --> A : exibirVantagens()
+alt Vantagens encontradas
+    CV --> Tela : vantagensEncontradas(listaVantagens)
+    Tela --> A : exibirVantagens()
+else Nenhuma vantagem cadastrada
+    CV --> Tela : listaNaoEncontrada()
+    Tela --> A : exibirMensagemVazia()
+end
 
 deactivate CV
 deactivate Tela

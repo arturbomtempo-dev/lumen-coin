@@ -1,4 +1,7 @@
 @startuml
+
+autonumber
+
 title UC06 - Realizar Cadastro (Empresa Parceira)
 actor "Funcionário Empresa Parceira" as FEP
 participant "Tela do Sistema" as Tela

@@ -1,5 +1,7 @@
 @startuml
 
+autonumber
+
 title UC03 - Cadastrar Professor
 
 actor "Funcionário Instituição" as FI

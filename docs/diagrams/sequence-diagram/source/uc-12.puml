@@ -1,4 +1,7 @@
 @startuml
+
+autonumber
+
 title UC12 - Resgatar Vantagem
 actor Aluno as A
 participant "Tela do Sistema" as Tela
@@ -7,7 +10,7 @@ participant "ControleVantagem" as CV
 database "PostgreSQL\nAlunos" as DBAluno
 database "PostgreSQL\nVantagens" as DBVantagem
 database "PostgreSQL\nResgates" as DBResgate
-queue "Fila de Resgate\nVantagem (SQS)" as SQS
+queue "Fila de Resgate\nVantagem (RabbitMQ)" as MQ
 participant "Worker Vantagem" as WV
 participant "Serviço de\nNotificação" as SN
 
@@ -42,15 +45,15 @@ alt Saldo suficiente
     DBResgate --> CR : resgateCriado(codigo)
     deactivate DBResgate
 
-    CR -> SQS : publicarMensagem(alunoID, vantagemID, codigo)
-    activate SQS
-    SQS --> CR : mensagemEnfileirada()
-    deactivate SQS
+    CR -> MQ : publicarMensagem(alunoID, vantagemID, codigo)
+    activate MQ
+    MQ --> CR : mensagemEnfileirada()
+    deactivate MQ
 
     CR --> Tela : resgateRealizado(codigo)
     Tela --> A : vantagemResgatada(codigo)
 
-    SQS -> WV : consumirMensagem()
+    MQ -> WV : consumirMensagem()
     activate WV
     WV -> DBResgate : atualizarStatus(codigo, status=CONFIRMADO)
     activate DBResgate

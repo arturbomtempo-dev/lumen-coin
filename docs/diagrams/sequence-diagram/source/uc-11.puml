@@ -1,4 +1,7 @@
 @startuml
+
+autonumber
+
 title UC11 - Visualizar Transações
 actor Professor as P
 actor Aluno as A

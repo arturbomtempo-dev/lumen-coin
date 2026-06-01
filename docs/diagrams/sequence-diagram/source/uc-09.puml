@@ -7,7 +7,7 @@ participant "ControleTransacao" as CT
 database "PostgreSQL\nProfessores" as DBProfessor
 database "PostgreSQL\nAlunos" as DBAluno
 database "PostgreSQL\nTransacoes" as DBTransacao
-queue "Fila de Envio\nMoeda (SQS)" as SQS
+queue "Fila de Envio\nMoeda (RabbitMQ)" as MQ
 participant "Worker Moedas" as WM
 participant "Serviço de\nNotificação" as SN
 
@@ -47,15 +47,15 @@ alt Saldo suficiente
     CT --> CEM : transacaoRegistrada()
     deactivate CT
 
-    CEM -> SQS : publicarMensagem(alunoID, quantidade, mensagem)
-    activate SQS
-    SQS --> CEM : mensagemEnfileirada()
-    deactivate SQS
+    CEM -> MQ : publicarMensagem(alunoID, quantidade, mensagem)
+    activate MQ
+    MQ --> CEM : mensagemEnfileirada()
+    deactivate MQ
 
     CEM --> Tela : envioRealizado()
     Tela --> P : moedasEnviadas()
 
-    SQS -> WM : consumirMensagem()
+    MQ -> WM : consumirMensagem()
     activate WM
     WM -> SN : enviarNotificacaoEmail(emailAluno,\nquantidade, mensagem)
     activate SN
