@@ -3,7 +3,9 @@ package br.pucminas.lumen_coin_api.common.exception;
 import br.pucminas.lumen_coin_api.auth.exception.InvalidPasswordResetTokenException;
 import br.pucminas.lumen_coin_api.coin_transfer.exception.InsufficientBalanceException;
 import br.pucminas.lumen_coin_api.common.dto.ErrorResponse;
+import br.pucminas.lumen_coin_api.benefit.exception.BenefitNotFoundException;
 import br.pucminas.lumen_coin_api.course.exception.CourseNotFoundException;
+import br.pucminas.lumen_coin_api.user.exception.CompanyNotFoundException;
 import br.pucminas.lumen_coin_api.user.exception.CnpjAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.CpfAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
@@ -43,6 +45,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CourseNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleCourseNotFound(
             CourseNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(BenefitNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleBenefitNotFound(
+            BenefitNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(CompanyNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCompanyNotFound(
+            CompanyNotFoundException ex, HttpServletRequest request) {
         return build(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage(), request);
     }
 
