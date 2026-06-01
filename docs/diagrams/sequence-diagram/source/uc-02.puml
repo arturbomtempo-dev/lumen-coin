@@ -1,0 +1,81 @@
+@startuml
+title UC02 - Recuperar Senha
+
+actor Usuario as U
+participant "Tela do Sistema" as Tela
+participant "ControleAuth" as CA
+participant "ServicoEmail" as SE
+database "PostgreSQL\nUsuarios" as DBUsuario
+database "PostgreSQL\nTokensReset" as DBToken
+
+group Fase 1 - Solicitar recuperação de senha
+
+U -> Tela : solicitarRecuperacaoSenha(email)
+activate Tela
+
+Tela -> CA : esqueceuSenha(email)
+activate CA
+
+CA -> DBUsuario : buscarUsuarioPorEmail(email)
+activate DBUsuario
+DBUsuario --> CA : resultadoBusca()
+deactivate DBUsuario
+
+opt Email cadastrado no sistema
+    CA -> DBToken : salvarTokenReset(usuarioID, token, expiracaoEmUmaHora)
+    activate DBToken
+    DBToken --> CA : tokenSalvo()
+    deactivate DBToken
+
+    CA -> SE : enviarEmailRecuperacaoSenha(email, nome, linkReset)
+    activate SE
+    SE --> CA : emailEnviado()
+    deactivate SE
+end
+
+CA --> Tela : instrucoesPorEmail()
+Tela --> U : exibirMensagemInstrucoes()
+
+deactivate CA
+deactivate Tela
+
+end
+
+group Fase 2 - Redefinir senha
+
+U -> Tela : submeterNovaSenha(token, novaSenha)
+activate Tela
+
+Tela -> CA : resetarSenha(token, novaSenha)
+activate CA
+
+CA -> DBToken : buscarToken(token)
+activate DBToken
+DBToken --> CA : tokenEncontrado(dadosToken)
+deactivate DBToken
+
+alt Token válido (não expirado e não utilizado)
+    CA -> DBUsuario : atualizarSenha(usuarioID, novaSenhaHash)
+    activate DBUsuario
+    DBUsuario --> CA : senhaAtualizada()
+    deactivate DBUsuario
+
+    CA -> DBToken : marcarTokenComoUsado(token)
+    activate DBToken
+    DBToken --> CA : tokenAtualizado()
+    deactivate DBToken
+
+    CA --> Tela : senhaRedefinidaComSucesso()
+    Tela --> U : exibirConfirmacaoRedefinicao()
+
+else Token inválido ou expirado
+    CA --> Tela : erroTokenInvalido()
+    Tela --> U : exibirMensagemErro()
+end
+
+deactivate CA
+deactivate Tela
+
+end
+
+@enduml

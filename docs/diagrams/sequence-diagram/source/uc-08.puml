@@ -1,0 +1,66 @@
+@startuml
+title UC08 - Confirmar Vantagem
+
+actor "Funcionário Empresa Parceira" as FEP
+participant "Tela do Sistema" as Tela
+participant "ControleResgate" as CR
+participant "ServicoNotificacao" as SN
+database "PostgreSQL\nResgates" as DBResgate
+database "PostgreSQL\nAlunos" as DBAluno
+
+FEP -> Tela : consultarResgatesPendentes(empresaID)
+activate Tela
+
+Tela -> CR : listarResgatesPendentes(empresaID)
+activate CR
+
+CR -> DBResgate : buscarResgatesPorEmpresa(empresaID, status=PENDENTE)
+activate DBResgate
+DBResgate --> CR : listaResgatesPendentes()
+deactivate DBResgate
+
+CR --> Tela : resgatesEncontrados(lista)
+Tela --> FEP : exibirResgatesPendentes()
+
+deactivate CR
+deactivate Tela
+
+FEP -> Tela : confirmarResgate(codigoResgate)
+activate Tela
+
+Tela -> CR : confirmarVantagem(codigoResgate, empresaID)
+activate CR
+
+CR -> DBResgate : buscarResgate(codigoResgate)
+activate DBResgate
+DBResgate --> CR : resgateEncontrado(dadosResgate)
+deactivate DBResgate
+
+alt Resgate válido e com status PENDENTE
+    CR -> DBResgate : atualizarStatus(codigoResgate, status=CONFIRMADO)
+    activate DBResgate
+    DBResgate --> CR : statusAtualizado()
+    deactivate DBResgate
+
+    CR -> DBAluno : buscarAluno(alunoID)
+    activate DBAluno
+    DBAluno --> CR : alunoEncontrado(emailAluno)
+    deactivate DBAluno
+
+    CR -> SN : enviarNotificacaoConfirmacao(emailAluno, codigoResgate)
+    activate SN
+    SN --> CR : notificacaoEnviada()
+    deactivate SN
+
+    CR --> Tela : resgateConfirmado()
+    Tela --> FEP : vantagemConfirmadaComSucesso()
+
+else Resgate já confirmado ou inválido
+    CR --> Tela : erroResgateInvalido()
+    Tela --> FEP : exibirMensagemErro()
+end
+
+deactivate CR
+deactivate Tela
+
+@enduml
