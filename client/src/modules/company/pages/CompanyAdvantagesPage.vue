@@ -311,7 +311,7 @@ onMounted(() => {
                 </p>
             </PixelCard>
 
-            <div v-else class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div v-else class="grid sm:grid-cols-2 gap-4">
                 <PixelCard
                     v-for="benefit in benefits"
                     :key="benefit.id"
