@@ -1,0 +1,105 @@
+@startuml
+
+autonumber
+title Diagrama Geral - Sistema de Moedas e Vantagens
+
+actor Usuario as U
+actor Aluno as A
+actor Professor as P
+actor "Funcionário Instituição" as FI
+actor "Funcionário Empresa Parceira" as FEP
+
+participant "Tela do Sistema" as Tela
+
+participant "ControleUsuario" as CU
+participant "ControleAuth" as CAuth
+participant "ControleAluno" as CAluno
+participant "ControleProfessor" as CProfessor
+participant "ControleCurso" as CCurso
+participant "ControleEmpresa" as CEmpresa
+participant "ControleVantagem" as CV
+participant "ControleResgate" as CR
+participant "ControleEnvioMoeda" as CEM
+participant "ControleTransacao" as CT
+
+participant "ServicoNotificacao" as SN
+participant "ServicoEmail" as SE
+
+queue "Fila RabbitMQ\nMoedas" as MQMoeda
+queue "Fila RabbitMQ\nVantagens" as MQVantagem
+
+participant "Worker Moedas" as WM
+participant "Worker Vantagem" as WV
+
+database "PostgreSQL\nUsuarios" as DBUsuario
+database "PostgreSQL\nAlunos" as DBAluno
+database "PostgreSQL\nProfessores" as DBProfessor
+database "PostgreSQL\nCursos" as DBCurso
+database "PostgreSQL\nInstituicao" as DBInstituicao
+database "PostgreSQL\nEmpresas" as DBEmpresa
+database "PostgreSQL\nVantagens" as DBVantagem
+database "PostgreSQL\nResgates" as DBResgate
+database "PostgreSQL\nTransacoes" as DBTransacao
+database "PostgreSQL\nTokensReset" as DBToken
+
+== Autenticação ==
+
+ref over U,Tela,CU : UC01 - Realizar Login
+
+ref over U,Tela,CAuth : UC02 - Recuperar Senha
+
+== Cadastros Institucionais ==
+
+ref over FI,Tela,CProfessor : UC03 - Cadastrar Professor
+
+ref over FI,Tela,CCurso : UC04 - Cadastrar Curso
+
+ref over FI,Tela,CAluno : UC05 - Cadastro de Aluno
+
+== Cadastros Gerais ==
+
+ref over FEP,Tela,CEmpresa : UC06 - Cadastro Empresa Parceira
+
+ref over A,Tela,CAluno : UC13 - Auto Cadastro Aluno
+
+== Gestão de Vantagens ==
+
+ref over FEP,Tela,CV : UC07 - Cadastrar Vantagem
+
+ref over A,Tela,CV : UC14 - Visualizar Vantagens
+
+ref over FEP,Tela,CR : UC08 - Confirmar Vantagem
+
+ref over A,Tela,CR : UC12 - Resgatar Vantagem
+
+== Gestão de Moedas ==
+
+ref over P,Tela,CEM : UC09 - Enviar Moedas
+
+== Transações ==
+
+ref over P,A,Tela,CT : UC10 - Consultar Extrato
+
+ref over P,A,Tela,CT : UC11 - Visualizar Transações
+
+== Processamento Assíncrono ==
+
+group Fluxo Assíncrono de Moedas
+
+    MQMoeda -> WM : consumirMensagem()
+
+    WM -> SN : enviarNotificacaoEmail()
+
+end
+
+group Fluxo Assíncrono de Vantagens
+
+    MQVantagem -> WV : consumirMensagem()
+
+    WV -> DBResgate : atualizarStatus()
+
+    WV -> SN : enviarNotificacaoEmail()
+
+end
+
+@enduml
