@@ -11,4 +11,10 @@ public interface EmailService {
     void sendCoinSent(String to, String teacherName, String studentName, int amount, String message);
 
     void sendCoinReceived(String to, String studentName, String teacherName, int amount, String message);
+
+    void sendBenefitRedemptionConfirmationToStudent(String to, String studentName, String benefitName);
+
+    void sendBenefitRedemptionNotificationToCompany(String to, String companyName, String studentName, String benefitName, String couponCode);
+
+    void sendBenefitRedemptionApprovedToStudent(String to, String studentName, String benefitName, String usageNotes);
 }

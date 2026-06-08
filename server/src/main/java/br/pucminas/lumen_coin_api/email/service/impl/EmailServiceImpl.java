@@ -1,5 +1,8 @@
 package br.pucminas.lumen_coin_api.email.service.impl;
 
+import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionCompanyNotificationEmailContext;
+import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionStudentApprovedEmailContext;
+import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionStudentConfirmationEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.CoinReceivedEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.CoinSentEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.PasswordResetEmailContext;
@@ -111,6 +114,57 @@ public class EmailServiceImpl implements EmailService {
             log.info("Coin received email dispatched to {}", to);
         } catch (Exception e) {
             log.error("Failed to send coin received email to {}: {}", to, e.getMessage());
+        }
+    }
+
+    @Async
+    @Override
+    public void sendBenefitRedemptionConfirmationToStudent(String to, String studentName, String benefitName) {
+        if (!enabled) {
+            log.debug("Mail disabled - skipping benefit redemption confirmation to {}", to);
+            return;
+        }
+        try {
+            String html = templateEngine.render("benefit-redemption-student-confirmation",
+                    new BenefitRedemptionStudentConfirmationEmailContext(studentName, benefitName));
+            send(to, "Solicitação de resgate recebida - Lumen Coin", html);
+            log.info("Benefit redemption confirmation email sent to {}", to);
+        } catch (Exception e) {
+            log.error("Failed to send benefit redemption confirmation to {}: {}", to, e.getMessage());
+        }
+    }
+
+    @Async
+    @Override
+    public void sendBenefitRedemptionNotificationToCompany(String to, String companyName, String studentName, String benefitName, String couponCode) {
+        if (!enabled) {
+            log.debug("Mail disabled - skipping benefit redemption notification to company {}", to);
+            return;
+        }
+        try {
+            String html = templateEngine.render("benefit-redemption-company-notification",
+                    new BenefitRedemptionCompanyNotificationEmailContext(companyName, studentName, benefitName, couponCode));
+            send(to, "Novo resgate de vantagem solicitado - Lumen Coin", html);
+            log.info("Benefit redemption company notification sent to {}", to);
+        } catch (Exception e) {
+            log.error("Failed to send benefit redemption notification to company {}: {}", to, e.getMessage());
+        }
+    }
+
+    @Async
+    @Override
+    public void sendBenefitRedemptionApprovedToStudent(String to, String studentName, String benefitName, String usageNotes) {
+        if (!enabled) {
+            log.debug("Mail disabled - skipping benefit redemption approved email to {}", to);
+            return;
+        }
+        try {
+            String html = templateEngine.render("benefit-redemption-student-approved",
+                    new BenefitRedemptionStudentApprovedEmailContext(studentName, benefitName, usageNotes));
+            send(to, "Seu resgate foi aprovado! - Lumen Coin", html);
+            log.info("Benefit redemption approved email sent to {}", to);
+        } catch (Exception e) {
+            log.error("Failed to send benefit redemption approved email to {}: {}", to, e.getMessage());
         }
     }
 

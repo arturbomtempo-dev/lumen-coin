@@ -5,16 +5,22 @@ import br.pucminas.lumen_coin_api.benefit.exception.BenefitNotFoundException;
 import br.pucminas.lumen_coin_api.benefit.repository.BenefitRepository;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.CreateBenefitRedemptionRequest;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.BenefitRedemptionResponse;
+import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.ValidateBenefitRedemptionResponse;
 import br.pucminas.lumen_coin_api.benefit_redemption.entity.BenefitRedemption;
 import br.pucminas.lumen_coin_api.benefit_redemption.enums.RedemptionStatus;
 import br.pucminas.lumen_coin_api.benefit_redemption.exception.BenefitRedemptionNotFoundException;
 import br.pucminas.lumen_coin_api.benefit_redemption.exception.RedemptionAlreadyUsedException;
 import br.pucminas.lumen_coin_api.benefit_redemption.exception.UnauthorizedRedemptionException;
+import br.pucminas.lumen_coin_api.benefit_redemption.messaging.BenefitRedemptionMessage;
+import br.pucminas.lumen_coin_api.benefit_redemption.messaging.BenefitRedemptionProducer;
 import br.pucminas.lumen_coin_api.benefit_redemption.repository.BenefitRedemptionRepository;
 import br.pucminas.lumen_coin_api.benefit_redemption.service.BenefitRedemptionService;
 import br.pucminas.lumen_coin_api.coin_transfer.exception.InsufficientBalanceException;
+import br.pucminas.lumen_coin_api.email.service.EmailService;
+import br.pucminas.lumen_coin_api.user.entity.Company;
 import br.pucminas.lumen_coin_api.user.entity.Student;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
+import br.pucminas.lumen_coin_api.user.repository.CompanyRepository;
 import br.pucminas.lumen_coin_api.user.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -36,6 +42,9 @@ public class BenefitRedemptionServiceImpl implements BenefitRedemptionService {
     private final BenefitRedemptionRepository redemptionRepository;
     private final BenefitRepository benefitRepository;
     private final StudentRepository studentRepository;
+    private final CompanyRepository companyRepository;
+    private final BenefitRedemptionProducer redemptionProducer;
+    private final EmailService emailService;
 
     @Override
     @Transactional
@@ -69,6 +78,19 @@ public class BenefitRedemptionServiceImpl implements BenefitRedemptionService {
             redemption.setCouponCode(generateUniqueCouponCode());
             saved = redemptionRepository.saveAndFlush(redemption);
         }
+
+        Company company = companyRepository.findById(benefit.getCompanyId())
+                .orElseThrow(() -> new UserNotFoundException(benefit.getCompanyId()));
+
+        redemptionProducer.send(new BenefitRedemptionMessage(
+                student.getEmail(),
+                student.getName(),
+                company.getEmail(),
+                company.getName(),
+                benefit.getName(),
+                saved.getCouponCode(),
+                saved.getCoinsSpent()));
+
         return toResponse(saved);
     }
 
@@ -91,8 +113,37 @@ public class BenefitRedemptionServiceImpl implements BenefitRedemptionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public ValidateBenefitRedemptionResponse validateCoupon(String couponCode, UUID companyId) {
+        BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
+                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
+
+        if (!redemption.getCompanyId().equals(companyId)) {
+            throw new UnauthorizedRedemptionException();
+        }
+
+        if (redemption.getStatus() == RedemptionStatus.USED) {
+            throw new RedemptionAlreadyUsedException();
+        }
+
+        Student student = studentRepository.findById(redemption.getStudentId())
+                .orElseThrow(() -> new UserNotFoundException(redemption.getStudentId()));
+
+        Benefit benefit = benefitRepository.findById(redemption.getBenefitId())
+                .orElseThrow(() -> new BenefitNotFoundException(redemption.getBenefitId()));
+
+        return new ValidateBenefitRedemptionResponse(
+                redemption.getId(),
+                student.getName(),
+                benefit.getName(),
+                redemption.getCoinsSpent(),
+                redemption.getRedeemedAt(),
+                redemption.getCouponCode());
+    }
+
+    @Override
     @Transactional
-    public BenefitRedemptionResponse markAsUsed(String couponCode, UUID companyId) {
+    public BenefitRedemptionResponse markAsUsed(String couponCode, UUID companyId, String usageNotes) {
         BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
                 .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
 
@@ -107,7 +158,21 @@ public class BenefitRedemptionServiceImpl implements BenefitRedemptionService {
         redemption.setStatus(RedemptionStatus.USED);
         redemption.setUsedAt(Instant.now());
 
-        return toResponse(redemptionRepository.save(redemption));
+        BenefitRedemption saved = redemptionRepository.save(redemption);
+
+        Student student = studentRepository.findById(saved.getStudentId())
+                .orElseThrow(() -> new UserNotFoundException(saved.getStudentId()));
+
+        Benefit benefit = benefitRepository.findById(saved.getBenefitId())
+                .orElseThrow(() -> new BenefitNotFoundException(saved.getBenefitId()));
+
+        emailService.sendBenefitRedemptionApprovedToStudent(
+                student.getEmail(),
+                student.getName(),
+                benefit.getName(),
+                usageNotes);
+
+        return toResponse(saved);
     }
 
     private String generateUniqueCouponCode() {

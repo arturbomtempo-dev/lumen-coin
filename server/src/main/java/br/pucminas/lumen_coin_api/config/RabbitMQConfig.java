@@ -20,6 +20,11 @@ public class RabbitMQConfig {
     public static final String COIN_TRANSFER_EXCHANGE = "coin.transfer.exchange";
     public static final String COIN_TRANSFER_ROUTING_KEY = "coin.transfer";
 
+    public static final String BENEFIT_REDEMPTION_QUEUE = "benefit.redemption";
+    public static final String BENEFIT_REDEMPTION_DLQ = "benefit.redemption.dlq";
+    public static final String BENEFIT_REDEMPTION_EXCHANGE = "benefit.redemption.exchange";
+    public static final String BENEFIT_REDEMPTION_ROUTING_KEY = "benefit.redemption";
+
     @Bean
     Queue coinTransferQueue() {
         return QueueBuilder.durable(COIN_TRANSFER_QUEUE)
@@ -41,6 +46,29 @@ public class RabbitMQConfig {
     @Bean
     Binding coinTransferBinding(Queue coinTransferQueue, DirectExchange coinTransferExchange) {
         return BindingBuilder.bind(coinTransferQueue).to(coinTransferExchange).with(COIN_TRANSFER_ROUTING_KEY);
+    }
+
+    @Bean
+    Queue benefitRedemptionQueue() {
+        return QueueBuilder.durable(BENEFIT_REDEMPTION_QUEUE)
+                .withArgument("x-dead-letter-exchange", "")
+                .withArgument("x-dead-letter-routing-key", BENEFIT_REDEMPTION_DLQ)
+                .build();
+    }
+
+    @Bean
+    Queue benefitRedemptionDeadLetterQueue() {
+        return QueueBuilder.durable(BENEFIT_REDEMPTION_DLQ).build();
+    }
+
+    @Bean
+    DirectExchange benefitRedemptionExchange() {
+        return new DirectExchange(BENEFIT_REDEMPTION_EXCHANGE);
+    }
+
+    @Bean
+    Binding benefitRedemptionBinding(Queue benefitRedemptionQueue, DirectExchange benefitRedemptionExchange) {
+        return BindingBuilder.bind(benefitRedemptionQueue).to(benefitRedemptionExchange).with(BENEFIT_REDEMPTION_ROUTING_KEY);
     }
 
     @Bean

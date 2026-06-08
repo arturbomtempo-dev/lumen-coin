@@ -3,6 +3,7 @@ package br.pucminas.lumen_coin_api.benefit_redemption.controller;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.CreateBenefitRedemptionRequest;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.UseBenefitRedemptionRequest;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.BenefitRedemptionResponse;
+import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.ValidateBenefitRedemptionResponse;
 import br.pucminas.lumen_coin_api.benefit_redemption.service.BenefitRedemptionService;
 import br.pucminas.lumen_coin_api.security.UserPrincipal;
 import jakarta.validation.Valid;
@@ -13,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,11 +52,20 @@ public class BenefitRedemptionController {
         return ResponseEntity.ok(benefitRedemptionService.getCompanyRedemptions(principal.getUserId()));
     }
 
+    @GetMapping("/validate/{couponCode}")
+    @PreAuthorize("hasRole('COMPANY')")
+    public ResponseEntity<ValidateBenefitRedemptionResponse> validateCoupon(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable String couponCode) {
+        return ResponseEntity.ok(benefitRedemptionService.validateCoupon(couponCode, principal.getUserId()));
+    }
+
     @PatchMapping("/use")
     @PreAuthorize("hasRole('COMPANY')")
     public ResponseEntity<BenefitRedemptionResponse> markAsUsed(
             @AuthenticationPrincipal UserPrincipal principal,
             @Valid @RequestBody UseBenefitRedemptionRequest request) {
-        return ResponseEntity.ok(benefitRedemptionService.markAsUsed(request.couponCode(), principal.getUserId()));
+        return ResponseEntity.ok(benefitRedemptionService.markAsUsed(
+                request.couponCode(), principal.getUserId(), request.usageNotes()));
     }
 }

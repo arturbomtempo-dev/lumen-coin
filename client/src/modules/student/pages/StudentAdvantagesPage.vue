@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { getBenefitsByCompany, type BenefitResponse } from '@/modules/company/services/benefit.service';
 import { getCompanies } from '@/modules/institution/services/institution.service';
+import { redeemBenefit } from '@/modules/student/services/benefit-redemption.service';
 import { useStudentStore } from '@/modules/student/stores/student.store';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import {
+    PhCheckCircle,
     PhLightning,
     PhMagnifyingGlass,
     PhSparkle,
@@ -28,8 +30,9 @@ const searchQuery = ref('');
 const sortOrder = ref<'default' | 'menor' | 'maior' | 'alfabetica'>('default');
 const onlyAffordable = ref(false);
 
-const pendingRedemption = ref<{ name: string; cost: number } | null>(null);
-const generatedCoupon = ref<{ code: string; name: string } | null>(null);
+const pendingRedemption = ref<{ id: string; name: string; cost: number } | null>(null);
+const redemptionSuccess = ref<{ benefitName: string } | null>(null);
+const isRedeeming = ref(false);
 
 async function loadBenefits() {
     isLoading.value = true;
@@ -66,15 +69,18 @@ const filteredBenefits = computed(() => {
     return list;
 });
 
-function confirmRedemption() {
-    if (!pendingRedemption.value) return;
-    if (balance.value < pendingRedemption.value.cost) {
+async function confirmRedemption() {
+    if (!pendingRedemption.value || isRedeeming.value) return;
+    isRedeeming.value = true;
+    try {
+        await redeemBenefit(pendingRedemption.value.id);
+        redemptionSuccess.value = { benefitName: pendingRedemption.value.name };
         pendingRedemption.value = null;
-        return;
+        await store.loadProfile();
+    } catch {
+    } finally {
+        isRedeeming.value = false;
     }
-    const code = store.spend(pendingRedemption.value.cost, pendingRedemption.value.name);
-    generatedCoupon.value = { code, name: pendingRedemption.value.name };
-    pendingRedemption.value = null;
 }
 
 onMounted(() => {
@@ -187,7 +193,7 @@ onMounted(() => {
                             size="sm"
                             :variant="balance >= benefit.cost ? 'success' : 'ghost'"
                             :disabled="balance < benefit.cost"
-                            @click="pendingRedemption = { name: benefit.name, cost: benefit.cost }"
+                            @click="pendingRedemption = { id: benefit.id, name: benefit.name, cost: benefit.cost }"
                         >
                             <PhSparkle weight="fill" class="pixel-icon" />
                             {{ balance >= benefit.cost ? 'RESGATAR' : 'FALTAM MOEDAS' }}
@@ -228,12 +234,19 @@ onMounted(() => {
                     <PixelButton
                         variant="ghost"
                         class="flex-1"
+                        :disabled="isRedeeming"
                         @click="pendingRedemption = null"
                     >
                         CANCELAR
                     </PixelButton>
-                    <PixelButton variant="success" class="flex-1" @click="confirmRedemption">
-                        <PhLightning weight="fill" class="pixel-icon" /> CONFIRMAR
+                    <PixelButton
+                        variant="success"
+                        class="flex-1"
+                        :disabled="isRedeeming"
+                        @click="confirmRedemption"
+                    >
+                        <PhLightning weight="fill" class="pixel-icon" />
+                        {{ isRedeeming ? 'AGUARDE...' : 'CONFIRMAR' }}
                     </PixelButton>
                 </div>
             </div>
@@ -241,9 +254,9 @@ onMounted(() => {
     </div>
 
     <div
-        v-if="generatedCoupon"
+        v-if="redemptionSuccess"
         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80"
-        @click.self="generatedCoupon = null"
+        @click.self="redemptionSuccess = null"
     >
         <div
             class="w-full max-w-md bg-card border-4 border-border shadow-[8px_8px_0_0_hsl(var(--border))] animate-pop"
@@ -251,31 +264,33 @@ onMounted(() => {
             <div
                 class="bg-success text-success-foreground border-b-4 border-border px-4 py-2 font-pixel text-xs"
             >
-                ★ RECOMPENSA DESBLOQUEADA!
+                ★ SOLICITAÇÃO REALIZADA!
             </div>
             <div class="p-6 text-center">
-                <div class="flex justify-center mb-3">
-                    <CoinIcon :size="48" class="animate-bob" />
+                <div class="flex justify-center mb-4">
+                    <PhCheckCircle
+                        weight="fill"
+                        :size="56"
+                        style="color: hsl(var(--success))"
+                        class="animate-bob"
+                    />
                 </div>
-                <p class="font-display text-xl">
-                    Você resgatou <strong>{{ generatedCoupon.name }}</strong>!
+                <p class="font-pixel text-xs leading-relaxed" style="color: hsl(var(--success))">
+                    SOLICITAÇÃO ENVIADA!
                 </p>
-                <div
-                    class="mt-5 border-2 border-dashed border-border bg-hud text-hud-foreground p-4"
-                >
-                    <div class="font-pixel text-[9px] mb-2">CUPOM GERADO</div>
-                    <div class="font-pixel text-lg md:text-xl break-all">
-                        {{ generatedCoupon.code }}
-                    </div>
-                </div>
-                <p class="font-sans text-xs text-muted-foreground mt-3">
-                    Apresente este código no estabelecimento parceiro.
+                <p class="font-display text-xl mt-3">
+                    Sua solicitação de
+                    <strong>{{ redemptionSuccess.benefitName }}</strong> foi realizada com sucesso!
                 </p>
-                <div class="mt-5">
+                <p class="font-sans text-sm text-muted-foreground mt-3 leading-relaxed">
+                    Em breve você receberá um e-mail com as informações de recebimento da sua
+                    vantagem.
+                </p>
+                <div class="mt-6">
                     <PixelButton
-                        variant="primary"
+                        variant="success"
                         class="w-full"
-                        @click="generatedCoupon = null"
+                        @click="redemptionSuccess = null"
                     >
                         FECHAR
                     </PixelButton>
