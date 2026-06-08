@@ -7,6 +7,7 @@ import {
     updateBenefit,
     type BenefitResponse,
 } from '@/modules/company/services/benefit.service';
+import { getRedeemedBenefitIds } from '@/modules/company/services/benefit-redemption.service';
 import { registerBenefitSchema } from '@/modules/schemas/register-benefit.schema';
 import { updateBenefitSchema } from '@/modules/schemas/update-benefit.schema';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
@@ -15,6 +16,7 @@ import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import {
     PhImageSquare,
+    PhLockSimple,
     PhPencil,
     PhPlus,
     PhStorefront,
@@ -28,6 +30,7 @@ const authStore = useAuthStore();
 
 const benefits = ref<BenefitResponse[]>([]);
 const isLoading = ref(false);
+const redeemedBenefitIds = ref<Set<string>>(new Set());
 
 const createForm = ref({ name: '', description: '', cost: '' });
 const createImage = ref<File | null>(null);
@@ -46,8 +49,13 @@ async function loadBenefits() {
     if (!authStore.user?.id) return;
     isLoading.value = true;
     try {
-        const response = await getBenefitsByCompany(authStore.user.id);
-        benefits.value = response.data;
+        const [benefitsRes, redeemedRes] = await Promise.all([
+            getBenefitsByCompany(authStore.user.id),
+            getRedeemedBenefitIds(),
+        ]);
+        benefits.value = benefitsRes.data;
+        const { pendingBenefitIds, usedBenefitIds } = redeemedRes.data;
+        redeemedBenefitIds.value = new Set([...pendingBenefitIds, ...usedBenefitIds]);
     } catch {
     } finally {
         isLoading.value = false;
@@ -329,11 +337,19 @@ onMounted(() => {
                         <p class="font-sans text-xs text-foreground/75 mt-2 flex-1 line-clamp-3">
                             {{ benefit.description }}
                         </p>
-                        <div class="mt-4 flex items-center justify-between">
-                            <div class="font-pixel text-sm flex items-center gap-1">
+                        <div class="mt-4 flex items-center justify-between gap-2">
+                            <div class="font-pixel text-sm flex items-center gap-1 shrink-0">
                                 <CoinIcon :size="12" /> {{ benefit.cost }}
                             </div>
-                            <div class="flex gap-2">
+                            <div
+                                v-if="redeemedBenefitIds.has(benefit.id)"
+                                class="flex items-center gap-1.5 border-2 border-border px-2 py-1 font-pixel text-[8px]"
+                                style="color: hsl(var(--muted-foreground)); background: hsl(var(--muted))"
+                            >
+                                <PhLockSimple weight="fill" :size="12" class="pixel-icon shrink-0" />
+                                JÁ RESGATADA
+                            </div>
+                            <div v-else class="flex gap-2">
                                 <PixelButton
                                     size="sm"
                                     variant="ghost"

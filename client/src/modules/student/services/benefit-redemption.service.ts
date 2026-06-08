@@ -12,6 +12,15 @@ export type BenefitRedemptionResponse = {
     usedAt: string | null;
 };
 
+export type RedeemedBenefitIdsResponse = {
+    pendingBenefitIds: string[];
+    usedBenefitIds: string[];
+};
+
 export function redeemBenefit(benefitId: string) {
     return api.post<BenefitRedemptionResponse>('/benefit-redemptions', { benefitId });
+}
+
+export function getRedeemedBenefitIds() {
+    return api.get<RedeemedBenefitIdsResponse>('/benefit-redemptions/redeemed-benefit-ids');
 }

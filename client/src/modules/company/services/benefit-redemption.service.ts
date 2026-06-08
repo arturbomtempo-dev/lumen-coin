@@ -1,5 +1,10 @@
 import { api } from '@/shared/services/api';
 
+export type RedeemedBenefitIdsResponse = {
+    pendingBenefitIds: string[];
+    usedBenefitIds: string[];
+};
+
 export type ValidateBenefitRedemptionResponse = {
     id: string;
     studentName: string;
@@ -20,6 +25,10 @@ export type BenefitRedemptionResponse = {
     redeemedAt: string;
     usedAt: string | null;
 };
+
+export function getRedeemedBenefitIds() {
+    return api.get<RedeemedBenefitIdsResponse>('/benefit-redemptions/redeemed-benefit-ids');
+}
 
 export function validateCoupon(couponCode: string) {
     return api.get<ValidateBenefitRedemptionResponse>(

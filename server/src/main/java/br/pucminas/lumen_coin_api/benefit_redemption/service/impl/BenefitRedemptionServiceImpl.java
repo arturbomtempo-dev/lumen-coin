@@ -5,6 +5,7 @@ import br.pucminas.lumen_coin_api.benefit.exception.BenefitNotFoundException;
 import br.pucminas.lumen_coin_api.benefit.repository.BenefitRepository;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.CreateBenefitRedemptionRequest;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.BenefitRedemptionResponse;
+import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.RedeemedBenefitIdsResponse;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.ValidateBenefitRedemptionResponse;
 import br.pucminas.lumen_coin_api.benefit_redemption.entity.BenefitRedemption;
 import br.pucminas.lumen_coin_api.benefit_redemption.enums.RedemptionStatus;
@@ -56,7 +57,7 @@ public class BenefitRedemptionServiceImpl implements BenefitRedemptionService {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new UserNotFoundException(studentId));
 
-        if (redemptionRepository.existsByStudentIdAndBenefitId(studentId, benefit.getId())) {
+        if (redemptionRepository.existsByBenefitId(benefit.getId())) {
             throw new BenefitAlreadyRedeemedException();
         }
 
@@ -115,6 +116,14 @@ public class BenefitRedemptionServiceImpl implements BenefitRedemptionService {
                 .stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RedeemedBenefitIdsResponse getRedeemedBenefitIds() {
+        return new RedeemedBenefitIdsResponse(
+                redemptionRepository.findBenefitIdsByStatus(RedemptionStatus.PENDING),
+                redemptionRepository.findBenefitIdsByStatus(RedemptionStatus.USED));
     }
 
     @Override

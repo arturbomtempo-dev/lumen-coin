@@ -3,6 +3,7 @@ package br.pucminas.lumen_coin_api.benefit_redemption.controller;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.CreateBenefitRedemptionRequest;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.UseBenefitRedemptionRequest;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.BenefitRedemptionResponse;
+import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.RedeemedBenefitIdsResponse;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.ValidateBenefitRedemptionResponse;
 import br.pucminas.lumen_coin_api.benefit_redemption.service.BenefitRedemptionService;
 import br.pucminas.lumen_coin_api.security.UserPrincipal;
@@ -43,6 +44,12 @@ public class BenefitRedemptionController {
     public ResponseEntity<List<BenefitRedemptionResponse>> getMyRedemptions(
             @AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(benefitRedemptionService.getMyRedemptions(principal.getUserId()));
+    }
+
+    @GetMapping("/redeemed-benefit-ids")
+    @PreAuthorize("hasAnyRole('STUDENT', 'COMPANY')")
+    public ResponseEntity<RedeemedBenefitIdsResponse> getRedeemedBenefitIds() {
+        return ResponseEntity.ok(benefitRedemptionService.getRedeemedBenefitIds());
     }
 
     @GetMapping("/company")

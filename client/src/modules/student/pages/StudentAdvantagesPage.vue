@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { getBenefitsByCompany, type BenefitResponse } from '@/modules/company/services/benefit.service';
 import { getCompanies } from '@/modules/institution/services/institution.service';
-import { redeemBenefit } from '@/modules/student/services/benefit-redemption.service';
+import {
+    getRedeemedBenefitIds,
+    redeemBenefit,
+} from '@/modules/student/services/benefit-redemption.service';
 import { useStudentStore } from '@/modules/student/stores/student.store';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
@@ -34,10 +37,18 @@ const pendingRedemption = ref<{ id: string; name: string; cost: number } | null>
 const redemptionSuccess = ref<{ benefitName: string } | null>(null);
 const isRedeeming = ref(false);
 
+const pendingBenefitIds = ref<Set<string>>(new Set());
+const usedBenefitIds = ref<Set<string>>(new Set());
+
 async function loadBenefits() {
     isLoading.value = true;
     try {
-        const companiesRes = await getCompanies();
+        const [companiesRes, redeemedRes] = await Promise.all([
+            getCompanies(),
+            getRedeemedBenefitIds(),
+        ]);
+        pendingBenefitIds.value = new Set(redeemedRes.data.pendingBenefitIds);
+        usedBenefitIds.value = new Set(redeemedRes.data.usedBenefitIds);
         const results = await Promise.all(
             companiesRes.data.map(async (company) => {
                 const res = await getBenefitsByCompany(company.id);
@@ -52,7 +63,7 @@ async function loadBenefits() {
 }
 
 const filteredBenefits = computed(() => {
-    let list = [...benefits.value];
+    let list = benefits.value.filter((b) => !usedBenefitIds.value.has(b.id));
     if (searchQuery.value) {
         const q = searchQuery.value.toLowerCase();
         list = list.filter(
@@ -76,7 +87,9 @@ async function confirmRedemption() {
         await redeemBenefit(pendingRedemption.value.id);
         redemptionSuccess.value = { benefitName: pendingRedemption.value.name };
         pendingRedemption.value = null;
-        await store.loadProfile();
+        const [, redeemedRes] = await Promise.all([store.loadProfile(), getRedeemedBenefitIds()]);
+        pendingBenefitIds.value = new Set(redeemedRes.data.pendingBenefitIds);
+        usedBenefitIds.value = new Set(redeemedRes.data.usedBenefitIds);
     } catch {
     } finally {
         isRedeeming.value = false;
@@ -191,12 +204,31 @@ onMounted(() => {
                         </div>
                         <PixelButton
                             size="sm"
-                            :variant="balance >= benefit.cost ? 'success' : 'ghost'"
-                            :disabled="balance < benefit.cost"
-                            @click="pendingRedemption = { id: benefit.id, name: benefit.name, cost: benefit.cost }"
+                            :variant="
+                                pendingBenefitIds.has(benefit.id)
+                                    ? 'secondary'
+                                    : balance >= benefit.cost
+                                      ? 'success'
+                                      : 'ghost'
+                            "
+                            :disabled="pendingBenefitIds.has(benefit.id) || balance < benefit.cost"
+                            @click="
+                                !pendingBenefitIds.has(benefit.id) &&
+                                    (pendingRedemption = {
+                                        id: benefit.id,
+                                        name: benefit.name,
+                                        cost: benefit.cost,
+                                    })
+                            "
                         >
                             <PhSparkle weight="fill" class="pixel-icon" />
-                            {{ balance >= benefit.cost ? 'RESGATAR' : 'FALTAM MOEDAS' }}
+                            {{
+                                pendingBenefitIds.has(benefit.id)
+                                    ? 'JÁ SOLICITADA'
+                                    : balance >= benefit.cost
+                                      ? 'RESGATAR'
+                                      : 'FALTAM MOEDAS'
+                            }}
                         </PixelButton>
                     </div>
                 </div>
