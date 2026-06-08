@@ -15,6 +15,7 @@ public record TeacherResponse(
         String department,
         int balance,
         UUID institutionId,
+        boolean firstLogin,
         Instant createdAt,
         Instant updatedAt) {
 }

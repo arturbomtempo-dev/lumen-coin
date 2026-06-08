@@ -28,6 +28,9 @@ public class Teacher extends User {
     @Column(name = "institution_id")
     private UUID institutionId;
 
+    @Column(name = "first_login", nullable = false)
+    private boolean firstLogin = true;
+
     @Override
     public UserRole getRole() {
         return UserRole.TEACHER;

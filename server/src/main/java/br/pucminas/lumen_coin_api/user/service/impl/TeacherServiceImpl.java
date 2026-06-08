@@ -3,6 +3,7 @@ package br.pucminas.lumen_coin_api.user.service.impl;
 import br.pucminas.lumen_coin_api.common.util.PasswordGenerator;
 import br.pucminas.lumen_coin_api.email.service.EmailService;
 import br.pucminas.lumen_coin_api.whatsapp.service.WhatsAppService;
+import br.pucminas.lumen_coin_api.user.dto.request.ChangeInitialPasswordRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.ChangeTeacherPasswordRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterTeacherRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateTeacherRequest;
@@ -135,6 +136,21 @@ public class TeacherServiceImpl implements TeacherService {
         }
 
         teacher.setPassword(passwordEncoder.encode(request.newPassword()));
+        teacherRepository.save(teacher);
+    }
+
+    @Override
+    @Transactional
+    public void changeInitialPassword(UUID id, ChangeInitialPasswordRequest request) {
+        Teacher teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        if (!request.newPassword().equals(request.confirmPassword())) {
+            throw new PasswordMismatchException();
+        }
+
+        teacher.setPassword(passwordEncoder.encode(request.newPassword()));
+        teacher.setFirstLogin(false);
         teacherRepository.save(teacher);
     }
 

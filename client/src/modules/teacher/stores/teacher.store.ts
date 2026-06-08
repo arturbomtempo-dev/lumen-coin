@@ -7,6 +7,7 @@ export const useTeacherStore = defineStore('teacher', () => {
     const name = ref('');
     const balance = ref(0);
     const institutionId = ref<string | null>(null);
+    const firstLogin = ref(false);
     const isLoaded = ref(false);
 
     async function loadProfile() {
@@ -16,6 +17,7 @@ export const useTeacherStore = defineStore('teacher', () => {
         name.value = data.name;
         balance.value = data.balance;
         institutionId.value = data.institutionId;
+        firstLogin.value = data.firstLogin;
         isLoaded.value = true;
     }
 
@@ -31,8 +33,9 @@ export const useTeacherStore = defineStore('teacher', () => {
         name.value = '';
         balance.value = 0;
         institutionId.value = null;
+        firstLogin.value = false;
         isLoaded.value = false;
     }
 
-    return { name, balance, institutionId, isLoaded, loadProfile, setName, setBalance, reset };
+    return { name, balance, institutionId, firstLogin, isLoaded, loadProfile, setName, setBalance, reset };
 });

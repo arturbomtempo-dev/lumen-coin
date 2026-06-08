@@ -44,6 +44,7 @@ public class UserMapperImpl implements UserMapper {
                 teacher.getDepartment(),
                 teacher.getBalance(),
                 teacher.getInstitutionId(),
+                teacher.isFirstLogin(),
                 teacher.getCreatedAt(),
                 teacher.getUpdatedAt());
     }

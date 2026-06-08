@@ -1,5 +1,6 @@
 package br.pucminas.lumen_coin_api.user.service;
 
+import br.pucminas.lumen_coin_api.user.dto.request.ChangeInitialPasswordRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.ChangeTeacherPasswordRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.RegisterTeacherRequest;
 import br.pucminas.lumen_coin_api.user.dto.request.UpdateTeacherRequest;
@@ -18,6 +19,8 @@ public interface TeacherService {
     TeacherResponse update(UUID id, UpdateTeacherRequest request);
 
     void changePassword(UUID id, ChangeTeacherPasswordRequest request);
+
+    void changeInitialPassword(UUID id, ChangeInitialPasswordRequest request);
 
     void delete(UUID id);
 }

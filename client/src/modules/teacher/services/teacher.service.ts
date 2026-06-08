@@ -11,6 +11,7 @@ export type TeacherProfile = {
     department: string;
     balance: number;
     institutionId: string;
+    firstLogin: boolean;
     createdAt: string;
     updatedAt: string;
 };
@@ -54,4 +55,11 @@ export function changeTeacherPassword(
     dto: { currentPassword: string; newPassword: string; confirmNewPassword: string }
 ) {
     return api.patch(`/teachers/${id}/password`, dto);
+}
+
+export function changeInitialPassword(
+    id: string,
+    dto: { newPassword: string; confirmPassword: string }
+) {
+    return api.patch(`/teachers/${id}/initial-password`, dto);
 }
