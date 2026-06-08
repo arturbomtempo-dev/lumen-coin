@@ -84,21 +84,32 @@ ref over P,A,Tela,CT : UC11 - Visualizar Transações
 
 == Processamento Assíncrono ==
 
+
 group Fluxo Assíncrono de Moedas
 
     MQMoeda -> WM : consumirMensagem()
+    activate WM
 
     WM ->> SN : enviarNotificacaoEmail()
+
+    deactivate WM
 
 end
 
 group Fluxo Assíncrono de Vantagens
 
     MQVantagem -> WV : consumirMensagem()
+    activate WV
 
     WV -> DBResgate : atualizarStatus()
+    activate DBResgate
+
+    DBResgate --> WV : status atualizado
+    deactivate DBResgate
 
     WV ->> SN : enviarNotificacaoEmail()
+
+    deactivate WV
 
 end
 
