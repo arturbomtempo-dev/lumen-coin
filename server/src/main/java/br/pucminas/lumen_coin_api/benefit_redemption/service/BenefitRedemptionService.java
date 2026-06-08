@@ -27,4 +27,8 @@ public interface BenefitRedemptionService {
     BenefitRedemptionResponse markAsUsed(String couponCode, UUID companyId, String usageNotes);
 
     BenefitRedemptionResponse markAsUsedByInstitution(String couponCode, UUID institutionId, String usageNotes);
+
+    void denyRedemption(String couponCode, UUID companyId, String denialReason);
+
+    void denyRedemptionByInstitution(String couponCode, UUID institutionId, String denialReason);
 }

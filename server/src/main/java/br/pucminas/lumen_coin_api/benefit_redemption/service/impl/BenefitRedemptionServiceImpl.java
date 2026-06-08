@@ -281,6 +281,70 @@ public class BenefitRedemptionServiceImpl implements BenefitRedemptionService {
         return toResponse(saved);
     }
 
+    @Override
+    @Transactional
+    public void denyRedemption(String couponCode, UUID companyId, String denialReason) {
+        BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
+                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
+
+        if (redemption.getCompanyId() == null || !redemption.getCompanyId().equals(companyId)) {
+            throw new UnauthorizedRedemptionException();
+        }
+
+        if (redemption.getStatus() == RedemptionStatus.USED) {
+            throw new RedemptionAlreadyUsedException();
+        }
+
+        Student student = studentRepository.findById(redemption.getStudentId())
+                .orElseThrow(() -> new UserNotFoundException(redemption.getStudentId()));
+
+        Benefit benefit = benefitRepository.findById(redemption.getBenefitId())
+                .orElseThrow(() -> new BenefitNotFoundException(redemption.getBenefitId()));
+
+        student.setBalance(student.getBalance() + redemption.getCoinsSpent());
+        studentRepository.save(student);
+
+        redemptionRepository.delete(redemption);
+
+        emailService.sendBenefitRedemptionDeniedToStudent(
+                student.getEmail(),
+                student.getName(),
+                benefit.getName(),
+                denialReason);
+    }
+
+    @Override
+    @Transactional
+    public void denyRedemptionByInstitution(String couponCode, UUID institutionId, String denialReason) {
+        BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
+                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
+
+        if (redemption.getInstitutionId() == null || !redemption.getInstitutionId().equals(institutionId)) {
+            throw new UnauthorizedRedemptionException();
+        }
+
+        if (redemption.getStatus() == RedemptionStatus.USED) {
+            throw new RedemptionAlreadyUsedException();
+        }
+
+        Student student = studentRepository.findById(redemption.getStudentId())
+                .orElseThrow(() -> new UserNotFoundException(redemption.getStudentId()));
+
+        Benefit benefit = benefitRepository.findById(redemption.getBenefitId())
+                .orElseThrow(() -> new BenefitNotFoundException(redemption.getBenefitId()));
+
+        student.setBalance(student.getBalance() + redemption.getCoinsSpent());
+        studentRepository.save(student);
+
+        redemptionRepository.delete(redemption);
+
+        emailService.sendBenefitRedemptionDeniedToStudent(
+                student.getEmail(),
+                student.getName(),
+                benefit.getName(),
+                denialReason);
+    }
+
     private String generateUniqueCouponCode() {
         String code;
         do {

@@ -14,6 +14,7 @@ import { updateCompanySchema } from '@/modules/schemas/update-company.schema';
 import CompanyAdvantagesPage from '@/modules/company/pages/CompanyAdvantagesPage.vue';
 import {
     confirmRedemption,
+    denyRedemption,
     validateCoupon,
     type ValidateBenefitRedemptionResponse,
 } from '@/modules/company/services/benefit-redemption.service';
@@ -64,12 +65,55 @@ const isValidating = ref(false);
 const isConfirming = ref(false);
 const redemptionConfirmed = ref(false);
 
+const showDenyModal = ref(false);
+const denialReason = ref('');
+const denialReasonError = ref('');
+const isDenying = ref(false);
+const redemptionDenied = ref(false);
+
 function resetCouponForm() {
     couponCode.value = '';
     couponError.value = '';
     validatedRedemption.value = null;
     usageNotes.value = '';
     redemptionConfirmed.value = false;
+    showDenyModal.value = false;
+    denialReason.value = '';
+    denialReasonError.value = '';
+    redemptionDenied.value = false;
+}
+
+function openDenyModal() {
+    denialReason.value = '';
+    denialReasonError.value = '';
+    showDenyModal.value = true;
+}
+
+function closeDenyModal() {
+    showDenyModal.value = false;
+    denialReason.value = '';
+    denialReasonError.value = '';
+}
+
+async function handleDenyRedemption() {
+    if (!validatedRedemption.value) return;
+    if (!denialReason.value.trim()) {
+        denialReasonError.value = 'Denial reason is required.';
+        return;
+    }
+    isDenying.value = true;
+    try {
+        await denyRedemption(validatedRedemption.value.couponCode, denialReason.value.trim());
+        showDenyModal.value = false;
+        redemptionDenied.value = true;
+        validatedRedemption.value = null;
+        usageNotes.value = '';
+        couponCode.value = '';
+        couponError.value = '';
+    } catch {
+    } finally {
+        isDenying.value = false;
+    }
 }
 
 async function validate() {
@@ -393,6 +437,35 @@ onMounted(() => {
                                         {{ isConfirming ? 'CONFIRMANDO...' : 'CONFIRMAR RESGATE' }}
                                     </PixelButton>
                                 </div>
+                                <PixelButton
+                                    variant="danger"
+                                    class="w-full"
+                                    @click="openDenyModal"
+                                >
+                                    <PhXCircle weight="fill" class="pixel-icon" />
+                                    DENY REDEMPTION
+                                </PixelButton>
+                            </div>
+
+                            <div
+                                v-if="redemptionDenied"
+                                class="border-2 border-border p-4"
+                                style="border-color: hsl(var(--destructive)); background: hsl(var(--destructive) / 0.08)"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <PhXCircle weight="fill" class="pixel-icon shrink-0" :size="20" style="color: hsl(var(--destructive))" />
+                                    <div>
+                                        <div class="font-pixel text-[9px]" style="color: hsl(var(--destructive))">REDEMPTION DENIED</div>
+                                        <div class="font-sans text-sm mt-0.5 text-muted-foreground">
+                                            The student was notified by email. Their coins have been refunded.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <PixelButton variant="ghost" size="sm" class="w-full" @click="resetCouponForm">
+                                        VALIDATE ANOTHER CODE
+                                    </PixelButton>
+                                </div>
                             </div>
 
                             <div
@@ -608,5 +681,66 @@ onMounted(() => {
                 </div>
             </template>
         </main>
+    </div>
+
+    <div
+        v-if="showDenyModal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/70"
+        @click.self="closeDenyModal"
+    >
+        <div
+            class="w-full max-w-md bg-card text-card-foreground border-4 border-border shadow-[8px_8px_0_0_hsl(var(--border))] animate-pop"
+        >
+            <div
+                class="border-b-4 border-border px-4 py-2 flex items-center justify-between"
+                style="background: hsl(var(--destructive)); color: hsl(var(--destructive-foreground))"
+            >
+                <span class="font-pixel text-xs">DENY REDEMPTION</span>
+                <button
+                    type="button"
+                    class="hover:opacity-75 transition-opacity"
+                    aria-label="Close"
+                    @click="closeDenyModal"
+                >
+                    <PhXCircle weight="bold" :size="16" />
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="font-sans text-sm text-muted-foreground">
+                    The student will be notified by email with your reason. Their coins will be fully refunded.
+                </p>
+                <div>
+                    <label class="font-pixel text-[10px] block mb-2">DENIAL REASON <span style="color: hsl(var(--destructive))">*</span></label>
+                    <textarea
+                        v-model="denialReason"
+                        rows="4"
+                        placeholder="Explain why this redemption is being denied..."
+                        maxlength="2000"
+                        class="w-full bg-input text-foreground border-2 border-border px-3 py-2 font-display text-lg shadow-[inset_2px_2px_0_0_hsl(var(--border)/0.25)] focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+                    ></textarea>
+                    <p
+                        v-if="denialReasonError"
+                        class="font-sans text-xs mt-1"
+                        style="color: hsl(var(--destructive))"
+                    >
+                        {{ denialReasonError }}
+                    </p>
+                </div>
+                <div class="flex gap-3 pt-1">
+                    <PixelButton variant="ghost" class="flex-1" @click="closeDenyModal">
+                        CANCEL
+                    </PixelButton>
+                    <PixelButton
+                        variant="danger"
+                        class="flex-1"
+                        :disabled="isDenying"
+                        @click="handleDenyRedemption"
+                    >
+                        <PhXCircle weight="fill" class="pixel-icon" />
+                        {{ isDenying ? 'DENYING...' : 'CONFIRM DENY' }}
+                    </PixelButton>
+                </div>
+            </div>
+        </div>
     </div>
 </template>

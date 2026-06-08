@@ -17,4 +17,6 @@ public interface EmailService {
     void sendBenefitRedemptionNotificationToCompany(String to, String companyName, String studentName, String benefitName, String couponCode);
 
     void sendBenefitRedemptionApprovedToStudent(String to, String studentName, String benefitName, String usageNotes);
+
+    void sendBenefitRedemptionDeniedToStudent(String to, String studentName, String benefitName, String denialReason);
 }

@@ -1,6 +1,7 @@
 package br.pucminas.lumen_coin_api.benefit_redemption.controller;
 
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.CreateBenefitRedemptionRequest;
+import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.DenyBenefitRedemptionRequest;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.UseBenefitRedemptionRequest;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.BenefitRedemptionResponse;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.RedeemedBenefitIdsResponse;
@@ -98,5 +99,25 @@ public class BenefitRedemptionController {
             @Valid @RequestBody UseBenefitRedemptionRequest request) {
         return ResponseEntity.ok(benefitRedemptionService.markAsUsedByInstitution(
                 request.couponCode(), principal.getUserId(), request.usageNotes()));
+    }
+
+    @PatchMapping("/deny")
+    @PreAuthorize("hasRole('COMPANY')")
+    public ResponseEntity<Void> denyRedemption(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @Valid @RequestBody DenyBenefitRedemptionRequest request) {
+        benefitRedemptionService.denyRedemption(
+                request.couponCode(), principal.getUserId(), request.denialReason());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/deny-institution")
+    @PreAuthorize("hasRole('INSTITUTION')")
+    public ResponseEntity<Void> denyRedemptionByInstitution(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @Valid @RequestBody DenyBenefitRedemptionRequest request) {
+        benefitRedemptionService.denyRedemptionByInstitution(
+                request.couponCode(), principal.getUserId(), request.denialReason());
+        return ResponseEntity.noContent().build();
     }
 }

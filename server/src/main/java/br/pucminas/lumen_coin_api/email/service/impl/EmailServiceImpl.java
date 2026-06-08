@@ -2,6 +2,7 @@ package br.pucminas.lumen_coin_api.email.service.impl;
 
 import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionCompanyNotificationEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionStudentApprovedEmailContext;
+import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionStudentDeniedEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionStudentConfirmationEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.CoinReceivedEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.CoinSentEmailContext;
@@ -165,6 +166,23 @@ public class EmailServiceImpl implements EmailService {
             log.info("Benefit redemption approved email sent to {}", to);
         } catch (Exception e) {
             log.error("Failed to send benefit redemption approved email to {}: {}", to, e.getMessage());
+        }
+    }
+
+    @Async
+    @Override
+    public void sendBenefitRedemptionDeniedToStudent(String to, String studentName, String benefitName, String denialReason) {
+        if (!enabled) {
+            log.debug("Mail disabled - skipping benefit redemption denied email to {}", to);
+            return;
+        }
+        try {
+            String html = templateEngine.render("benefit-redemption-student-denied",
+                    new BenefitRedemptionStudentDeniedEmailContext(studentName, benefitName, denialReason));
+            send(to, "Solicitação de resgate negada - Lumen Coin", html);
+            log.info("Benefit redemption denied email sent to {}", to);
+        } catch (Exception e) {
+            log.error("Failed to send benefit redemption denied email to {}: {}", to, e.getMessage());
         }
     }
 
