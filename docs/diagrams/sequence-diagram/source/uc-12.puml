@@ -60,10 +60,7 @@ alt Saldo suficiente
     DBResgate --> WV : statusAtualizado()
     deactivate DBResgate
 
-    WV -> SN : enviarNotificacaoEmail(emailAluno,\nemailEmpresa, codigo)
-    activate SN
-    SN --> WV : emailEnviado()
-    deactivate SN
+    WV ->> SN : enviarNotificacaoEmail(emailAluno,\nemailEmpresa, codigo)
     deactivate WV
 else Saldo insuficiente
     CR --> Tela : erroSaldoInsuficiente()

@@ -50,10 +50,7 @@ alt Resgate válido e com status PENDENTE
     DBAluno --> CR : alunoEncontrado(emailAluno)
     deactivate DBAluno
 
-    CR -> SN : enviarNotificacaoConfirmacao(emailAluno, codigoResgate)
-    activate SN
-    SN --> CR : notificacaoEnviada()
-    deactivate SN
+    CR ->> SN : enviarNotificacaoConfirmacao(emailAluno, codigoResgate)
 
     CR --> Tela : resgateConfirmado()
     Tela --> FEP : vantagemConfirmadaComSucesso()

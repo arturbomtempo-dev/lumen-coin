@@ -30,10 +30,7 @@ opt Email cadastrado no sistema
     DBToken --> CA : tokenSalvo()
     deactivate DBToken
 
-    CA -> SE : enviarEmailRecuperacaoSenha(email, nome, linkReset)
-    activate SE
-    SE --> CA : emailEnviado()
-    deactivate SE
+    CA ->> SE : enviarEmailRecuperacaoSenha(email, nome, linkReset)
 end
 
 CA --> Tela : instrucoesPorEmail()

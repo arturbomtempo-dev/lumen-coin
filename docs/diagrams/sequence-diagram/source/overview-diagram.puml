@@ -88,7 +88,7 @@ group Fluxo Assíncrono de Moedas
 
     MQMoeda -> WM : consumirMensagem()
 
-    WM -> SN : enviarNotificacaoEmail()
+    WM ->> SN : enviarNotificacaoEmail()
 
 end
 
@@ -98,7 +98,7 @@ group Fluxo Assíncrono de Vantagens
 
     WV -> DBResgate : atualizarStatus()
 
-    WV -> SN : enviarNotificacaoEmail()
+    WV ->> SN : enviarNotificacaoEmail()
 
 end
 

@@ -57,10 +57,7 @@ alt Saldo suficiente
 
     MQ -> WM : consumirMensagem()
     activate WM
-    WM -> SN : enviarNotificacaoEmail(emailAluno,\nquantidade, mensagem)
-    activate SN
-    SN --> WM : emailEnviado()
-    deactivate SN
+    WM ->> SN : enviarNotificacaoEmail(emailAluno,\nquantidade, mensagem)
     deactivate WM
 else Saldo insuficiente
     CEM --> Tela : erroSaldoInsuficiente()
