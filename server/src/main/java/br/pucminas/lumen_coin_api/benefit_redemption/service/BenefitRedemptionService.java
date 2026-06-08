@@ -1,0 +1,18 @@
+package br.pucminas.lumen_coin_api.benefit_redemption.service;
+
+import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.CreateBenefitRedemptionRequest;
+import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.BenefitRedemptionResponse;
+
+import java.util.List;
+import java.util.UUID;
+
+public interface BenefitRedemptionService {
+
+    BenefitRedemptionResponse redeem(UUID studentId, CreateBenefitRedemptionRequest request);
+
+    List<BenefitRedemptionResponse> getMyRedemptions(UUID studentId);
+
+    List<BenefitRedemptionResponse> getCompanyRedemptions(UUID companyId);
+
+    BenefitRedemptionResponse markAsUsed(String couponCode, UUID companyId);
+}

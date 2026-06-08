@@ -1,0 +1,60 @@
+package br.pucminas.lumen_coin_api.benefit_redemption.controller;
+
+import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.CreateBenefitRedemptionRequest;
+import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.UseBenefitRedemptionRequest;
+import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.BenefitRedemptionResponse;
+import br.pucminas.lumen_coin_api.benefit_redemption.service.BenefitRedemptionService;
+import br.pucminas.lumen_coin_api.security.UserPrincipal;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/benefit-redemptions")
+@RequiredArgsConstructor
+public class BenefitRedemptionController {
+
+    private final BenefitRedemptionService benefitRedemptionService;
+
+    @PostMapping
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<BenefitRedemptionResponse> redeem(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @Valid @RequestBody CreateBenefitRedemptionRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(benefitRedemptionService.redeem(principal.getUserId(), request));
+    }
+
+    @GetMapping("/my")
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<List<BenefitRedemptionResponse>> getMyRedemptions(
+            @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(benefitRedemptionService.getMyRedemptions(principal.getUserId()));
+    }
+
+    @GetMapping("/company")
+    @PreAuthorize("hasRole('COMPANY')")
+    public ResponseEntity<List<BenefitRedemptionResponse>> getCompanyRedemptions(
+            @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(benefitRedemptionService.getCompanyRedemptions(principal.getUserId()));
+    }
+
+    @PatchMapping("/use")
+    @PreAuthorize("hasRole('COMPANY')")
+    public ResponseEntity<BenefitRedemptionResponse> markAsUsed(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @Valid @RequestBody UseBenefitRedemptionRequest request) {
+        return ResponseEntity.ok(benefitRedemptionService.markAsUsed(request.couponCode(), principal.getUserId()));
+    }
+}
