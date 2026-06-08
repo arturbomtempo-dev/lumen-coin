@@ -17,7 +17,10 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tb_benefits", indexes = @Index(name = "idx_benefits_company_id", columnList = "company_id"))
+@Table(name = "tb_benefits", indexes = {
+        @Index(name = "idx_benefits_company_id", columnList = "company_id"),
+        @Index(name = "idx_benefits_institution_id", columnList = "institution_id")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,8 +31,11 @@ public class Benefit {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "company_id", nullable = false)
+    @Column(name = "company_id")
     private UUID companyId;
+
+    @Column(name = "institution_id")
+    private UUID institutionId;
 
     @Column(name = "name", nullable = false, length = 150)
     private String name;

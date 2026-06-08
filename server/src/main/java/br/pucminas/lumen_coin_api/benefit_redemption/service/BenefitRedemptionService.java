@@ -16,9 +16,15 @@ public interface BenefitRedemptionService {
 
     List<BenefitRedemptionResponse> getCompanyRedemptions(UUID companyId);
 
+    List<BenefitRedemptionResponse> getInstitutionRedemptions(UUID institutionId);
+
     RedeemedBenefitIdsResponse getRedeemedBenefitIds();
 
     ValidateBenefitRedemptionResponse validateCoupon(String couponCode, UUID companyId);
 
+    ValidateBenefitRedemptionResponse validateCouponForInstitution(String couponCode, UUID institutionId);
+
     BenefitRedemptionResponse markAsUsed(String couponCode, UUID companyId, String usageNotes);
+
+    BenefitRedemptionResponse markAsUsedByInstitution(String couponCode, UUID institutionId, String usageNotes);
 }

@@ -30,15 +30,11 @@ export function createBenefit(dto: CreateBenefitDto, image: File) {
     formData.append('description', dto.description);
     formData.append('cost', String(dto.cost));
     formData.append('image', image);
-    return api.post<BenefitResponse>('/benefits', formData);
+    return api.post<BenefitResponse>('/benefits/institution', formData);
 }
 
-export function getBenefitsByCompany(companyId: string) {
-    return api.get<BenefitResponse[]>(`/benefits/company/${companyId}`);
-}
-
-export function getBenefitById(id: string) {
-    return api.get<BenefitResponse>(`/benefits/${id}`);
+export function getBenefitsByInstitution(institutionId: string) {
+    return api.get<BenefitResponse[]>(`/benefits/institution/${institutionId}`);
 }
 
 export function updateBenefit(id: string, dto: UpdateBenefitDto, image?: File | null) {

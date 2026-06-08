@@ -10,6 +10,7 @@ public record BenefitRedemptionResponse(
         UUID studentId,
         UUID benefitId,
         UUID companyId,
+        UUID institutionId,
         String couponCode,
         int coinsSpent,
         RedemptionStatus status,

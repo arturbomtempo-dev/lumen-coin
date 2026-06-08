@@ -6,6 +6,7 @@ import java.util.UUID;
 public record BenefitResponse(
         UUID id,
         UUID companyId,
+        UUID institutionId,
         String name,
         String description,
         String imageUrl,

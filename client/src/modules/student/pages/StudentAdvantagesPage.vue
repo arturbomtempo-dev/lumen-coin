@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { getBenefitsByCompany, type BenefitResponse } from '@/modules/company/services/benefit.service';
-import { getCompanies } from '@/modules/institution/services/institution.service';
+import { getBenefitsByCompany } from '@/modules/company/services/benefit.service';
+import { getBenefitsByInstitution } from '@/modules/institution/services/benefit.service';
+import {
+    getCompanies,
+    getInstitutions,
+} from '@/modules/institution/services/institution.service';
 import {
     getRedeemedBenefitIds,
     redeemBenefit,
@@ -21,12 +25,19 @@ import {
 import { storeToRefs } from 'pinia';
 import { computed, onMounted, ref } from 'vue';
 
-type BenefitWithCompany = BenefitResponse & { companyName: string };
+type BenefitWithOwner = {
+    id: string;
+    name: string;
+    description: string;
+    imageUrl: string;
+    cost: number;
+    ownerName: string;
+};
 
 const store = useStudentStore();
 const { balance } = storeToRefs(store);
 
-const benefits = ref<BenefitWithCompany[]>([]);
+const benefits = ref<BenefitWithOwner[]>([]);
 const isLoading = ref(false);
 
 const searchQuery = ref('');
@@ -43,19 +54,28 @@ const usedBenefitIds = ref<Set<string>>(new Set());
 async function loadBenefits() {
     isLoading.value = true;
     try {
-        const [companiesRes, redeemedRes] = await Promise.all([
+        const [companiesRes, institutionsRes, redeemedRes] = await Promise.all([
             getCompanies(),
+            getInstitutions(),
             getRedeemedBenefitIds(),
         ]);
         pendingBenefitIds.value = new Set(redeemedRes.data.pendingBenefitIds);
         usedBenefitIds.value = new Set(redeemedRes.data.usedBenefitIds);
-        const results = await Promise.all(
-            companiesRes.data.map(async (company) => {
-                const res = await getBenefitsByCompany(company.id);
-                return res.data.map((b) => ({ ...b, companyName: company.name }));
-            }),
-        );
-        benefits.value = results.flat();
+        const [companyBenefits, institutionBenefits] = await Promise.all([
+            Promise.all(
+                companiesRes.data.map(async (company) => {
+                    const res = await getBenefitsByCompany(company.id);
+                    return res.data.map((b) => ({ ...b, ownerName: company.name }));
+                }),
+            ),
+            Promise.all(
+                institutionsRes.data.map(async (institution) => {
+                    const res = await getBenefitsByInstitution(institution.id);
+                    return res.data.map((b) => ({ ...b, ownerName: institution.name }));
+                }),
+            ),
+        ]);
+        benefits.value = [...companyBenefits.flat(), ...institutionBenefits.flat()];
     } catch {
     } finally {
         isLoading.value = false;
@@ -70,7 +90,7 @@ const filteredBenefits = computed(() => {
             (b) =>
                 b.name.toLowerCase().includes(q) ||
                 b.description.toLowerCase().includes(q) ||
-                b.companyName.toLowerCase().includes(q),
+                b.ownerName.toLowerCase().includes(q),
         );
     }
     if (onlyAffordable.value) list = list.filter((b) => balance.value >= b.cost);
@@ -120,7 +140,7 @@ onMounted(() => {
                     />
                     <PixelInput
                         v-model="searchQuery"
-                        placeholder="Buscar vantagem, empresa, descrição..."
+                        placeholder="Buscar vantagem, empresa, instituição, descrição..."
                         style="padding-left: 2rem"
                     />
                     <button
@@ -192,7 +212,7 @@ onMounted(() => {
                     <div>
                         <div class="font-pixel text-xs">{{ benefit.name.toUpperCase() }}</div>
                         <div class="font-sans text-xs text-muted-foreground mt-1">
-                            {{ benefit.companyName }}
+                            {{ benefit.ownerName }}
                         </div>
                     </div>
                     <p class="font-sans text-sm text-foreground/75 mt-2 flex-1">

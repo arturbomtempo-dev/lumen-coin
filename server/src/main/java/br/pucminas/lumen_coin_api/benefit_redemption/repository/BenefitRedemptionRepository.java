@@ -19,6 +19,8 @@ public interface BenefitRedemptionRepository extends JpaRepository<BenefitRedemp
 
     List<BenefitRedemption> findByCompanyIdOrderByRedeemedAtDesc(UUID companyId);
 
+    List<BenefitRedemption> findByInstitutionIdOrderByRedeemedAtDesc(UUID institutionId);
+
     boolean existsByCouponCode(String couponCode);
 
     boolean existsByBenefitId(UUID benefitId);

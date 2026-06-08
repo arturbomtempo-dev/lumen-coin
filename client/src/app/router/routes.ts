@@ -108,9 +108,20 @@ export const routes: RouteRecordRaw[] = [
     },
     {
         path: '/app/instituicao',
-        name: 'institution-dashboard',
+        component: () => import('@/shared/layouts/InstitutionLayout.vue'),
         meta: { requiresAuth: true },
-        component: () => import('@/modules/institution/pages/InstitutionDashboardPage.vue'),
+        children: [
+            {
+                path: '',
+                name: 'institution-dashboard',
+                component: () => import('@/modules/institution/pages/InstitutionDashboardPage.vue'),
+            },
+            {
+                path: 'vantagens',
+                name: 'institution-advantages',
+                component: () => import('@/modules/institution/pages/InstitutionAdvantagesPage.vue'),
+            },
+        ],
     },
     {
         path: '/:pathMatch(.*)*',

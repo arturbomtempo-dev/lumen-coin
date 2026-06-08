@@ -29,14 +29,12 @@ import { registerCourseSchema } from '@/modules/schemas/register-course.schema';
 import { registerTeacherSchema } from '@/modules/schemas/register-teacher.schema';
 import { updateInstitutionSchema } from '@/modules/schemas/update-institution.schema';
 import { updateTeacherSchema } from '@/modules/schemas/update-teacher.schema';
-import CoinIcon from '@/shared/components/CoinIcon.vue';
 import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import { useForm } from '@/shared/composables/useForm';
-import { useThemeStore } from '@/shared/stores/theme.store';
 import {
     PhBookOpen,
     PhBuildings,
@@ -44,22 +42,18 @@ import {
     PhEyeSlash,
     PhGraduationCap,
     PhKey,
-    PhMoon,
     PhPencilSimple,
     PhPlus,
-    PhSignOut,
     PhStudent,
-    PhSun,
     PhTrash,
     PhUser,
     PhX,
 } from '@phosphor-icons/vue';
 import { vMaska } from 'maska/vue';
 import { computed, onMounted, ref } from 'vue';
-import { RouterLink, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
 
-const themeStore = useThemeStore();
 const router = useRouter();
 
 type Tab = 'courses' | 'teachers' | 'students' | 'profile';
@@ -487,11 +481,6 @@ async function confirmDeleteInstitution() {
     showDeleteConfirmation.value = false;
 }
 
-async function handleLogout() {
-    await authStore.logout();
-    router.push('/login');
-}
-
 const courseFilter = ref('all');
 const studentSearch = ref('');
 
@@ -529,119 +518,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col">
-        <header class="bg-hud text-hud-foreground border-b-4 border-border">
-            <div class="container flex items-center justify-between py-3 gap-3">
-                <RouterLink to="/" class="flex items-center gap-2 font-pixel text-[10px]">
-                    <CoinIcon :size="16" />
-                    LUMEN COIN
-                </RouterLink>
-                <div class="flex items-center gap-2 font-pixel text-[10px]">
-                    <PhBuildings weight="fill" class="pixel-icon text-info" :size="18" />
-                    {{ institutionName.toUpperCase() }}
-                </div>
-                <div class="flex items-center gap-2">
-                    <button
-                        class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))]"
-                        @click="themeStore.toggle()"
-                    >
-                        <PhSun
-                            v-if="themeStore.theme === 'night'"
-                            weight="fill"
-                            class="pixel-icon"
-                        />
-                        <PhMoon v-else weight="fill" class="pixel-icon" />
-                        {{ themeStore.theme === 'night' ? 'DIA' : 'NOITE' }}
-                    </button>
-                    <button
-                        class="font-pixel text-[9px] flex items-center gap-2 border-2 border-border bg-card text-card-foreground px-2 py-1 shadow-[2px_2px_0_0_hsl(var(--border))]"
-                        aria-label="Sair"
-                        @click="handleLogout"
-                    >
-                        <PhSignOut weight="bold" class="pixel-icon" />
-                        SAIR
-                    </button>
-                </div>
-            </div>
-
-            <div
-                v-if="showDeleteCourseModal"
-                class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80"
-                @click="cancelDeleteCourse"
-            >
-                <div
-                    class="w-full max-w-md bg-card border-4 border-border shadow-[8px_8px_0_0_hsl(var(--border))] animate-pop"
-                    @click.stop
-                >
-                    <div
-                        class="bg-secondary text-secondary-foreground border-b-4 border-border px-4 py-2 font-pixel text-xs"
-                    >
-                        ⚠ CONFIRMAR EXCLUSÃO
-                    </div>
-                    <div class="p-5">
-                        <p class="font-display text-xl">
-                            Excluir o curso
-                            <span class="text-primary">{{ courseToDeleteName }}</span
-                            >?
-                        </p>
-                        <p class="font-sans text-sm text-muted-foreground mt-3">
-                            Esta ação é permanente e removerá o curso.
-                        </p>
-                        <div class="mt-5 flex gap-3">
-                            <PixelButton class="flex-1" variant="ghost" @click="cancelDeleteCourse"
-                                >CANCELAR</PixelButton
-                            >
-                            <PixelButton
-                                class="flex-1"
-                                variant="danger"
-                                @click="proceedDeleteCourse"
-                                ><PhTrash weight="bold" /> EXCLUIR</PixelButton
-                            >
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div
-                v-if="showDeleteTeacherModal"
-                class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80"
-                @click="cancelDeleteTeacher"
-            >
-                <div
-                    class="w-full max-w-md bg-card border-4 border-border shadow-[8px_8px_0_0_hsl(var(--border))] animate-pop"
-                    @click.stop
-                >
-                    <div
-                        class="bg-secondary text-secondary-foreground border-b-4 border-border px-4 py-2 font-pixel text-xs"
-                    >
-                        ⚠ CONFIRMAR EXCLUSÃO
-                    </div>
-                    <div class="p-5">
-                        <p class="font-display text-xl">
-                            Excluir o professor
-                            <span class="text-primary">{{ teacherToDeleteName }}</span
-                            >?
-                        </p>
-                        <p class="font-sans text-sm text-muted-foreground mt-3">
-                            Esta ação é permanente e removerá o professor.
-                        </p>
-                        <div class="mt-5 flex gap-3">
-                            <PixelButton class="flex-1" variant="ghost" @click="cancelDeleteTeacher"
-                                >CANCELAR</PixelButton
-                            >
-                            <PixelButton
-                                class="flex-1"
-                                variant="danger"
-                                @click="proceedDeleteTeacher"
-                                ><PhTrash weight="bold" /> EXCLUIR</PixelButton
-                            >
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <main class="flex-1 container py-8 space-y-6">
+    <div class="space-y-6">
             <section class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <PixelCard class="p-4 flex items-center gap-3">
                     <PhBookOpen weight="fill" class="pixel-icon text-primary" :size="28" />
@@ -1478,6 +1355,81 @@ onMounted(async () => {
                     </div>
                 </PixelCard>
             </div>
-        </main>
+    </div>
+
+    <div
+        v-if="showDeleteCourseModal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80"
+        @click="cancelDeleteCourse"
+    >
+        <div
+            class="w-full max-w-md bg-card border-4 border-border shadow-[8px_8px_0_0_hsl(var(--border))] animate-pop"
+            @click.stop
+        >
+            <div
+                class="bg-secondary text-secondary-foreground border-b-4 border-border px-4 py-2 font-pixel text-xs"
+            >
+                ⚠ CONFIRMAR EXCLUSÃO
+            </div>
+            <div class="p-5">
+                <p class="font-display text-xl">
+                    Excluir o curso
+                    <span class="text-primary">{{ courseToDeleteName }}</span
+                    >?
+                </p>
+                <p class="font-sans text-sm text-muted-foreground mt-3">
+                    Esta ação é permanente e removerá o curso.
+                </p>
+                <div class="mt-5 flex gap-3">
+                    <PixelButton class="flex-1" variant="ghost" @click="cancelDeleteCourse"
+                        >CANCELAR</PixelButton
+                    >
+                    <PixelButton
+                        class="flex-1"
+                        variant="danger"
+                        @click="proceedDeleteCourse"
+                        ><PhTrash weight="bold" /> EXCLUIR</PixelButton
+                    >
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div
+        v-if="showDeleteTeacherModal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80"
+        @click="cancelDeleteTeacher"
+    >
+        <div
+            class="w-full max-w-md bg-card border-4 border-border shadow-[8px_8px_0_0_hsl(var(--border))] animate-pop"
+            @click.stop
+        >
+            <div
+                class="bg-secondary text-secondary-foreground border-b-4 border-border px-4 py-2 font-pixel text-xs"
+            >
+                ⚠ CONFIRMAR EXCLUSÃO
+            </div>
+            <div class="p-5">
+                <p class="font-display text-xl">
+                    Excluir o professor
+                    <span class="text-primary">{{ teacherToDeleteName }}</span
+                    >?
+                </p>
+                <p class="font-sans text-sm text-muted-foreground mt-3">
+                    Esta ação é permanente e removerá o professor.
+                </p>
+                <div class="mt-5 flex gap-3">
+                    <PixelButton class="flex-1" variant="ghost" @click="cancelDeleteTeacher"
+                        >CANCELAR</PixelButton
+                    >
+                    <PixelButton
+                        class="flex-1"
+                        variant="danger"
+                        @click="proceedDeleteTeacher"
+                        ><PhTrash weight="bold" /> EXCLUIR</PixelButton
+                    >
+                </div>
+            </div>
+        </div>
     </div>
 </template>

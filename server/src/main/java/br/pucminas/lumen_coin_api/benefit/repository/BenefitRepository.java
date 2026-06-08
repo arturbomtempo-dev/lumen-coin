@@ -10,4 +10,6 @@ import java.util.UUID;
 @Repository
 public interface BenefitRepository extends JpaRepository<Benefit, UUID> {
     List<Benefit> findByCompanyId(UUID companyId);
+
+    List<Benefit> findByInstitutionId(UUID institutionId);
 }

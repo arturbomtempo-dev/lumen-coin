@@ -20,7 +20,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "tb_benefit_redemptions", indexes = {
         @Index(name = "idx_redemptions_student_id", columnList = "student_id"),
-        @Index(name = "idx_redemptions_company_id", columnList = "company_id")
+        @Index(name = "idx_redemptions_company_id", columnList = "company_id"),
+        @Index(name = "idx_redemptions_institution_id", columnList = "institution_id")
 })
 @Getter
 @Setter
@@ -36,8 +37,11 @@ public class BenefitRedemption {
     @Column(name = "benefit_id", nullable = false)
     private UUID benefitId;
 
-    @Column(name = "company_id", nullable = false)
+    @Column(name = "company_id")
     private UUID companyId;
+
+    @Column(name = "institution_id")
+    private UUID institutionId;
 
     @Column(name = "coupon_code", nullable = false, unique = true, length = 20)
     private String couponCode;

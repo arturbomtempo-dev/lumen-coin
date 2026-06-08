@@ -35,19 +35,34 @@ public class BenefitController {
                 .body(benefitService.create(request, principal.getUserId(), image));
     }
 
+    @PostMapping(value = "/institution", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('INSTITUTION')")
+    public ResponseEntity<BenefitResponse> createForInstitution(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @ModelAttribute @Valid CreateBenefitRequest request,
+            @RequestParam("image") MultipartFile image) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(benefitService.createForInstitution(request, principal.getUserId(), image));
+    }
+
     @GetMapping("/company/{companyId}")
     public ResponseEntity<List<BenefitResponse>> findByCompanyId(@PathVariable UUID companyId) {
         return ResponseEntity.ok(benefitService.findByCompanyId(companyId));
     }
 
+    @GetMapping("/institution/{institutionId}")
+    public ResponseEntity<List<BenefitResponse>> findByInstitutionId(@PathVariable UUID institutionId) {
+        return ResponseEntity.ok(benefitService.findByInstitutionId(institutionId));
+    }
+
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('COMPANY')")
+    @PreAuthorize("hasAnyRole('COMPANY', 'INSTITUTION')")
     public ResponseEntity<BenefitResponse> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(benefitService.findById(id));
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('COMPANY')")
+    @PreAuthorize("hasAnyRole('COMPANY', 'INSTITUTION')")
     public ResponseEntity<BenefitResponse> update(
             @PathVariable UUID id,
             @ModelAttribute @Valid UpdateBenefitRequest request,
@@ -56,7 +71,7 @@ public class BenefitController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('COMPANY')")
+    @PreAuthorize("hasAnyRole('COMPANY', 'INSTITUTION')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         benefitService.delete(id);
         return ResponseEntity.noContent().build();

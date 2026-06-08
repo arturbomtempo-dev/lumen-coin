@@ -11,7 +11,11 @@ import java.util.UUID;
 public interface BenefitService {
     BenefitResponse create(CreateBenefitRequest request, UUID companyId, MultipartFile image);
 
+    BenefitResponse createForInstitution(CreateBenefitRequest request, UUID institutionId, MultipartFile image);
+
     List<BenefitResponse> findByCompanyId(UUID companyId);
+
+    List<BenefitResponse> findByInstitutionId(UUID institutionId);
 
     BenefitResponse findById(UUID id);
 

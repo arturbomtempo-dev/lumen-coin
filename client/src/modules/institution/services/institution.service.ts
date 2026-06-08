@@ -45,6 +45,10 @@ export function registerCompany(dto: RegisterCompanyDto) {
     return api.post<CompanyResponse>('/companies', dto);
 }
 
+export function getInstitutions() {
+    return api.get<InstitutionProfile[]>('/institutions');
+}
+
 export function getInstitution(id: string) {
     return api.get<InstitutionProfile>(`/institutions/${id}`);
 }

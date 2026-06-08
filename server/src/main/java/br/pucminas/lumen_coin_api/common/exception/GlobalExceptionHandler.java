@@ -11,6 +11,7 @@ import br.pucminas.lumen_coin_api.benefit.exception.BenefitNotFoundException;
 import br.pucminas.lumen_coin_api.course.exception.CourseNotFoundException;
 import br.pucminas.lumen_coin_api.storage.exception.StorageException;
 import br.pucminas.lumen_coin_api.user.exception.CompanyNotFoundException;
+import br.pucminas.lumen_coin_api.user.exception.InstitutionNotFoundException;
 import br.pucminas.lumen_coin_api.user.exception.CnpjAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.CpfAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
@@ -92,6 +93,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CompanyNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleCompanyNotFound(
             CompanyNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(InstitutionNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleInstitutionNotFound(
+            InstitutionNotFoundException ex, HttpServletRequest request) {
         return build(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage(), request);
     }
 

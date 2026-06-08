@@ -47,7 +47,7 @@ public class BenefitRedemptionController {
     }
 
     @GetMapping("/redeemed-benefit-ids")
-    @PreAuthorize("hasAnyRole('STUDENT', 'COMPANY')")
+    @PreAuthorize("hasAnyRole('STUDENT', 'COMPANY', 'INSTITUTION')")
     public ResponseEntity<RedeemedBenefitIdsResponse> getRedeemedBenefitIds() {
         return ResponseEntity.ok(benefitRedemptionService.getRedeemedBenefitIds());
     }
@@ -59,6 +59,13 @@ public class BenefitRedemptionController {
         return ResponseEntity.ok(benefitRedemptionService.getCompanyRedemptions(principal.getUserId()));
     }
 
+    @GetMapping("/institution")
+    @PreAuthorize("hasRole('INSTITUTION')")
+    public ResponseEntity<List<BenefitRedemptionResponse>> getInstitutionRedemptions(
+            @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(benefitRedemptionService.getInstitutionRedemptions(principal.getUserId()));
+    }
+
     @GetMapping("/validate/{couponCode}")
     @PreAuthorize("hasRole('COMPANY')")
     public ResponseEntity<ValidateBenefitRedemptionResponse> validateCoupon(
@@ -67,12 +74,29 @@ public class BenefitRedemptionController {
         return ResponseEntity.ok(benefitRedemptionService.validateCoupon(couponCode, principal.getUserId()));
     }
 
+    @GetMapping("/validate-institution/{couponCode}")
+    @PreAuthorize("hasRole('INSTITUTION')")
+    public ResponseEntity<ValidateBenefitRedemptionResponse> validateCouponForInstitution(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable String couponCode) {
+        return ResponseEntity.ok(benefitRedemptionService.validateCouponForInstitution(couponCode, principal.getUserId()));
+    }
+
     @PatchMapping("/use")
     @PreAuthorize("hasRole('COMPANY')")
     public ResponseEntity<BenefitRedemptionResponse> markAsUsed(
             @AuthenticationPrincipal UserPrincipal principal,
             @Valid @RequestBody UseBenefitRedemptionRequest request) {
         return ResponseEntity.ok(benefitRedemptionService.markAsUsed(
+                request.couponCode(), principal.getUserId(), request.usageNotes()));
+    }
+
+    @PatchMapping("/use-institution")
+    @PreAuthorize("hasRole('INSTITUTION')")
+    public ResponseEntity<BenefitRedemptionResponse> markAsUsedByInstitution(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @Valid @RequestBody UseBenefitRedemptionRequest request) {
+        return ResponseEntity.ok(benefitRedemptionService.markAsUsedByInstitution(
                 request.couponCode(), principal.getUserId(), request.usageNotes()));
     }
 }
