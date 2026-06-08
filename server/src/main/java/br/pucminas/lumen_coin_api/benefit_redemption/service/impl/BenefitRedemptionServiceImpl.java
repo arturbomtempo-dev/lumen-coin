@@ -8,6 +8,7 @@ import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.BenefitRedempt
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.ValidateBenefitRedemptionResponse;
 import br.pucminas.lumen_coin_api.benefit_redemption.entity.BenefitRedemption;
 import br.pucminas.lumen_coin_api.benefit_redemption.enums.RedemptionStatus;
+import br.pucminas.lumen_coin_api.benefit_redemption.exception.BenefitAlreadyRedeemedException;
 import br.pucminas.lumen_coin_api.benefit_redemption.exception.BenefitRedemptionNotFoundException;
 import br.pucminas.lumen_coin_api.benefit_redemption.exception.RedemptionAlreadyUsedException;
 import br.pucminas.lumen_coin_api.benefit_redemption.exception.UnauthorizedRedemptionException;
@@ -54,6 +55,10 @@ public class BenefitRedemptionServiceImpl implements BenefitRedemptionService {
 
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new UserNotFoundException(studentId));
+
+        if (redemptionRepository.existsByStudentIdAndBenefitId(studentId, benefit.getId())) {
+            throw new BenefitAlreadyRedeemedException();
+        }
 
         if (student.getBalance() < benefit.getCost()) {
             throw new InsufficientBalanceException(student.getBalance(), benefit.getCost());

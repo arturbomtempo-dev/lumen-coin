@@ -1,6 +1,7 @@
 package br.pucminas.lumen_coin_api.common.exception;
 
 import br.pucminas.lumen_coin_api.auth.exception.InvalidPasswordResetTokenException;
+import br.pucminas.lumen_coin_api.benefit_redemption.exception.BenefitAlreadyRedeemedException;
 import br.pucminas.lumen_coin_api.benefit_redemption.exception.BenefitRedemptionNotFoundException;
 import br.pucminas.lumen_coin_api.benefit_redemption.exception.RedemptionAlreadyUsedException;
 import br.pucminas.lumen_coin_api.benefit_redemption.exception.UnauthorizedRedemptionException;
@@ -62,6 +63,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBenefitRedemptionNotFound(
             BenefitRedemptionNotFoundException ex, HttpServletRequest request) {
         return build(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(BenefitAlreadyRedeemedException.class)
+    public ResponseEntity<ErrorResponse> handleBenefitAlreadyRedeemed(
+            BenefitAlreadyRedeemedException ex, HttpServletRequest request) {
+        return build(HttpStatus.CONFLICT, "Conflict", ex.getMessage(), request);
     }
 
     @ExceptionHandler(RedemptionAlreadyUsedException.class)
