@@ -69,7 +69,7 @@ export const routes: RouteRecordRaw[] = [
             {
                 path: 'vantagens',
                 name: 'student-advantages',
-                component: () => import('@/modules/student/pages/StudentAdvantagesPage.vue'),
+                redirect: { name: 'student-dashboard' },
             },
         ],
     },

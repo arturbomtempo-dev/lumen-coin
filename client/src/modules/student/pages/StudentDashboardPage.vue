@@ -3,6 +3,7 @@ import { useStudentStore } from '@/modules/student/stores/student.store';
 import { useGamification } from '@/shared/composables/useGamification';
 import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
+import StudentAdvantagesMarketplace from '@/modules/student/components/StudentAdvantagesMarketplace.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import XPBar from '@/shared/components/XPBar.vue';
@@ -86,5 +87,7 @@ const { currentLevel, progressPercent, medalsWithStatus } = useGamification(bala
                 </div>
             </PixelCard>
         </section>
+
+        <StudentAdvantagesMarketplace />
     </div>
 </template>
