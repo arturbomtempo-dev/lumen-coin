@@ -1,0 +1,102 @@
+@startuml
+title Diagrama Entidade-Relacionamento
+skinparam classAttributeIconSize 0
+
+' --- ENTIDADES ---
+
+entity USUARIO {
+    ID [PK]
+    --
+    NOME : String
+    EMAIL : String
+    SENHA : String
+    AVATAR : Avatar
+}
+
+entity PROFESSOR {
+    ID [FK]
+    --
+    CPF : String
+    DEPARTAMENTO : String
+    SALDO : int
+}
+
+entity ALUNO {
+    ID [FK]
+    --
+    CPF : String
+    RG : String
+    SALDO : int
+    CEP : String
+    ENDERECO : String
+}
+
+entity INSTITUICAO_ENSINO {
+    ID [FK]
+    --
+    CNPJ : String
+    CEP : String
+    ENDERECO : String
+}
+
+entity EMPRESA_PARCEIRA {
+    ID [FK]
+    --
+    CNPJ : String
+}
+
+entity CURSO {
+    ID [PK]
+    --
+    NOME : String
+    TURNO : String
+    QTD_PERIODOS : int
+}
+
+entity VANTAGEM {
+    ID [PK]
+    --
+    NOME : String
+    DESCRICAO : String
+    IMAGEM : String
+    CUSTO : int
+}
+
+entity ENVIO_MOEDA {
+    CODIGO [PK]
+    --
+    DATA_HORA : DateTime
+    QUANTIDADE : int
+    MENSAGEM : String
+}
+
+entity RESGATE_VANTAGEM {
+    CODIGO [PK]
+    --
+    DATA_HORA : DateTime
+    STATUS : StatusResgate
+}
+
+' --- RELACIONAMENTOS (HERANÇA E ASSOCIAÇÕES) ---
+
+' Herança (Especialização Disjunta)
+USUARIO <|-- PROFESSOR
+USUARIO <|-- ALUNO
+USUARIO <|-- INSTITUICAO_ENSINO
+USUARIO <|-- EMPRESA_PARCEIRA
+
+' Relacionamentos de Instituição
+INSTITUICAO_ENSINO "1" -- "0..*" PROFESSOR : "Trabalha em"
+INSTITUICAO_ENSINO "1" -- "1..*" CURSO : "Oferece"
+ALUNO "1..*" -- "1" CURSO : "Está matriculado"
+
+' Fluxo de Moedas
+PROFESSOR "1" -- "0..*" ENVIO_MOEDA : "Realiza"
+ALUNO "1" -- "0..*" ENVIO_MOEDA : "Recebe"
+
+' Fluxo de Vantagens
+EMPRESA_PARCEIRA "1" -- "1..*" VANTAGEM : "Disponibiliza"
+VANTAGEM "1" -- "0..*" RESGATE_VANTAGEM : "Origina"
+ALUNO "1" -- "0..*" RESGATE_VANTAGEM : "Efetua"
+
+@enduml
