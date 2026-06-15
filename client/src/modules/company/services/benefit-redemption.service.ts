@@ -17,14 +17,23 @@ export type ValidateBenefitRedemptionResponse = {
 export type BenefitRedemptionResponse = {
     id: string;
     studentId: string;
+    studentName: string;
     benefitId: string;
-    companyId: string;
+    benefitName: string;
+    companyId: string | null;
+    companyName?: string | null;
+    institutionId?: string | null;
+    institutionName?: string | null;
     couponCode: string;
     coinsSpent: number;
     status: 'PENDING' | 'USED';
     redeemedAt: string;
     usedAt: string | null;
 };
+
+export function getCompanyRedemptions() {
+    return api.get<BenefitRedemptionResponse[]>('/benefit-redemptions/company');
+}
 
 export function getRedeemedBenefitIds() {
     return api.get<RedeemedBenefitIdsResponse>('/benefit-redemptions/redeemed-benefit-ids');

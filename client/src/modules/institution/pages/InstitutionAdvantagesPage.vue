@@ -5,7 +5,9 @@ import {
     denyRedemption,
     getRedeemedBenefitIds,
     validateCoupon,
+    getInstitutionRedemptions,
     type ValidateBenefitRedemptionResponse,
+    type BenefitRedemptionResponse,
 } from '@/modules/institution/services/benefit-redemption.service';
 import {
     createBenefit,
@@ -31,8 +33,9 @@ import {
     PhTicket,
     PhTrash,
     PhX,
+    PhClockCounterClockwise,
 } from '@phosphor-icons/vue';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
 const authStore = useAuthStore();
@@ -213,6 +216,41 @@ const denialReasonError = ref('');
 const isDenying = ref(false);
 const redemptionDenied = ref(false);
 
+const redemptions = ref<BenefitRedemptionResponse[]>([]);
+const isLoadingHistory = ref(false);
+const showAllRedemptions = ref(false);
+
+const displayedRedemptions = computed(() => {
+    if (showAllRedemptions.value) {
+        return redemptions.value;
+    }
+    return redemptions.value.slice(0, 5);
+});
+
+async function loadHistory() {
+    isLoadingHistory.value = true;
+    try {
+        const res = await getInstitutionRedemptions();
+        redemptions.value = res.data;
+    } catch {
+        toast.error('Erro ao carregar histórico de resgates.');
+    } finally {
+        isLoadingHistory.value = false;
+    }
+}
+
+function formatDate(dateStr: string) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+}
+
 function resetCouponForm() {
     couponCode.value = '';
     couponError.value = '';
@@ -252,6 +290,7 @@ async function handleDenyRedemption() {
         usageNotes.value = '';
         couponCode.value = '';
         couponError.value = '';
+        await loadHistory();
     } catch {
     } finally {
         isDenying.value = false;
@@ -295,6 +334,7 @@ async function handleConfirmRedemption() {
         usageNotes.value = '';
         couponCode.value = '';
         couponError.value = '';
+        await loadHistory();
     } catch {
     } finally {
         isConfirming.value = false;
@@ -303,6 +343,7 @@ async function handleConfirmRedemption() {
 
 onMounted(() => {
     loadBenefits();
+    loadHistory();
 });
 </script>
 
@@ -511,185 +552,241 @@ onMounted(() => {
                 </div>
             </div>
 
-            <!-- Right: coupon validation -->
-            <PixelCard class="p-6">
-                <div class="font-pixel text-sm mb-4 flex items-center gap-2">
-                    <PhTicket weight="fill" class="pixel-icon" /> VALIDAR CUPOM
-                </div>
-                <div class="space-y-4">
-                    <div>
-                        <label class="font-pixel text-[10px] block mb-2">CÓDIGO DO CUPOM</label>
-                        <PixelInput
-                            v-model="couponCode"
-                            placeholder="LUMEN-XXXXX-XXX"
-                            style="text-transform: uppercase"
-                            @keyup.enter="validate"
-                        />
-                        <p
-                            v-if="couponError"
-                            class="font-sans text-xs mt-1"
-                            style="color: hsl(var(--destructive))"
-                        >
-                            {{ couponError }}
-                        </p>
+            <!-- Right: coupon validation & history -->
+            <div class="space-y-6">
+                <PixelCard class="p-6">
+                    <div class="font-pixel text-sm mb-4 flex items-center gap-2">
+                        <PhTicket weight="fill" class="pixel-icon" /> VALIDAR CUPOM
                     </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="font-pixel text-[10px] block mb-2">CÓDIGO DO CUPOM</label>
+                            <PixelInput
+                                v-model="couponCode"
+                                placeholder="LUMEN-XXXXX-XXX"
+                                style="text-transform: uppercase"
+                                @keyup.enter="validate"
+                            />
+                            <p
+                                v-if="couponError"
+                                class="font-sans text-xs mt-1"
+                                style="color: hsl(var(--destructive))"
+                            >
+                                {{ couponError }}
+                            </p>
+                        </div>
 
-                    <PixelButton
-                        variant="info"
-                        class="w-full"
-                        :disabled="isValidating"
-                        @click="validate"
-                    >
-                        {{ isValidating ? 'VERIFICANDO...' : 'VERIFICAR CÓDIGO' }}
-                    </PixelButton>
+                        <PixelButton
+                            variant="info"
+                            class="w-full"
+                            :disabled="isValidating"
+                            @click="validate"
+                        >
+                            {{ isValidating ? 'VERIFICANDO...' : 'VERIFICAR CÓDIGO' }}
+                        </PixelButton>
 
-                    <div v-if="validatedRedemption" class="space-y-4">
+                        <div v-if="validatedRedemption" class="space-y-4">
+                            <div
+                                class="border-2 border-border p-4 flex items-start gap-3"
+                                style="
+                                    border-color: hsl(var(--success));
+                                    background: hsl(var(--success) / 0.08);
+                                "
+                            >
+                                <PhCheckCircle
+                                    weight="fill"
+                                    class="pixel-icon shrink-0 mt-0.5"
+                                    :size="20"
+                                    style="color: hsl(var(--success))"
+                                />
+                                <div class="space-y-1 text-sm">
+                                    <div
+                                        class="font-pixel text-[9px]"
+                                        style="color: hsl(var(--success))"
+                                    >
+                                        CÓDIGO VÁLIDO
+                                    </div>
+                                    <div class="font-display text-lg">
+                                        <span class="font-sans text-xs text-muted-foreground"
+                                            >Aluno:
+                                        </span>
+                                        {{ validatedRedemption.studentName }}
+                                    </div>
+                                    <div class="font-display text-lg">
+                                        <span class="font-sans text-xs text-muted-foreground"
+                                            >Vantagem:
+                                        </span>
+                                        {{ validatedRedemption.benefitName }}
+                                    </div>
+                                    <div class="font-display text-lg flex items-center gap-1">
+                                        <span class="font-sans text-xs text-muted-foreground"
+                                            >Custo:
+                                        </span>
+                                        <CoinIcon :size="12" />
+                                        {{ validatedRedemption.coinsSpent }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="font-pixel text-[10px] block mb-2">
+                                    INSTRUÇÕES DE USO DA VANTAGEM
+                                </label>
+                                <textarea
+                                    v-model="usageNotes"
+                                    rows="4"
+                                    placeholder="Descreva como o aluno pode utilizar esta vantagem..."
+                                    class="w-full bg-input text-foreground border-2 border-border px-3 py-2 font-display text-lg shadow-[inset_2px_2px_0_0_hsl(var(--border)/0.25)] focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+                                ></textarea>
+                                <p class="font-sans text-xs text-muted-foreground mt-1">
+                                    Esta mensagem será enviada ao aluno por e-mail.
+                                </p>
+                            </div>
+
+                            <div class="flex gap-3">
+                                <PixelButton
+                                    variant="ghost"
+                                    class="flex-1"
+                                    @click="resetCouponForm"
+                                >
+                                    CANCELAR
+                                </PixelButton>
+                                <PixelButton
+                                    variant="success"
+                                    class="flex-1"
+                                    :disabled="isConfirming || !usageNotes.trim()"
+                                    @click="handleConfirmRedemption"
+                                >
+                                    <PhCheckCircle weight="fill" class="pixel-icon" />
+                                    {{ isConfirming ? 'CONFIRMANDO...' : 'CONFIRMAR RESGATE' }}
+                                </PixelButton>
+                            </div>
+                            <PixelButton
+                                variant="danger"
+                                class="w-full"
+                                @click="openDenyModal"
+                            >
+                                <PhX weight="bold" class="pixel-icon" />
+                                DENY REDEMPTION
+                            </PixelButton>
+                        </div>
+
                         <div
-                            class="border-2 border-border p-4 flex items-start gap-3"
+                            v-if="redemptionDenied"
+                            class="border-2 border-border p-4"
+                            style="border-color: hsl(var(--destructive)); background: hsl(var(--destructive) / 0.08)"
+                        >
+                            <div class="flex items-center gap-3">
+                                <PhX weight="bold" class="pixel-icon shrink-0" :size="20" style="color: hsl(var(--destructive))" />
+                                <div>
+                                    <div class="font-pixel text-[9px]" style="color: hsl(var(--destructive))">REDEMPTION DENIED</div>
+                                    <div class="font-sans text-sm mt-0.5 text-muted-foreground">
+                                        The student was notified by email. Their coins have been refunded.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <PixelButton variant="ghost" size="sm" class="w-full" @click="resetCouponForm">
+                                    VALIDATE ANOTHER CODE
+                                </PixelButton>
+                            </div>
+                        </div>
+
+                        <div
+                            v-if="redemptionConfirmed"
+                            class="border-2 border-border p-4"
                             style="
                                 border-color: hsl(var(--success));
                                 background: hsl(var(--success) / 0.08);
                             "
                         >
-                            <PhCheckCircle
-                                weight="fill"
-                                class="pixel-icon shrink-0 mt-0.5"
-                                :size="20"
-                                style="color: hsl(var(--success))"
-                            />
-                            <div class="space-y-1 text-sm">
-                                <div
-                                    class="font-pixel text-[9px]"
+                            <div class="flex items-center gap-3">
+                                <PhStar
+                                    weight="fill"
+                                    class="pixel-icon shrink-0"
+                                    :size="20"
                                     style="color: hsl(var(--success))"
+                                />
+                                <div>
+                                    <div
+                                        class="font-pixel text-[9px]"
+                                        style="color: hsl(var(--success))"
+                                    >
+                                        RESGATE CONFIRMADO!
+                                    </div>
+                                    <div class="font-sans text-sm mt-0.5 text-muted-foreground">
+                                        O e-mail com as instruções foi enviado ao aluno.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <PixelButton
+                                    variant="ghost"
+                                    size="sm"
+                                    class="w-full"
+                                    @click="resetCouponForm"
                                 >
-                                    CÓDIGO VÁLIDO
+                                    VALIDAR OUTRO CÓDIGO
+                                </PixelButton>
+                            </div>
+                        </div>
+                    </div>
+                </PixelCard>
+
+                <!-- Histórico de Resgates -->
+                <PixelCard class="p-6">
+                    <div class="font-pixel text-sm mb-4 flex items-center gap-2">
+                        <PhClockCounterClockwise weight="fill" class="pixel-icon" /> HISTÓRICO DE RESGATES
+                    </div>
+                    <div v-if="isLoadingHistory" class="font-pixel text-[10px] text-muted-foreground py-4 text-center">
+                        CARREGANDO HISTÓRICO...
+                    </div>
+                    <div v-else-if="redemptions.length === 0" class="font-pixel text-[9px] text-muted-foreground py-4 text-center">
+                        NENHUM RESGATE ENCONTRADO
+                    </div>
+                    <div v-else class="space-y-4">
+                        <div
+                            v-for="redemption in displayedRedemptions"
+                            :key="redemption.id"
+                            class="border-2 border-border p-3 flex flex-col gap-2 bg-card/50"
+                        >
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="font-pixel text-[9px] truncate max-w-[70%] text-foreground">
+                                    {{ redemption.studentName }}
                                 </div>
-                                <div class="font-display text-lg">
-                                    <span class="font-sans text-xs text-muted-foreground"
-                                        >Aluno:
-                                    </span>
-                                    {{ validatedRedemption.studentName }}
-                                </div>
-                                <div class="font-display text-lg">
-                                    <span class="font-sans text-xs text-muted-foreground"
-                                        >Vantagem:
-                                    </span>
-                                    {{ validatedRedemption.benefitName }}
-                                </div>
-                                <div class="font-display text-lg flex items-center gap-1">
-                                    <span class="font-sans text-xs text-muted-foreground"
-                                        >Custo:
-                                    </span>
-                                    <CoinIcon :size="12" />
-                                    {{ validatedRedemption.coinsSpent }}
-                                </div>
+                                <span
+                                    class="font-pixel text-[8px] px-2 py-0.5 border-2"
+                                    :style="redemption.status === 'USED' 
+                                        ? 'color: hsl(var(--success)); border-color: hsl(var(--success)); background: hsl(var(--success) / 0.05)'
+                                        : 'color: hsl(var(--warning)); border-color: hsl(var(--warning)); background: hsl(var(--warning) / 0.05)'"
+                                >
+                                    {{ redemption.status === 'USED' ? 'UTILIZADO' : 'PENDENTE' }}
+                                </span>
+                            </div>
+                            <div class="font-sans text-xs text-muted-foreground flex items-center justify-between gap-1 flex-wrap">
+                                <span>{{ redemption.benefitName }}</span>
+                                <span class="flex items-center gap-0.5 shrink-0">
+                                    <CoinIcon :size="10" /> {{ redemption.coinsSpent }}
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between text-[9px] font-sans text-muted-foreground/60 border-t border-border/50 pt-1.5">
+                                <span>Código: <span class="font-mono">{{ redemption.couponCode }}</span></span>
+                                <span>{{ formatDate(redemption.redeemedAt) }}</span>
                             </div>
                         </div>
 
-                        <div>
-                            <label class="font-pixel text-[10px] block mb-2">
-                                INSTRUÇÕES DE USO DA VANTAGEM
-                            </label>
-                            <textarea
-                                v-model="usageNotes"
-                                rows="4"
-                                placeholder="Descreva como o aluno pode utilizar esta vantagem..."
-                                class="w-full bg-input text-foreground border-2 border-border px-3 py-2 font-display text-lg shadow-[inset_2px_2px_0_0_hsl(var(--border)/0.25)] focus:outline-none focus:ring-2 focus:ring-ring resize-none"
-                            ></textarea>
-                            <p class="font-sans text-xs text-muted-foreground mt-1">
-                                Esta mensagem será enviada ao aluno por e-mail.
-                            </p>
-                        </div>
-
-                        <div class="flex gap-3">
-                            <PixelButton
-                                variant="ghost"
-                                class="flex-1"
-                                @click="resetCouponForm"
-                            >
-                                CANCELAR
-                            </PixelButton>
-                            <PixelButton
-                                variant="success"
-                                class="flex-1"
-                                :disabled="isConfirming || !usageNotes.trim()"
-                                @click="handleConfirmRedemption"
-                            >
-                                <PhCheckCircle weight="fill" class="pixel-icon" />
-                                {{ isConfirming ? 'CONFIRMANDO...' : 'CONFIRMAR RESGATE' }}
-                            </PixelButton>
-                        </div>
                         <PixelButton
-                            variant="danger"
-                            class="w-full"
-                            @click="openDenyModal"
+                            v-if="redemptions.length > 5"
+                            variant="ghost"
+                            size="sm"
+                            class="w-full text-[9px] font-pixel"
+                            @click="showAllRedemptions = !showAllRedemptions"
                         >
-                            <PhX weight="bold" class="pixel-icon" />
-                            DENY REDEMPTION
+                            {{ showAllRedemptions ? 'VER MENOS' : 'VER MAIS' }}
                         </PixelButton>
                     </div>
-
-                    <div
-                        v-if="redemptionDenied"
-                        class="border-2 border-border p-4"
-                        style="border-color: hsl(var(--destructive)); background: hsl(var(--destructive) / 0.08)"
-                    >
-                        <div class="flex items-center gap-3">
-                            <PhX weight="bold" class="pixel-icon shrink-0" :size="20" style="color: hsl(var(--destructive))" />
-                            <div>
-                                <div class="font-pixel text-[9px]" style="color: hsl(var(--destructive))">REDEMPTION DENIED</div>
-                                <div class="font-sans text-sm mt-0.5 text-muted-foreground">
-                                    The student was notified by email. Their coins have been refunded.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <PixelButton variant="ghost" size="sm" class="w-full" @click="resetCouponForm">
-                                VALIDATE ANOTHER CODE
-                            </PixelButton>
-                        </div>
-                    </div>
-
-                    <div
-                        v-if="redemptionConfirmed"
-                        class="border-2 border-border p-4"
-                        style="
-                            border-color: hsl(var(--success));
-                            background: hsl(var(--success) / 0.08);
-                        "
-                    >
-                        <div class="flex items-center gap-3">
-                            <PhStar
-                                weight="fill"
-                                class="pixel-icon shrink-0"
-                                :size="20"
-                                style="color: hsl(var(--success))"
-                            />
-                            <div>
-                                <div
-                                    class="font-pixel text-[9px]"
-                                    style="color: hsl(var(--success))"
-                                >
-                                    RESGATE CONFIRMADO!
-                                </div>
-                                <div class="font-sans text-sm mt-0.5 text-muted-foreground">
-                                    O e-mail com as instruções foi enviado ao aluno.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <PixelButton
-                                variant="ghost"
-                                size="sm"
-                                class="w-full"
-                                @click="resetCouponForm"
-                            >
-                                VALIDAR OUTRO CÓDIGO
-                            </PixelButton>
-                        </div>
-                    </div>
-                </div>
-            </PixelCard>
+                </PixelCard>
+            </div>
         </div>
     </div>
 

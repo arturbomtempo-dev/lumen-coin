@@ -52,7 +52,6 @@ const {
     errors: passwordErrors,
     isSubmitting: isChangingPassword,
     validate: validatePassword,
-    clearErrors: clearPasswordErrors,
 } = useForm<ChangeInitialPasswordFormData>(changeInitialPasswordSchema);
 
 passwordData.value = { newPassword: '', confirmPassword: '' };

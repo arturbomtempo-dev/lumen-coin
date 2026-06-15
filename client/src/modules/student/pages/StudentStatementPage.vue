@@ -3,35 +3,45 @@ import {
     getReceivedTransfers,
     type CoinTransferResponse,
 } from '@/modules/coin-transfer/services/coin-transfer.service';
-import { useStudentStore } from '@/modules/student/stores/student.store';
+import {
+    getMyRedemptions,
+    type BenefitRedemptionResponse,
+} from '@/modules/student/services/benefit-redemption.service';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import PixelBadge from '@/shared/components/PixelBadge.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import { PhReceipt, PhTicket } from '@phosphor-icons/vue';
-import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
 
-const store = useStudentStore();
-const { coupons } = storeToRefs(store);
-
 const transfers = ref<CoinTransferResponse[]>([]);
+const coupons = ref<BenefitRedemptionResponse[]>([]);
 const isLoading = ref(true);
+const isLoadingCoupons = ref(true);
 
 function formatDate(iso: string) {
+    if (!iso) return '';
     return new Intl.DateTimeFormat('pt-BR', {
         timeZone: 'America/Sao_Paulo',
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
     }).format(new Date(iso));
 }
 
 onMounted(async () => {
     try {
-        const { data } = await getReceivedTransfers();
-        transfers.value = data;
+        const [transfersRes, couponsRes] = await Promise.all([
+            getReceivedTransfers(),
+            getMyRedemptions(),
+        ]);
+        transfers.value = transfersRes.data;
+        coupons.value = couponsRes.data;
+    } catch {
     } finally {
         isLoading.value = false;
+        isLoadingCoupons.value = false;
     }
 });
 </script>
@@ -91,8 +101,11 @@ onMounted(async () => {
             <h2 class="font-pixel text-sm md:text-lg mb-4 flex items-center gap-2">
                 <PhTicket weight="fill" class="pixel-icon text-secondary" /> MEUS CUPONS
             </h2>
+            <div v-if="isLoadingCoupons" class="p-6 font-sans text-sm text-muted-foreground text-center">
+                Carregando cupons...
+            </div>
             <PixelCard
-                v-if="coupons.length === 0"
+                v-else-if="coupons.length === 0"
                 class="p-6 text-center font-sans text-muted-foreground text-sm"
             >
                 Você ainda não resgatou nenhuma vantagem. Vá ao marketplace e desbloqueie
@@ -101,19 +114,22 @@ onMounted(async () => {
             <div v-else class="grid sm:grid-cols-2 gap-4">
                 <PixelCard v-for="c in coupons" :key="c.id" class="p-4">
                     <div class="flex items-center justify-between">
-                        <div class="font-pixel text-xs">{{ c.benefit.toUpperCase() }}</div>
-                        <PixelBadge :tone="c.used ? 'red' : 'green'">{{
-                            c.used ? 'USADO' : 'VÁLIDO'
+                        <div class="font-pixel text-xs">{{ c.benefitName.toUpperCase() }}</div>
+                        <PixelBadge :tone="c.status === 'USED' ? 'red' : 'green'">{{
+                            c.status === 'USED' ? 'USADO' : 'VÁLIDO'
                         }}</PixelBadge>
+                    </div>
+                    <div class="font-sans text-sm text-muted-foreground mt-1">
+                       Fornecido por {{ c.companyName || c.institutionName || 'Parceiro' }}
                     </div>
                     <div
                         class="mt-3 border-2 border-dashed border-border bg-hud text-hud-foreground p-3"
                     >
                         <div class="font-pixel text-[9px] opacity-70">CÓDIGO</div>
-                        <div class="font-pixel text-sm break-all">{{ c.code }}</div>
+                        <div class="font-pixel text-sm break-all font-mono">{{ c.couponCode }}</div>
                     </div>
-                    <div class="font-sans text-xs text-muted-foreground mt-2">
-                        Gerado em {{ c.date }}
+                    <div class="font-sans text-sm text-muted-foreground mt-2">
+                        Gerado em {{ formatDate(c.redeemedAt) }}
                     </div>
                 </PixelCard>
             </div>

@@ -8,9 +8,13 @@ import java.util.UUID;
 public record BenefitRedemptionResponse(
         UUID id,
         UUID studentId,
+        String studentName,
         UUID benefitId,
+        String benefitName,
         UUID companyId,
+        String companyName,
         UUID institutionId,
+        String institutionName,
         String couponCode,
         int coinsSpent,
         RedemptionStatus status,

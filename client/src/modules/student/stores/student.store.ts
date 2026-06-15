@@ -93,6 +93,7 @@ export const useStudentStore = defineStore('student', () => {
             id: 't' + Date.now(),
             student: 'Maria Luiza Souza',
             teacher,
+            senderId: 'dummy-sender-id',
             amount,
             reason,
             date: new Date().toISOString().slice(0, 10),

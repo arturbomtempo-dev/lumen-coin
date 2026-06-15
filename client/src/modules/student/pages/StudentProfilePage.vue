@@ -652,7 +652,7 @@ onMounted(async () => {
                 <div class="border-2 border-border bg-hud text-hud-foreground p-4 space-y-4">
                     <div class="flex items-start justify-between gap-3">
                         <div>
-                            <div class="font-pixel text-[9px] text-muted-foreground mb-1">
+                            <div class="font-pixel text-[9px] text-yellow-50 mb-1">
                                 NÍVEL ATUAL
                             </div>
                             <div class="font-pixel text-3xl flex items-center gap-2">
@@ -682,10 +682,10 @@ onMounted(async () => {
 
                     <div
                         v-if="nextLevel"
-                        class="font-pixel text-[9px] text-center text-muted-foreground"
+                        class="font-pixel text-[9px] text-center text-yellow-50"
                     >
                         Faltam
-                        <span class="text-foreground">{{
+                        <span class="text-primary">{{
                             coinsToNextLevel.toLocaleString('pt-BR')
                         }}</span>
                         moedas para alcançar
