@@ -1,0 +1,70 @@
+@startuml
+title Diagrama de Comunicação Geral - Sistema de Moedas e Vantagens
+
+' --- Definição das Instâncias do Sistema ---
+object "<u>:Professor</u>" as Professor
+object "<u>:Aluno</u>" as Aluno
+object "<u>:EmpresaParceira</u>" as Empresa
+
+object "<u>:ControleMoeda</u>" as CMoeda
+object "<u>:ControleVantagem</u>" as CVantagem
+object "<u>:ControleResgate</u>" as CResgate
+
+object "<u>:DBUsuarios</u>" as DBUsu
+object "<u>:DBMoedas</u>" as DBMoeda
+object "<u>:DBVantagens</u>" as DBVan
+object "<u>:DBResgates</u>" as DBRes
+
+object "<u>:FilaNotificacoes</u>" as Fila
+object "<u>:WorkerNotificacoes</u>" as Worker
+object "<u>:ServicoEmail</u>" as Email
+
+' --- Notas de Regras de Negócio Globais ---
+note left of CMoeda
+  **[Fluxo 1]** O professor envia moedas
+  para reconhecer o aluno.
+end note
+
+note right of CResgate
+  **[Fluxos 3, 4 e 5]** O aluno consulta,
+  resgata a vantagem e a empresa
+  valida o consumo do benefício.
+end note
+
+' --- MAPEAMENTO DO FLUXO GERAL COM SETAS DIRECIONAIS ---
+
+' === MACRO FLUXO 1: ENVIO DE MOEDAS E NOTIFICAÇÃO ===
+Professor --> CMoeda : 1: Enviar Moedas
+CMoeda --> DBUsu : 1.1: Consultar Aluno
+CMoeda --> DBMoeda : 1.2: Registrar Transação
+CMoeda --> Fila : 1.3: Publicar Notificação
+Fila --> Worker : 1.4: Consumir Mensagem
+Worker --> Email : 1.5: Enviar E-mail
+Email --> Aluno : 1.6: Notificar Recebimento
+
+' === MACRO FLUXO 2: CONSULTA DE VANTAGENS ===
+Aluno --> CVantagem : 2: Consultar Vantagens Disp.
+CVantagem --> DBVan : 2.1: Buscar Vantagens Catálogo
+
+' === MACRO FLUXO 3: SOLICITAÇÃO DE RESGATE ===
+Aluno --> CResgate : 3: Solicitar Resgate de Vantagem
+CResgate --> DBUsu : 3.1: Validar Saldo Aluno
+CResgate --> DBVan : 3.2: Validar Custo Vantagem
+CResgate --> DBMoeda : 3.3: Debitar Moedas
+CResgate --> DBRes : 3.4: Cadastrar Resgate (PENDENTE)
+CResgate --> Fila : 3.5: Publicar Confirmação Resgate
+
+' === MACRO FLUXO 4: NOTIFICAÇÃO DO RESGATE (Voucher) ===
+Fila --> Worker : 4.1: Consumir Mensagem Resgate
+Worker --> Email : 4.2: Enviar E-mail com Voucher
+Email --> Aluno : 4.3: Receber Voucher de Confirmação
+
+' === MACRO FLUXO 5: CONSUMO E CONFIRMAÇÃO DA EMPRESA ===
+Empresa --> CResgate : 5: Confirmar Utilização do Voucher
+CResgate --> DBRes : 5.1: Atualizar Status Resgate (UTILIZADO)
+CResgate --> Fila : 5.2: Publicar Notificação de Consumo
+Fila --> Worker : 5.3: Consumir Mensagem Consumo
+Worker --> Email : 5.4: Enviar E-mail de Encerramento
+Email --> Aluno : 5.5: Notificar Benefício Utilizado com Sucesso
+
+@enduml
