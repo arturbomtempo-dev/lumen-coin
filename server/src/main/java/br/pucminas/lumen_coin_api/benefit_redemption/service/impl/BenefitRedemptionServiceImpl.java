@@ -362,12 +362,35 @@ public class BenefitRedemptionServiceImpl implements BenefitRedemptionService {
     }
 
     private BenefitRedemptionResponse toResponse(BenefitRedemption r) {
+        String studentName = studentRepository.findById(r.getStudentId())
+                .map(Student::getName)
+                .orElse("Estudante");
+        String benefitName = benefitRepository.findById(r.getBenefitId())
+                .map(Benefit::getName)
+                .orElse("Vantagem");
+        String companyName = null;
+        if (r.getCompanyId() != null) {
+            companyName = companyRepository.findById(r.getCompanyId())
+                    .map(Company::getName)
+                    .orElse(null);
+        }
+        String institutionName = null;
+        if (r.getInstitutionId() != null) {
+            institutionName = institutionRepository.findById(r.getInstitutionId())
+                    .map(Institution::getName)
+                    .orElse(null);
+        }
+
         return new BenefitRedemptionResponse(
                 r.getId(),
                 r.getStudentId(),
+                studentName,
                 r.getBenefitId(),
+                benefitName,
                 r.getCompanyId(),
+                companyName,
                 r.getInstitutionId(),
+                institutionName,
                 r.getCouponCode(),
                 r.getCoinsSpent(),
                 r.getStatus(),

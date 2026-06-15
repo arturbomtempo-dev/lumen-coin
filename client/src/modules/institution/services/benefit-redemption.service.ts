@@ -17,9 +17,13 @@ export type ValidateBenefitRedemptionResponse = {
 export type BenefitRedemptionResponse = {
     id: string;
     studentId: string;
+    studentName: string;
     benefitId: string;
+    benefitName: string;
     companyId: string | null;
+    companyName?: string | null;
     institutionId: string | null;
+    institutionName?: string | null;
     couponCode: string;
     coinsSpent: number;
     status: 'PENDING' | 'USED';
