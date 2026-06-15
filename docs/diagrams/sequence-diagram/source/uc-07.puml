@@ -3,36 +3,57 @@
 autonumber
 
 title UC07 - Cadastrar Vantagem
+
 actor "Funcionário Empresa Parceira" as FEP
+actor "Funcionário Instituição" as FI
 participant "Tela do Sistema" as Tela
 participant "ControleVantagem" as CV
 database "PostgreSQL\nVantagens" as DBVantagem
 database "PostgreSQL\nEmpresas" as DBEmpresa
 
-FEP -> Tela : cadastrarVantagem(nome, descricao,\nimagem, custo, empresaID)
-activate Tela
+== Cenário 1: Cadastro por Funcionário Empresa Parceira ==
+alt Ator é Funcionário Empresa Parceira
+    FEP -> Tela : cadastrarVantagem(nome, descricao, imagem, custo, empresaID)
+    activate Tela
+    Tela -> CV : solicitarCadastroVantagem(dadosVantagem)
+    activate CV
+    
+    CV -> DBEmpresa : buscarEmpresa(empresaID)
+    activate DBEmpresa
+    DBEmpresa --> CV : empresaEncontrada()
+    deactivate DBEmpresa
+    
+    alt Empresa encontrada
+        CV -> DBVantagem : salvarVantagem(nome, descricao, imagem, custo, empresaID)
+        activate DBVantagem
+        DBVantagem --> CV : vantagemCadastrada()
+        deactivate DBVantagem
+        CV --> Tela : cadastroRealizado()
+        Tela --> FEP : vantagemCadastrada()
+    else Empresa não encontrada
+        CV --> Tela : erroCadastro()
+        Tela --> FEP : exibirMensagemErro()
+    end
+    deactivate CV
+    deactivate Tela
 
-Tela -> CV : solicitarCadastroVantagem(dadosVantagem)
-activate CV
-
-CV -> DBEmpresa : buscarEmpresa(empresaID)
-activate DBEmpresa
-DBEmpresa --> CV : empresaEncontrada()
-deactivate DBEmpresa
-
-alt Empresa encontrada
-    CV -> DBVantagem : salvarVantagem(nome, descricao,\nimagem, custo, empresaID)
+== Cenário 2: Cadastro por Funcionário Instituição ==
+else Ator é Funcionário Instituição
+    FI -> Tela : cadastrarVantagem(nome, descricao, imagem, custo, instituicaoID)
+    activate Tela
+    Tela -> CV : solicitarCadastroVantagem(dadosVantagem)
+    activate CV
+    
+    ' Não busca na tabela de empresas parceiras, salva direto atrelando à Instituição
+    CV -> DBVantagem : salvarVantagem(nome, descricao, imagem, custo, instituicaoID)
     activate DBVantagem
-    DBVantagem --> CV : vantagemCadastrada(vantagem)
+    DBVantagem --> CV : vantagemCadastrada()
     deactivate DBVantagem
-
+    
     CV --> Tela : cadastroRealizado()
-    Tela --> FEP : vantagemCadastrada()
-else Empresa não encontrada
-    CV --> Tela : erroCadastro()
-    Tela --> FEP : exibirMensagemErro()
+    Tela --> FI : vantagemCadastrada()
+    deactivate CV
+    deactivate Tela
 end
 
-deactivate CV
-deactivate Tela
 @enduml

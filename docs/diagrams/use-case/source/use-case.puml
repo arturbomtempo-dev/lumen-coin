@@ -1,0 +1,71 @@
+@startuml
+skinparam packageStyle rectangle
+
+left to right direction
+
+actor "Usuário" as Usuario
+
+actor "Funcionário Instituição de Ensino" as FuncInstituicao
+actor "Funcionário Empresa Parceira" as FuncEmpresa
+actor "Professor" as Professor
+actor "Aluno" as Aluno
+
+' Heranças (Generalizações) dos Atores
+Usuario <|-- FuncInstituicao
+Usuario <|-- FuncEmpresa
+Usuario <|-- Professor
+Usuario <|-- Aluno
+
+rectangle "Sistema de Moeda Estudantil" {
+    usecase "UC01: Realizar Login" as UC01
+    usecase "UC02: Recuperar senha" as UC02
+    usecase "UC03: Cadastrar Professor" as UC03
+    usecase "UC04: Cadastrar Curso" as UC04
+    usecase "UC05: Realizar cadastro" as UC05
+    usecase "UC06: Realizar cadastro" as UC06
+    usecase "UC07: Cadastrar Vantagem" as UC07
+    usecase "UC08: Confirmar Vantagem" as UC08
+    usecase "UC09: Enviar Moedas ao Aluno" as UC09
+    usecase "UC10: Consultar Extrato" as UC10
+    usecase "UC11: Visualizar Transações" as UC11
+    usecase "UC12: Resgatar Vantagem" as UC12
+    usecase "UC13: Realizar Cadastro" as UC13
+    usecase "UC14: Visualizar Vantagens" as UC14
+    
+    usecase "Enviar Notificação por Email" as EnviarEmail #ffcccc
+}
+
+' Associações do Usuário
+Usuario --> UC01
+
+' Relacionamento de Extends
+UC01 <.. UC02 : <<extends>>
+
+' Associações do Funcionário Instituição de Ensino
+FuncInstituicao --> UC03
+FuncInstituicao --> UC04
+FuncInstituicao --> UC05
+
+' Associações do Funcionário Empresa Parceira
+FuncEmpresa --> UC06
+FuncEmpresa --> UC07
+FuncEmpresa --> UC08
+
+' Associações do Professor
+Professor --> UC09
+Professor --> UC10
+Professor --> UC11
+
+' Associações do Aluno
+Aluno --> UC10
+Aluno --> UC11
+Aluno --> UC12
+Aluno --> UC13
+Aluno --> UC14
+
+' Relacionamentos de Include (linhas pontilhadas)
+UC09 ..> EnviarEmail : <<include>>
+UC12 ..> EnviarEmail : <<include>>
+UC13 ..> EnviarEmail : <<include>>
+
+@endum

@@ -1,0 +1,142 @@
+@startuml
+title Diagrama de Classes
+skinparam classAttributeIconSize 0
+
+enum Avatar <<enum>> {
+    MARIO
+    LUIGI
+    PEACH
+    TOAD
+    BOWSER
+    EMPRESA
+    INSTITUICAO
+}
+
+enum StatusResgate <<enum>> {
+    PENDENTE
+    CONFIRMADO
+    UTILIZADO
+    CANCELADO
+}
+
+abstract class Usuario {
+    - nome : String
+    - email : String
+    - senha : String
+    - avatar : Avatar
+    + Logar() : void
+    + Excluir() : void
+}
+
+class EmpresaParceira {
+    - cnpj : String
+    + Cadastrar() : void
+    + Editar() : void
+}
+
+class Aluno {
+    - cpf : String
+    - rg : String
+    - cep : String
+    - endereco : String
+    - saldo : int
+    + Cadastrar() : void
+    + Editar() : void
+    + ConsultarExtrato() : void
+}
+
+class InstituicaoEnsino {
+    - cnpj : String
+    - cep : String
+    - endereco : String
+    + Cadastrar() : void
+    + Editar() : void
+    + CadastrarProfessor() : void
+}
+
+class Professor {
+    - cpf : String
+    - departamento : String
+    - saldo : int
+    + Editar() : void
+    + ConsultarExtrato() : void
+}
+
+class Vantagem {
+    - nome : String
+    - descricao : String
+    - imagem : String
+    - custo : int
+    + Cadastrar() : void
+    + Editar() : void
+    + Excluir() : void
+    + Visualizar() : void
+}
+
+class ResgateVantagem {
+    - status : StatusResgate
+    + Cadastrar() : void
+    + Cancelar() : void
+    + EnviarEmailConfirmacao() : void
+}
+
+abstract class Transacao {
+    - codigo : String
+    - dataHora : String
+    + Visualizar() : void
+}
+
+class EnvioMoeda {
+    - quantidade : int
+    - mensagem : String
+    + Enviar() : void
+    + Notificar() : void
+}
+
+class Curso {
+    - nome : String
+    - turno : String
+    - quantidadePeriodos : int
+    + Cadastrar() : void
+    + Editar() : void
+    + Excluir() : void
+    + Visualizar() : void
+}
+
+' --- Relacionamentos de Herança (Generalização) ---
+Usuario <|-- EmpresaParceira
+Usuario <|-- Aluno
+Usuario <|-- InstituicaoEnsino
+Usuario <|-- Professor
+
+Transacao <|-- ResgateVantagem
+Transacao <|-- EnvioMoeda
+
+' --- Outros Relacionamentos e Multiplicidades ---
+
+' EmpresaParceira possui 1..* Vantagem (Composição)
+EmpresaParceira "1" *-- "1..*" Vantagem
+
+' Vantagem possui 0..* ResgateVantagem (Composição)
+Vantagem "1" *-- "0..*" ResgateVantagem
+
+' Aluno possui 0..* ResgateVantagem
+Aluno "1" -- "0..*" ResgateVantagem
+
+' Aluno possui 0..* Transacao
+Aluno "1" -- "0..*" Transacao
+
+' Aluno e Curso
+Aluno "1..*" -- "1" Curso
+
+' InstituicaoEnsino e Professor
+InstituicaoEnsino "1" -- "1..*" Professor
+
+' InstituicaoEnsino possui 1..* Curso (Composição)
+InstituicaoEnsino "1" *-- "1..*" Curso
+
+' Professor envia moedas para Aluno
+Professor "1" -- "0..*" EnvioMoeda
+Aluno "1" -- "0..*" EnvioMoeda
+
+@enduml
