@@ -7,9 +7,16 @@ import {
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
-import { PhCamera, PhCheckCircle, PhQrCode, PhWarning, PhXCircle } from '@phosphor-icons/vue';
+import {
+    PhCamera,
+    PhCheckCircle,
+    PhDeviceMobile,
+    PhQrCode,
+    PhWarning,
+    PhXCircle,
+} from '@phosphor-icons/vue';
 import { Html5Qrcode } from 'html5-qrcode';
-import { onUnmounted, ref } from 'vue';
+import { nextTick, onUnmounted, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
 type ScanState = 'idle' | 'scanning' | 'validating' | 'validated' | 'confirmed' | 'error';
@@ -27,6 +34,8 @@ async function startScanner() {
     scanError.value = '';
     validatedRedemption.value = null;
     scannedCode.value = '';
+
+    await nextTick();
 
     scanner = new Html5Qrcode('qr-reader');
 
@@ -119,6 +128,24 @@ onUnmounted(() => {
                 Aponte a câmera para o QR Code do cupom do aluno para validar e confirmar o resgate
                 automaticamente.
             </p>
+            <div
+                class="hidden md:flex border-2 items-start gap-2 p-3"
+                style="
+                    border-color: hsl(var(--border));
+                    background: hsl(var(--muted-foreground) / 0.06);
+                "
+            >
+                <PhDeviceMobile
+                    weight="fill"
+                    :size="16"
+                    class="pixel-icon shrink-0 mt-0.5"
+                    style="color: hsl(var(--muted-foreground))"
+                />
+                <p class="font-pixel text-[8px]" style="color: hsl(var(--muted-foreground))">
+                    CASO NÃO CONSIGA ACESSAR O QR CODE CORRETAMENTE PELO COMPUTADOR, RECOMENDA-SE
+                    ACESSAR PELO CELULAR.
+                </p>
+            </div>
             <PixelButton variant="primary" class="w-full" @click="startScanner">
                 <PhCamera weight="fill" class="pixel-icon mr-2" />
                 INICIAR CÂMERA
@@ -128,9 +155,9 @@ onUnmounted(() => {
         <div v-if="scanState === 'scanning'" class="space-y-4">
             <div
                 id="qr-reader"
-                class="w-full border-2 border-border overflow-hidden"
+                class="w-full border-2 border-border"
                 style="min-height: 300px"
-            />
+            ></div>
             <p
                 class="font-pixel text-[9px] text-center"
                 style="color: hsl(var(--muted-foreground))"
