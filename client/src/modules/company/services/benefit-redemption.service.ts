@@ -56,3 +56,7 @@ export function confirmRedemption(couponCode: string, usageNotes: string) {
 export function denyRedemption(couponCode: string, denialReason: string) {
     return api.patch('/benefit-redemptions/deny', { couponCode, denialReason });
 }
+
+export function scanRedemption(couponCode: string) {
+    return api.patch<BenefitRedemptionResponse>('/benefit-redemptions/scan', { couponCode });
+}

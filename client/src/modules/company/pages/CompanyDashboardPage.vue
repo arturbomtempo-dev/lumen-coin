@@ -1,5 +1,15 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
+import CompanyAdvantagesPage from '@/modules/company/pages/CompanyAdvantagesPage.vue';
+import CompanyQrScannerPage from '@/modules/company/pages/CompanyQrScannerPage.vue';
+import {
+    confirmRedemption,
+    denyRedemption,
+    getCompanyRedemptions,
+    validateCoupon,
+    type BenefitRedemptionResponse,
+    type ValidateBenefitRedemptionResponse,
+} from '@/modules/company/services/benefit-redemption.service';
 import {
     changeCompanyPassword,
     deleteCompany,
@@ -11,15 +21,6 @@ import {
     type ChangeCompanyPasswordFormData,
 } from '@/modules/schemas/change-company-password.schema';
 import { updateCompanySchema } from '@/modules/schemas/update-company.schema';
-import CompanyAdvantagesPage from '@/modules/company/pages/CompanyAdvantagesPage.vue';
-import {
-    confirmRedemption,
-    denyRedemption,
-    validateCoupon,
-    getCompanyRedemptions,
-    type ValidateBenefitRedemptionResponse,
-    type BenefitRedemptionResponse,
-} from '@/modules/company/services/benefit-redemption.service';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
@@ -31,12 +32,14 @@ import { useThemeStore } from '@/shared/stores/theme.store';
 import {
     PhArrowLeft,
     PhCheckCircle,
+    PhClockCounterClockwise,
     PhEye,
     PhEyeSlash,
     PhFloppyDisk,
     PhGameController,
     PhKey,
     PhMoon,
+    PhQrCode,
     PhSignOut,
     PhStar,
     PhStorefront,
@@ -45,7 +48,6 @@ import {
     PhTrash,
     PhUser,
     PhXCircle,
-    PhClockCounterClockwise,
 } from '@phosphor-icons/vue';
 import { vMaska } from 'maska/vue';
 import { computed, onMounted, ref } from 'vue';
@@ -56,7 +58,7 @@ const themeStore = useThemeStore();
 const authStore = useAuthStore();
 const router = useRouter();
 
-type Tab = 'benefits' | 'account';
+type Tab = 'benefits' | 'scanner' | 'account';
 const tab = ref<Tab>('benefits');
 
 const couponCode = ref('');
@@ -305,6 +307,7 @@ async function handleLogout() {
 
 const tabs = [
     { id: 'benefits' as Tab, label: 'VANTAGENS', icon: PhStorefront },
+    { id: 'scanner' as Tab, label: 'ESCANEAR QR', icon: PhQrCode },
     { id: 'account' as Tab, label: 'MINHA CONTA', icon: PhUser },
 ];
 
@@ -586,6 +589,12 @@ onMounted(() => {
                             </div>
                         </PixelCard>
                     </div>
+                </div>
+            </template>
+
+            <template v-if="tab === 'scanner'">
+                <div class="max-w-lg">
+                    <CompanyQrScannerPage />
                 </div>
             </template>
 

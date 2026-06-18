@@ -40,361 +40,396 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BenefitRedemptionServiceImpl implements BenefitRedemptionService {
 
-    private static final String COUPON_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private static final SecureRandom RANDOM = new SecureRandom();
+        private static final String COUPON_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        private static final SecureRandom RANDOM = new SecureRandom();
 
-    private final BenefitRedemptionRepository redemptionRepository;
-    private final BenefitRepository benefitRepository;
-    private final StudentRepository studentRepository;
-    private final CompanyRepository companyRepository;
-    private final InstitutionRepository institutionRepository;
-    private final BenefitRedemptionProducer redemptionProducer;
-    private final EmailService emailService;
+        private final BenefitRedemptionRepository redemptionRepository;
+        private final BenefitRepository benefitRepository;
+        private final StudentRepository studentRepository;
+        private final CompanyRepository companyRepository;
+        private final InstitutionRepository institutionRepository;
+        private final BenefitRedemptionProducer redemptionProducer;
+        private final EmailService emailService;
 
-    @Override
-    @Transactional
-    public BenefitRedemptionResponse redeem(UUID studentId, CreateBenefitRedemptionRequest request) {
-        Benefit benefit = benefitRepository.findById(request.benefitId())
-                .orElseThrow(() -> new BenefitNotFoundException(request.benefitId()));
+        @Override
+        @Transactional
+        public BenefitRedemptionResponse redeem(UUID studentId, CreateBenefitRedemptionRequest request) {
+                Benefit benefit = benefitRepository.findById(request.benefitId())
+                                .orElseThrow(() -> new BenefitNotFoundException(request.benefitId()));
 
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new UserNotFoundException(studentId));
+                Student student = studentRepository.findById(studentId)
+                                .orElseThrow(() -> new UserNotFoundException(studentId));
 
-        if (redemptionRepository.existsByBenefitId(benefit.getId())) {
-            throw new BenefitAlreadyRedeemedException();
+                if (redemptionRepository.existsByBenefitId(benefit.getId())) {
+                        throw new BenefitAlreadyRedeemedException();
+                }
+
+                if (student.getBalance() < benefit.getCost()) {
+                        throw new InsufficientBalanceException(student.getBalance(), benefit.getCost());
+                }
+
+                student.setBalance(student.getBalance() - benefit.getCost());
+                studentRepository.save(student);
+
+                String couponCode = generateUniqueCouponCode();
+
+                BenefitRedemption redemption = new BenefitRedemption();
+                redemption.setStudentId(studentId);
+                redemption.setBenefitId(benefit.getId());
+                redemption.setCoinsSpent(benefit.getCost());
+                redemption.setCouponCode(couponCode);
+
+                if (benefit.getCompanyId() != null) {
+                        redemption.setCompanyId(benefit.getCompanyId());
+                } else {
+                        redemption.setInstitutionId(benefit.getInstitutionId());
+                }
+
+                BenefitRedemption saved;
+                try {
+                        saved = redemptionRepository.saveAndFlush(redemption);
+                } catch (DataIntegrityViolationException e) {
+                        redemption.setCouponCode(generateUniqueCouponCode());
+                        saved = redemptionRepository.saveAndFlush(redemption);
+                }
+
+                if (benefit.getCompanyId() != null) {
+                        Company company = companyRepository.findById(benefit.getCompanyId())
+                                        .orElseThrow(() -> new UserNotFoundException(benefit.getCompanyId()));
+                        redemptionProducer.send(new BenefitRedemptionMessage(
+                                        student.getEmail(),
+                                        student.getName(),
+                                        company.getEmail(),
+                                        company.getName(),
+                                        benefit.getName(),
+                                        saved.getCouponCode(),
+                                        saved.getCoinsSpent()));
+                } else {
+                        Institution institution = institutionRepository.findById(benefit.getInstitutionId())
+                                        .orElseThrow(() -> new UserNotFoundException(benefit.getInstitutionId()));
+                        redemptionProducer.send(new BenefitRedemptionMessage(
+                                        student.getEmail(),
+                                        student.getName(),
+                                        institution.getEmail(),
+                                        institution.getName(),
+                                        benefit.getName(),
+                                        saved.getCouponCode(),
+                                        saved.getCoinsSpent()));
+                }
+
+                return toResponse(saved);
         }
 
-        if (student.getBalance() < benefit.getCost()) {
-            throw new InsufficientBalanceException(student.getBalance(), benefit.getCost());
+        @Override
+        @Transactional(readOnly = true)
+        public List<BenefitRedemptionResponse> getMyRedemptions(UUID studentId) {
+                return redemptionRepository.findByStudentIdOrderByRedeemedAtDesc(studentId)
+                                .stream()
+                                .map(this::toResponse)
+                                .toList();
         }
 
-        student.setBalance(student.getBalance() - benefit.getCost());
-        studentRepository.save(student);
-
-        String couponCode = generateUniqueCouponCode();
-
-        BenefitRedemption redemption = new BenefitRedemption();
-        redemption.setStudentId(studentId);
-        redemption.setBenefitId(benefit.getId());
-        redemption.setCoinsSpent(benefit.getCost());
-        redemption.setCouponCode(couponCode);
-
-        if (benefit.getCompanyId() != null) {
-            redemption.setCompanyId(benefit.getCompanyId());
-        } else {
-            redemption.setInstitutionId(benefit.getInstitutionId());
+        @Override
+        @Transactional(readOnly = true)
+        public List<BenefitRedemptionResponse> getCompanyRedemptions(UUID companyId) {
+                return redemptionRepository.findByCompanyIdOrderByRedeemedAtDesc(companyId)
+                                .stream()
+                                .map(this::toResponse)
+                                .toList();
         }
 
-        BenefitRedemption saved;
-        try {
-            saved = redemptionRepository.saveAndFlush(redemption);
-        } catch (DataIntegrityViolationException e) {
-            redemption.setCouponCode(generateUniqueCouponCode());
-            saved = redemptionRepository.saveAndFlush(redemption);
+        @Override
+        @Transactional(readOnly = true)
+        public List<BenefitRedemptionResponse> getInstitutionRedemptions(UUID institutionId) {
+                return redemptionRepository.findByInstitutionIdOrderByRedeemedAtDesc(institutionId)
+                                .stream()
+                                .map(this::toResponse)
+                                .toList();
         }
 
-        if (benefit.getCompanyId() != null) {
-            Company company = companyRepository.findById(benefit.getCompanyId())
-                    .orElseThrow(() -> new UserNotFoundException(benefit.getCompanyId()));
-            redemptionProducer.send(new BenefitRedemptionMessage(
-                    student.getEmail(),
-                    student.getName(),
-                    company.getEmail(),
-                    company.getName(),
-                    benefit.getName(),
-                    saved.getCouponCode(),
-                    saved.getCoinsSpent()));
-        } else {
-            Institution institution = institutionRepository.findById(benefit.getInstitutionId())
-                    .orElseThrow(() -> new UserNotFoundException(benefit.getInstitutionId()));
-            redemptionProducer.send(new BenefitRedemptionMessage(
-                    student.getEmail(),
-                    student.getName(),
-                    institution.getEmail(),
-                    institution.getName(),
-                    benefit.getName(),
-                    saved.getCouponCode(),
-                    saved.getCoinsSpent()));
+        @Override
+        @Transactional(readOnly = true)
+        public RedeemedBenefitIdsResponse getRedeemedBenefitIds() {
+                return new RedeemedBenefitIdsResponse(
+                                redemptionRepository.findBenefitIdsByStatus(RedemptionStatus.PENDING),
+                                redemptionRepository.findBenefitIdsByStatus(RedemptionStatus.USED));
         }
 
-        return toResponse(saved);
-    }
+        @Override
+        @Transactional(readOnly = true)
+        public ValidateBenefitRedemptionResponse validateCoupon(String couponCode, UUID companyId) {
+                BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
+                                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<BenefitRedemptionResponse> getMyRedemptions(UUID studentId) {
-        return redemptionRepository.findByStudentIdOrderByRedeemedAtDesc(studentId)
-                .stream()
-                .map(this::toResponse)
-                .toList();
-    }
+                if (redemption.getCompanyId() == null || !redemption.getCompanyId().equals(companyId)) {
+                        throw new UnauthorizedRedemptionException();
+                }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<BenefitRedemptionResponse> getCompanyRedemptions(UUID companyId) {
-        return redemptionRepository.findByCompanyIdOrderByRedeemedAtDesc(companyId)
-                .stream()
-                .map(this::toResponse)
-                .toList();
-    }
+                if (redemption.getStatus() == RedemptionStatus.USED) {
+                        throw new RedemptionAlreadyUsedException();
+                }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<BenefitRedemptionResponse> getInstitutionRedemptions(UUID institutionId) {
-        return redemptionRepository.findByInstitutionIdOrderByRedeemedAtDesc(institutionId)
-                .stream()
-                .map(this::toResponse)
-                .toList();
-    }
+                Student student = studentRepository.findById(redemption.getStudentId())
+                                .orElseThrow(() -> new UserNotFoundException(redemption.getStudentId()));
 
-    @Override
-    @Transactional(readOnly = true)
-    public RedeemedBenefitIdsResponse getRedeemedBenefitIds() {
-        return new RedeemedBenefitIdsResponse(
-                redemptionRepository.findBenefitIdsByStatus(RedemptionStatus.PENDING),
-                redemptionRepository.findBenefitIdsByStatus(RedemptionStatus.USED));
-    }
+                Benefit benefit = benefitRepository.findById(redemption.getBenefitId())
+                                .orElseThrow(() -> new BenefitNotFoundException(redemption.getBenefitId()));
 
-    @Override
-    @Transactional(readOnly = true)
-    public ValidateBenefitRedemptionResponse validateCoupon(String couponCode, UUID companyId) {
-        BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
-                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
-
-        if (redemption.getCompanyId() == null || !redemption.getCompanyId().equals(companyId)) {
-            throw new UnauthorizedRedemptionException();
+                return new ValidateBenefitRedemptionResponse(
+                                redemption.getId(),
+                                student.getName(),
+                                benefit.getName(),
+                                redemption.getCoinsSpent(),
+                                redemption.getRedeemedAt(),
+                                redemption.getCouponCode());
         }
 
-        if (redemption.getStatus() == RedemptionStatus.USED) {
-            throw new RedemptionAlreadyUsedException();
+        @Override
+        @Transactional(readOnly = true)
+        public ValidateBenefitRedemptionResponse validateCouponForInstitution(String couponCode, UUID institutionId) {
+                BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
+                                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
+
+                if (redemption.getInstitutionId() == null || !redemption.getInstitutionId().equals(institutionId)) {
+                        throw new UnauthorizedRedemptionException();
+                }
+
+                if (redemption.getStatus() == RedemptionStatus.USED) {
+                        throw new RedemptionAlreadyUsedException();
+                }
+
+                Student student = studentRepository.findById(redemption.getStudentId())
+                                .orElseThrow(() -> new UserNotFoundException(redemption.getStudentId()));
+
+                Benefit benefit = benefitRepository.findById(redemption.getBenefitId())
+                                .orElseThrow(() -> new BenefitNotFoundException(redemption.getBenefitId()));
+
+                return new ValidateBenefitRedemptionResponse(
+                                redemption.getId(),
+                                student.getName(),
+                                benefit.getName(),
+                                redemption.getCoinsSpent(),
+                                redemption.getRedeemedAt(),
+                                redemption.getCouponCode());
         }
 
-        Student student = studentRepository.findById(redemption.getStudentId())
-                .orElseThrow(() -> new UserNotFoundException(redemption.getStudentId()));
+        @Override
+        @Transactional
+        public BenefitRedemptionResponse markAsUsed(String couponCode, UUID companyId, String usageNotes) {
+                BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
+                                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
 
-        Benefit benefit = benefitRepository.findById(redemption.getBenefitId())
-                .orElseThrow(() -> new BenefitNotFoundException(redemption.getBenefitId()));
+                if (redemption.getCompanyId() == null || !redemption.getCompanyId().equals(companyId)) {
+                        throw new UnauthorizedRedemptionException();
+                }
 
-        return new ValidateBenefitRedemptionResponse(
-                redemption.getId(),
-                student.getName(),
-                benefit.getName(),
-                redemption.getCoinsSpent(),
-                redemption.getRedeemedAt(),
-                redemption.getCouponCode());
-    }
+                if (redemption.getStatus() == RedemptionStatus.USED) {
+                        throw new RedemptionAlreadyUsedException();
+                }
 
-    @Override
-    @Transactional(readOnly = true)
-    public ValidateBenefitRedemptionResponse validateCouponForInstitution(String couponCode, UUID institutionId) {
-        BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
-                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
+                redemption.setStatus(RedemptionStatus.USED);
+                redemption.setUsedAt(Instant.now());
 
-        if (redemption.getInstitutionId() == null || !redemption.getInstitutionId().equals(institutionId)) {
-            throw new UnauthorizedRedemptionException();
+                BenefitRedemption saved = redemptionRepository.save(redemption);
+
+                Student student = studentRepository.findById(saved.getStudentId())
+                                .orElseThrow(() -> new UserNotFoundException(saved.getStudentId()));
+
+                Benefit benefit = benefitRepository.findById(saved.getBenefitId())
+                                .orElseThrow(() -> new BenefitNotFoundException(saved.getBenefitId()));
+
+                emailService.sendBenefitRedemptionApprovedToStudent(
+                                student.getEmail(),
+                                student.getName(),
+                                benefit.getName(),
+                                usageNotes);
+
+                return toResponse(saved);
         }
 
-        if (redemption.getStatus() == RedemptionStatus.USED) {
-            throw new RedemptionAlreadyUsedException();
+        @Override
+        @Transactional
+        public BenefitRedemptionResponse markAsUsedByInstitution(String couponCode, UUID institutionId,
+                        String usageNotes) {
+                BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
+                                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
+
+                if (redemption.getInstitutionId() == null || !redemption.getInstitutionId().equals(institutionId)) {
+                        throw new UnauthorizedRedemptionException();
+                }
+
+                if (redemption.getStatus() == RedemptionStatus.USED) {
+                        throw new RedemptionAlreadyUsedException();
+                }
+
+                redemption.setStatus(RedemptionStatus.USED);
+                redemption.setUsedAt(Instant.now());
+
+                BenefitRedemption saved = redemptionRepository.save(redemption);
+
+                Student student = studentRepository.findById(saved.getStudentId())
+                                .orElseThrow(() -> new UserNotFoundException(saved.getStudentId()));
+
+                Benefit benefit = benefitRepository.findById(saved.getBenefitId())
+                                .orElseThrow(() -> new BenefitNotFoundException(saved.getBenefitId()));
+
+                emailService.sendBenefitRedemptionApprovedToStudent(
+                                student.getEmail(),
+                                student.getName(),
+                                benefit.getName(),
+                                usageNotes);
+
+                return toResponse(saved);
         }
 
-        Student student = studentRepository.findById(redemption.getStudentId())
-                .orElseThrow(() -> new UserNotFoundException(redemption.getStudentId()));
+        @Override
+        @Transactional
+        public void denyRedemption(String couponCode, UUID companyId, String denialReason) {
+                BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
+                                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
 
-        Benefit benefit = benefitRepository.findById(redemption.getBenefitId())
-                .orElseThrow(() -> new BenefitNotFoundException(redemption.getBenefitId()));
+                if (redemption.getCompanyId() == null || !redemption.getCompanyId().equals(companyId)) {
+                        throw new UnauthorizedRedemptionException();
+                }
 
-        return new ValidateBenefitRedemptionResponse(
-                redemption.getId(),
-                student.getName(),
-                benefit.getName(),
-                redemption.getCoinsSpent(),
-                redemption.getRedeemedAt(),
-                redemption.getCouponCode());
-    }
+                if (redemption.getStatus() == RedemptionStatus.USED) {
+                        throw new RedemptionAlreadyUsedException();
+                }
 
-    @Override
-    @Transactional
-    public BenefitRedemptionResponse markAsUsed(String couponCode, UUID companyId, String usageNotes) {
-        BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
-                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
+                Student student = studentRepository.findById(redemption.getStudentId())
+                                .orElseThrow(() -> new UserNotFoundException(redemption.getStudentId()));
 
-        if (redemption.getCompanyId() == null || !redemption.getCompanyId().equals(companyId)) {
-            throw new UnauthorizedRedemptionException();
+                Benefit benefit = benefitRepository.findById(redemption.getBenefitId())
+                                .orElseThrow(() -> new BenefitNotFoundException(redemption.getBenefitId()));
+
+                student.setBalance(student.getBalance() + redemption.getCoinsSpent());
+                studentRepository.save(student);
+
+                redemptionRepository.delete(redemption);
+
+                emailService.sendBenefitRedemptionDeniedToStudent(
+                                student.getEmail(),
+                                student.getName(),
+                                benefit.getName(),
+                                denialReason);
         }
 
-        if (redemption.getStatus() == RedemptionStatus.USED) {
-            throw new RedemptionAlreadyUsedException();
+        @Override
+        @Transactional
+        public void denyRedemptionByInstitution(String couponCode, UUID institutionId, String denialReason) {
+                BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
+                                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
+
+                if (redemption.getInstitutionId() == null || !redemption.getInstitutionId().equals(institutionId)) {
+                        throw new UnauthorizedRedemptionException();
+                }
+
+                if (redemption.getStatus() == RedemptionStatus.USED) {
+                        throw new RedemptionAlreadyUsedException();
+                }
+
+                Student student = studentRepository.findById(redemption.getStudentId())
+                                .orElseThrow(() -> new UserNotFoundException(redemption.getStudentId()));
+
+                Benefit benefit = benefitRepository.findById(redemption.getBenefitId())
+                                .orElseThrow(() -> new BenefitNotFoundException(redemption.getBenefitId()));
+
+                student.setBalance(student.getBalance() + redemption.getCoinsSpent());
+                studentRepository.save(student);
+
+                redemptionRepository.delete(redemption);
+
+                emailService.sendBenefitRedemptionDeniedToStudent(
+                                student.getEmail(),
+                                student.getName(),
+                                benefit.getName(),
+                                denialReason);
         }
 
-        redemption.setStatus(RedemptionStatus.USED);
-        redemption.setUsedAt(Instant.now());
+        @Override
+        @Transactional
+        public BenefitRedemptionResponse redeemByScan(String couponCode, UUID companyId) {
+                BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
+                                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
 
-        BenefitRedemption saved = redemptionRepository.save(redemption);
+                if (redemption.getCompanyId() == null || !redemption.getCompanyId().equals(companyId)) {
+                        throw new UnauthorizedRedemptionException();
+                }
 
-        Student student = studentRepository.findById(saved.getStudentId())
-                .orElseThrow(() -> new UserNotFoundException(saved.getStudentId()));
+                if (redemption.getStatus() == RedemptionStatus.USED) {
+                        throw new RedemptionAlreadyUsedException();
+                }
 
-        Benefit benefit = benefitRepository.findById(saved.getBenefitId())
-                .orElseThrow(() -> new BenefitNotFoundException(saved.getBenefitId()));
+                redemption.setStatus(RedemptionStatus.USED);
+                redemption.setUsedAt(Instant.now());
 
-        emailService.sendBenefitRedemptionApprovedToStudent(
-                student.getEmail(),
-                student.getName(),
-                benefit.getName(),
-                usageNotes);
+                BenefitRedemption saved = redemptionRepository.save(redemption);
 
-        return toResponse(saved);
-    }
+                Student student = studentRepository.findById(saved.getStudentId())
+                                .orElseThrow(() -> new UserNotFoundException(saved.getStudentId()));
 
-    @Override
-    @Transactional
-    public BenefitRedemptionResponse markAsUsedByInstitution(String couponCode, UUID institutionId, String usageNotes) {
-        BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
-                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
+                Benefit benefit = benefitRepository.findById(saved.getBenefitId())
+                                .orElseThrow(() -> new BenefitNotFoundException(saved.getBenefitId()));
 
-        if (redemption.getInstitutionId() == null || !redemption.getInstitutionId().equals(institutionId)) {
-            throw new UnauthorizedRedemptionException();
+                emailService.sendBenefitRedemptionApprovedToStudent(
+                                student.getEmail(),
+                                student.getName(),
+                                benefit.getName(),
+                                "Resgate confirmado via QR Code.");
+
+                return toResponse(saved);
         }
 
-        if (redemption.getStatus() == RedemptionStatus.USED) {
-            throw new RedemptionAlreadyUsedException();
+        private String generateUniqueCouponCode() {
+                String code;
+                do {
+                        code = "LUMEN-" + randomSegment(5) + "-" + randomSegment(3);
+                } while (redemptionRepository.existsByCouponCode(code));
+                return code;
         }
 
-        redemption.setStatus(RedemptionStatus.USED);
-        redemption.setUsedAt(Instant.now());
-
-        BenefitRedemption saved = redemptionRepository.save(redemption);
-
-        Student student = studentRepository.findById(saved.getStudentId())
-                .orElseThrow(() -> new UserNotFoundException(saved.getStudentId()));
-
-        Benefit benefit = benefitRepository.findById(saved.getBenefitId())
-                .orElseThrow(() -> new BenefitNotFoundException(saved.getBenefitId()));
-
-        emailService.sendBenefitRedemptionApprovedToStudent(
-                student.getEmail(),
-                student.getName(),
-                benefit.getName(),
-                usageNotes);
-
-        return toResponse(saved);
-    }
-
-    @Override
-    @Transactional
-    public void denyRedemption(String couponCode, UUID companyId, String denialReason) {
-        BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
-                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
-
-        if (redemption.getCompanyId() == null || !redemption.getCompanyId().equals(companyId)) {
-            throw new UnauthorizedRedemptionException();
+        private String randomSegment(int length) {
+                StringBuilder sb = new StringBuilder(length);
+                for (int i = 0; i < length; i++) {
+                        sb.append(COUPON_CHARS.charAt(RANDOM.nextInt(COUPON_CHARS.length())));
+                }
+                return sb.toString();
         }
 
-        if (redemption.getStatus() == RedemptionStatus.USED) {
-            throw new RedemptionAlreadyUsedException();
+        private BenefitRedemptionResponse toResponse(BenefitRedemption r) {
+                String studentName = studentRepository.findById(r.getStudentId())
+                                .map(Student::getName)
+                                .orElse("Estudante");
+                String benefitName = benefitRepository.findById(r.getBenefitId())
+                                .map(Benefit::getName)
+                                .orElse("Vantagem");
+                String companyName = null;
+                if (r.getCompanyId() != null) {
+                        companyName = companyRepository.findById(r.getCompanyId())
+                                        .map(Company::getName)
+                                        .orElse(null);
+                }
+                String institutionName = null;
+                if (r.getInstitutionId() != null) {
+                        institutionName = institutionRepository.findById(r.getInstitutionId())
+                                        .map(Institution::getName)
+                                        .orElse(null);
+                }
+
+                return new BenefitRedemptionResponse(
+                                r.getId(),
+                                r.getStudentId(),
+                                studentName,
+                                r.getBenefitId(),
+                                benefitName,
+                                r.getCompanyId(),
+                                companyName,
+                                r.getInstitutionId(),
+                                institutionName,
+                                r.getCouponCode(),
+                                r.getCoinsSpent(),
+                                r.getStatus(),
+                                r.getRedeemedAt(),
+                                r.getUsedAt());
         }
-
-        Student student = studentRepository.findById(redemption.getStudentId())
-                .orElseThrow(() -> new UserNotFoundException(redemption.getStudentId()));
-
-        Benefit benefit = benefitRepository.findById(redemption.getBenefitId())
-                .orElseThrow(() -> new BenefitNotFoundException(redemption.getBenefitId()));
-
-        student.setBalance(student.getBalance() + redemption.getCoinsSpent());
-        studentRepository.save(student);
-
-        redemptionRepository.delete(redemption);
-
-        emailService.sendBenefitRedemptionDeniedToStudent(
-                student.getEmail(),
-                student.getName(),
-                benefit.getName(),
-                denialReason);
-    }
-
-    @Override
-    @Transactional
-    public void denyRedemptionByInstitution(String couponCode, UUID institutionId, String denialReason) {
-        BenefitRedemption redemption = redemptionRepository.findByCouponCode(couponCode.strip().toUpperCase())
-                .orElseThrow(() -> new BenefitRedemptionNotFoundException(couponCode));
-
-        if (redemption.getInstitutionId() == null || !redemption.getInstitutionId().equals(institutionId)) {
-            throw new UnauthorizedRedemptionException();
-        }
-
-        if (redemption.getStatus() == RedemptionStatus.USED) {
-            throw new RedemptionAlreadyUsedException();
-        }
-
-        Student student = studentRepository.findById(redemption.getStudentId())
-                .orElseThrow(() -> new UserNotFoundException(redemption.getStudentId()));
-
-        Benefit benefit = benefitRepository.findById(redemption.getBenefitId())
-                .orElseThrow(() -> new BenefitNotFoundException(redemption.getBenefitId()));
-
-        student.setBalance(student.getBalance() + redemption.getCoinsSpent());
-        studentRepository.save(student);
-
-        redemptionRepository.delete(redemption);
-
-        emailService.sendBenefitRedemptionDeniedToStudent(
-                student.getEmail(),
-                student.getName(),
-                benefit.getName(),
-                denialReason);
-    }
-
-    private String generateUniqueCouponCode() {
-        String code;
-        do {
-            code = "LUMEN-" + randomSegment(5) + "-" + randomSegment(3);
-        } while (redemptionRepository.existsByCouponCode(code));
-        return code;
-    }
-
-    private String randomSegment(int length) {
-        StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            sb.append(COUPON_CHARS.charAt(RANDOM.nextInt(COUPON_CHARS.length())));
-        }
-        return sb.toString();
-    }
-
-    private BenefitRedemptionResponse toResponse(BenefitRedemption r) {
-        String studentName = studentRepository.findById(r.getStudentId())
-                .map(Student::getName)
-                .orElse("Estudante");
-        String benefitName = benefitRepository.findById(r.getBenefitId())
-                .map(Benefit::getName)
-                .orElse("Vantagem");
-        String companyName = null;
-        if (r.getCompanyId() != null) {
-            companyName = companyRepository.findById(r.getCompanyId())
-                    .map(Company::getName)
-                    .orElse(null);
-        }
-        String institutionName = null;
-        if (r.getInstitutionId() != null) {
-            institutionName = institutionRepository.findById(r.getInstitutionId())
-                    .map(Institution::getName)
-                    .orElse(null);
-        }
-
-        return new BenefitRedemptionResponse(
-                r.getId(),
-                r.getStudentId(),
-                studentName,
-                r.getBenefitId(),
-                benefitName,
-                r.getCompanyId(),
-                companyName,
-                r.getInstitutionId(),
-                institutionName,
-                r.getCouponCode(),
-                r.getCoinsSpent(),
-                r.getStatus(),
-                r.getRedeemedAt(),
-                r.getUsedAt());
-    }
 }

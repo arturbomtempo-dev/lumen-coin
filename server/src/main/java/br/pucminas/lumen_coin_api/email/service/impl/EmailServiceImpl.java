@@ -15,6 +15,7 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -120,15 +121,16 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendBenefitRedemptionConfirmationToStudent(String to, String studentName, String benefitName) {
+    public void sendBenefitRedemptionConfirmationToStudent(String to, String studentName, String benefitName,
+            String couponCode, byte[] qrCodePng) {
         if (!enabled) {
             log.debug("Mail disabled - skipping benefit redemption confirmation to {}", to);
             return;
         }
         try {
             String html = templateEngine.render("benefit-redemption-student-confirmation",
-                    new BenefitRedemptionStudentConfirmationEmailContext(studentName, benefitName));
-            send(to, "Solicitação de resgate recebida - Lumen Coin", html);
+                    new BenefitRedemptionStudentConfirmationEmailContext(studentName, benefitName, couponCode));
+            sendWithInlineImage(to, "Seu cupom de resgate - Lumen Coin", html, "qrcode", qrCodePng, "image/png");
             log.info("Benefit redemption confirmation email sent to {}", to);
         } catch (Exception e) {
             log.error("Failed to send benefit redemption confirmation to {}: {}", to, e.getMessage());
@@ -137,14 +139,16 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendBenefitRedemptionNotificationToCompany(String to, String companyName, String studentName, String benefitName, String couponCode) {
+    public void sendBenefitRedemptionNotificationToCompany(String to, String companyName, String studentName,
+            String benefitName, String couponCode) {
         if (!enabled) {
             log.debug("Mail disabled - skipping benefit redemption notification to company {}", to);
             return;
         }
         try {
             String html = templateEngine.render("benefit-redemption-company-notification",
-                    new BenefitRedemptionCompanyNotificationEmailContext(companyName, studentName, benefitName, couponCode));
+                    new BenefitRedemptionCompanyNotificationEmailContext(companyName, studentName, benefitName,
+                            couponCode));
             send(to, "Novo resgate de vantagem solicitado - Lumen Coin", html);
             log.info("Benefit redemption company notification sent to {}", to);
         } catch (Exception e) {
@@ -154,7 +158,8 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendBenefitRedemptionApprovedToStudent(String to, String studentName, String benefitName, String usageNotes) {
+    public void sendBenefitRedemptionApprovedToStudent(String to, String studentName, String benefitName,
+            String usageNotes) {
         if (!enabled) {
             log.debug("Mail disabled - skipping benefit redemption approved email to {}", to);
             return;
@@ -171,7 +176,8 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendBenefitRedemptionDeniedToStudent(String to, String studentName, String benefitName, String denialReason) {
+    public void sendBenefitRedemptionDeniedToStudent(String to, String studentName, String benefitName,
+            String denialReason) {
         if (!enabled) {
             log.debug("Mail disabled - skipping benefit redemption denied email to {}", to);
             return;
@@ -193,6 +199,18 @@ public class EmailServiceImpl implements EmailService {
         helper.setTo(to);
         helper.setSubject(subject);
         helper.setText(html, true);
+        mailSender.send(message);
+    }
+
+    private void sendWithInlineImage(String to, String subject, String html, String imageId, byte[] imageBytes,
+            String mimeType) throws Exception {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        helper.setFrom(from);
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(html, true);
+        helper.addInline(imageId, new ByteArrayResource(imageBytes), mimeType);
         mailSender.send(message);
     }
 }

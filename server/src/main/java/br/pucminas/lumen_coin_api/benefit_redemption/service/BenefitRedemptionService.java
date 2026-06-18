@@ -31,4 +31,6 @@ public interface BenefitRedemptionService {
     void denyRedemption(String couponCode, UUID companyId, String denialReason);
 
     void denyRedemptionByInstitution(String couponCode, UUID institutionId, String denialReason);
+
+    BenefitRedemptionResponse redeemByScan(String couponCode, UUID companyId);
 }

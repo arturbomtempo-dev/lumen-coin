@@ -2,6 +2,7 @@ package br.pucminas.lumen_coin_api.benefit_redemption.controller;
 
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.CreateBenefitRedemptionRequest;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.DenyBenefitRedemptionRequest;
+import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.ScanBenefitRedemptionRequest;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.request.UseBenefitRedemptionRequest;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.BenefitRedemptionResponse;
 import br.pucminas.lumen_coin_api.benefit_redemption.dto.response.RedeemedBenefitIdsResponse;
@@ -99,6 +100,15 @@ public class BenefitRedemptionController {
             @Valid @RequestBody UseBenefitRedemptionRequest request) {
         return ResponseEntity.ok(benefitRedemptionService.markAsUsedByInstitution(
                 request.couponCode(), principal.getUserId(), request.usageNotes()));
+    }
+
+    @PatchMapping("/scan")
+    @PreAuthorize("hasRole('COMPANY')")
+    public ResponseEntity<BenefitRedemptionResponse> redeemByScan(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @Valid @RequestBody ScanBenefitRedemptionRequest request) {
+        return ResponseEntity.ok(benefitRedemptionService.redeemByScan(
+                request.couponCode(), principal.getUserId()));
     }
 
     @PatchMapping("/deny")
