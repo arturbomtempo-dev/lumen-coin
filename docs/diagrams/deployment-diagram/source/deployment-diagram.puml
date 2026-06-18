@@ -1,0 +1,138 @@
+@startuml deployment-diagram
+
+title Diagrama de Implantação - Sistema Lumen Coin
+
+skinparam nodesep 30
+skinparam ranksep 80
+
+skinparam component {
+  BackgroundColor #FDF8F0
+  BorderColor #C9A227
+  FontStyle bold
+}
+
+skinparam database {
+  BackgroundColor #F5EFE0
+  BorderColor #8B6914
+}
+
+skinparam interface {
+  BackgroundColor #FFFEF5
+  BorderColor #A0722A
+}
+
+skinparam queue {
+  BackgroundColor #FFF8E7
+  BorderColor #D4A017
+}
+
+skinparam rectangle {
+  BorderColor #B8860B
+  FontColor #5C3D00
+}
+
+skinparam node {
+  BackgroundColor #FAFAF5
+  BorderColor #9E9E9E
+}
+
+' ===== CLIENTE =====
+node "Cliente" {
+  [Navegador Web] as WEB
+}
+
+' ===== VERCEL (Frontend) =====
+rectangle "Vercel" as VERCEL #FDF3D8 {
+  [Frontend\n<<Vue.js / SPA>>] as FRONT
+}
+
+WEB --> FRONT : HTTPS
+
+' ===== RENDER (Backend Monolito) =====
+rectangle "Render" as RENDER #FEF9EE {
+
+  [Lumen Coin API\n<<Spring Boot Monolito>>] as API
+
+  ' --- Interfaces fornecidas (REST) ---
+  interface "REST /auth"           as iAUTH
+  interface "REST /usuarios"       as iUSERS
+  interface "REST /vantagens"      as iBENEFITS
+  interface "REST /resgates"       as iREDEMPTIONS
+  interface "REST /transferencias" as iCOINS
+  interface "REST /cursos"         as iCOURSES
+
+  API -up- iAUTH
+  API -up- iUSERS
+  API -up- iBENEFITS
+  API -up- iREDEMPTIONS
+  API -up- iCOINS
+  API -up- iCOURSES
+
+  ' --- Interfaces requeridas (conexões externas) ---
+  interface "JDBC / TCP"      as iDB
+  interface "AMQP"            as iAMQP
+  interface "HTTPS"           as iCLOUD
+  interface "SMTP / TLS"      as iSMTP
+
+  API --( iDB
+  API --( iAMQP
+  API --( iCLOUD
+  API --( iSMTP
+
+  iAUTH        -[hidden]right- iUSERS
+  iUSERS       -[hidden]right- iBENEFITS
+  iBENEFITS    -[hidden]right- iREDEMPTIONS
+  iREDEMPTIONS -[hidden]right- iCOINS
+  iCOINS       -[hidden]right- iCOURSES
+}
+
+' Frontend (Vercel) requer as interfaces REST do backend (Render)
+FRONT --( iAUTH          : HTTPS
+FRONT --( iUSERS         : HTTPS
+FRONT --( iBENEFITS      : HTTPS
+FRONT --( iREDEMPTIONS   : HTTPS
+FRONT --( iCOINS         : HTTPS
+FRONT --( iCOURSES       : HTTPS
+
+' ===== NEONDB (Banco de Dados em nuvem) =====
+rectangle "NeonDB" as NEONDB #F5EFE0 {
+  database "PostgreSQL\n<<Banco de Dados Único>>" as DB
+}
+
+iDB -down- DB
+
+' ===== CLOUDAMQP (Mensageria em nuvem) =====
+rectangle "CloudAMQP" as CLOUDAMQP #FFF8E7 {
+  [RabbitMQ Broker] as RABBIT
+
+  queue "coin.transfer"          as Q_COIN
+  queue "coin.transfer.dlq"      as Q_COIN_DLQ
+  queue "benefit.redemption"     as Q_BENEFIT
+  queue "benefit.redemption.dlq" as Q_BENEFIT_DLQ
+
+  RABBIT --> Q_COIN    : roteamento
+  RABBIT --> Q_BENEFIT : roteamento
+
+  Q_COIN    -[hidden]right- Q_COIN_DLQ
+  Q_BENEFIT -[hidden]right- Q_BENEFIT_DLQ
+}
+
+iAMQP -- RABBIT
+
+' ===== SERVIÇOS EXTERNOS =====
+rectangle "Serviços Externos" as EXT #FDE8D0 {
+  [Cloudinary API\n<<Armazenamento\nde Imagens>>] as CLOUDINARY
+  [Servidor de E-mail\n<<SMTP / Gmail>>]          as SMTP_SVC
+
+  CLOUDINARY -[hidden]right- SMTP_SVC
+}
+
+iCLOUD -down- CLOUDINARY
+iSMTP  -down- SMTP_SVC
+
+' ===== LAYOUT GERAL =====
+NEONDB    -[hidden]right- CLOUDAMQP
+CLOUDAMQP -[hidden]right- EXT
+RENDER    -[hidden]down-  NEONDB
+
+@enduml

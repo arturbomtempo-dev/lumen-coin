@@ -1,0 +1,162 @@
+@startuml component-diagram
+
+title Diagrama de Componentes - Sistema Lumen Coin
+
+skinparam nodesep 40
+skinparam ranksep 80
+
+skinparam component {
+  BackgroundColor #FDF8F0
+  BorderColor #C9A227
+  FontStyle bold
+}
+
+skinparam database {
+  BackgroundColor #F5EFE0
+  BorderColor #8B6914
+}
+
+skinparam interface {
+  BackgroundColor #FFFEF5
+  BorderColor #A0722A
+}
+
+skinparam queue {
+  BackgroundColor #FFF8E7
+  BorderColor #D4A017
+}
+
+skinparam rectangle {
+  BorderColor #B8860B
+  FontColor #5C3D00
+}
+
+skinparam node {
+  BackgroundColor #FAFAF5
+  BorderColor #9E9E9E
+}
+
+' ===== CLIENTE =====
+node "Cliente" {
+  [Navegador Web] as WEB
+}
+
+' ===== FRONTEND =====
+[Frontend\n<<Vue.js / SPA>>] as FRONT
+
+WEB --> FRONT : HTTPS
+
+' ===== INTERFACES REST (fornecidas pelo backend, requeridas pelo frontend) =====
+interface "REST /auth"          as iAUTH
+interface "REST /usuarios"      as iUSERS
+interface "REST /vantagens"     as iBENEFITS
+interface "REST /resgates"      as iREDEMPTIONS
+interface "REST /transferencias" as iCOINS
+interface "REST /cursos"        as iCOURSES
+
+FRONT --( iAUTH          : HTTPS
+FRONT --( iUSERS         : HTTPS
+FRONT --( iBENEFITS      : HTTPS
+FRONT --( iREDEMPTIONS   : HTTPS
+FRONT --( iCOINS         : HTTPS
+FRONT --( iCOURSES       : HTTPS
+
+' ===== BACKEND MONOLITO =====
+rectangle "Backend Monolito <<Spring Boot>>" as MONOLITH #FEF9EE {
+
+  ' --- Módulos de Domínio ---
+  [Módulo de\nAutenticação\n<<JWT>>]                           as AUTH
+  [Módulo de\nUsuários\n<<Company / Institution /\nStudent / Teacher>>] as USERS
+  [Módulo de\nVantagens]                                       as BENEFITS
+  [Módulo de\nResgates]                                        as REDEMPTIONS
+  [Módulo de\nTransferências\nde Moedas]                       as COINS
+  [Módulo de\nCursos]                                          as COURSES
+
+  ' --- Interfaces fornecidas (lollipop) ---
+  AUTH        -up- iAUTH
+  USERS       -up- iUSERS
+  BENEFITS    -up- iBENEFITS
+  REDEMPTIONS -up- iREDEMPTIONS
+  COINS       -up- iCOINS
+  COURSES     -up- iCOURSES
+
+  ' --- Serviços Internos Compartilhados ---
+  [Serviço de\nArmazenamento\n<<Cloudinary>>] as STORAGE
+  [Serviço de\nE-mail\n<<JavaMailSender>>]    as EMAIL_SVC
+  [Produtor de\nMensagens\n<<RabbitMQ>>]      as PRODUCER
+  [Consumidor de\nMensagens\n<<RabbitMQ>>]    as CONSUMER
+
+  ' --- Dependências entre módulos e serviços ---
+  BENEFITS    --> STORAGE  : upload de imagem
+  COINS       --> PRODUCER : publica notificação\nde envio de moedas
+  REDEMPTIONS --> PRODUCER : publica evento\nde resgate
+  CONSUMER    --> EMAIL_SVC : aciona envio de e-mail
+
+  REDEMPTIONS --> BENEFITS : consulta vantagem
+  REDEMPTIONS --> USERS    : valida saldo do aluno
+  COINS       --> USERS    : debita / credita saldo
+
+  ' --- Interfaces requeridas: Banco de Dados ---
+  interface "JDBC / TCP" as iDB
+  AUTH        --( iDB
+  USERS       --( iDB
+  BENEFITS    --( iDB
+  REDEMPTIONS --( iDB
+  COINS       --( iDB
+  COURSES     --( iDB
+
+  ' --- Interfaces requeridas: Mensageria (AMQP) ---
+  interface "AMQP\n(publicação)" as iAMQP_PUB
+  interface "AMQP\n(consumo)"    as iAMQP_SUB
+  PRODUCER --( iAMQP_PUB
+  CONSUMER --( iAMQP_SUB
+
+  ' --- Layout dos módulos de domínio ---
+  AUTH        -[hidden]right- USERS
+  USERS       -[hidden]right- BENEFITS
+  BENEFITS    -[hidden]right- REDEMPTIONS
+  REDEMPTIONS -[hidden]right- COINS
+  COINS       -[hidden]right- COURSES
+}
+
+' ===== INTERFACES REQUERIDAS: SERVIÇOS EXTERNOS =====
+interface "HTTPS" as iCLOUD
+interface "SMTP / TLS" as iSMTP
+
+STORAGE   --( iCLOUD : HTTPS
+EMAIL_SVC --( iSMTP  : SMTP/TLS
+
+' ===== BANCO DE DADOS (único) =====
+database "PostgreSQL\n<<Banco de Dados Único>>" as DB
+iDB -down- DB
+
+' ===== MENSAGERIA =====
+rectangle "Mensageria <<RabbitMQ / CloudAMQP>>" as MQ #FFF8E7 {
+  queue "coin.transfer"          as Q_COIN
+  queue "coin.transfer.dlq"      as Q_COIN_DLQ
+  queue "benefit.redemption"     as Q_BENEFIT
+  queue "benefit.redemption.dlq" as Q_BENEFIT_DLQ
+
+  Q_COIN    -[hidden]right- Q_COIN_DLQ
+  Q_BENEFIT -[hidden]right- Q_BENEFIT_DLQ
+}
+
+iAMQP_PUB -- MQ
+MQ         -- iAMQP_SUB
+
+' ===== SERVIÇOS EXTERNOS =====
+rectangle "Serviços Externos" as EXT #FDE8D0 {
+  [Cloudinary API\n<<Armazenamento\nde Imagens>>] as CLOUDINARY
+  [Servidor de E-mail\n<<SMTP / Gmail>>]          as SMTP_SVC
+
+  CLOUDINARY -[hidden]right- SMTP_SVC
+}
+
+CLOUDINARY -- iCLOUD
+SMTP_SVC   -- iSMTP
+
+' ===== LAYOUT GERAL =====
+DB  -[hidden]right- MQ
+MQ  -[hidden]right- EXT
+
+@enduml
