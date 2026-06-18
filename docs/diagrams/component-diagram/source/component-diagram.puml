@@ -36,23 +36,20 @@ skinparam node {
   BorderColor #9E9E9E
 }
 
-' ===== CLIENTE =====
 node "Cliente" {
   [Navegador Web] as WEB
 }
 
-' ===== FRONTEND =====
 [Frontend\n<<Vue.js / SPA>>] as FRONT
 
 WEB --> FRONT : HTTPS
 
-' ===== INTERFACES REST (fornecidas pelo backend, requeridas pelo frontend) =====
-interface "REST /auth"          as iAUTH
-interface "REST /usuarios"      as iUSERS
-interface "REST /vantagens"     as iBENEFITS
-interface "REST /resgates"      as iREDEMPTIONS
+interface "REST /auth"           as iAUTH
+interface "REST /usuarios"       as iUSERS
+interface "REST /vantagens"      as iBENEFITS
+interface "REST /resgates"       as iREDEMPTIONS
 interface "REST /transferencias" as iCOINS
-interface "REST /cursos"        as iCOURSES
+interface "REST /cursos"         as iCOURSES
 
 FRONT --( iAUTH          : HTTPS
 FRONT --( iUSERS         : HTTPS
@@ -61,18 +58,18 @@ FRONT --( iREDEMPTIONS   : HTTPS
 FRONT --( iCOINS         : HTTPS
 FRONT --( iCOURSES       : HTTPS
 
-' ===== BACKEND MONOLITO =====
 rectangle "Backend Monolito <<Spring Boot>>" as MONOLITH #FEF9EE {
 
-  ' --- Módulos de Domínio ---
-  [Módulo de\nAutenticação\n<<JWT>>]                           as AUTH
-  [Módulo de\nUsuários\n<<Company / Institution /\nStudent / Teacher>>] as USERS
-  [Módulo de\nVantagens]                                       as BENEFITS
-  [Módulo de\nResgates]                                        as REDEMPTIONS
-  [Módulo de\nTransferências\nde Moedas]                       as COINS
-  [Módulo de\nCursos]                                          as COURSES
+  [Módulo de\nAutenticação\n<<JWT>>]                                    as AUTH
+  [Módulo de\nUsuários] as USERS
+  [Módulo de\nVantagens]                                                as BENEFITS
+  [Módulo de\nResgates]                                                 as REDEMPTIONS
+  [Módulo de\nTransferências\nde Moedas]                                as COINS
+  [Módulo de\nCursos]                                                   as COURSES
 
-  ' --- Interfaces fornecidas (lollipop) ---
+  [Serviço de\nArmazenamento\n<<Cloudinary>>] as STORAGE
+  [Serviço de\nE-mail]    as EMAIL_SVC
+
   AUTH        -up- iAUTH
   USERS       -up- iUSERS
   BENEFITS    -up- iBENEFITS
@@ -80,23 +77,19 @@ rectangle "Backend Monolito <<Spring Boot>>" as MONOLITH #FEF9EE {
   COINS       -up- iCOINS
   COURSES     -up- iCOURSES
 
-  ' --- Serviços Internos Compartilhados ---
-  [Serviço de\nArmazenamento\n<<Cloudinary>>] as STORAGE
-  [Serviço de\nE-mail\n<<JavaMailSender>>]    as EMAIL_SVC
-  [Produtor de\nMensagens\n<<RabbitMQ>>]      as PRODUCER
-  [Consumidor de\nMensagens\n<<RabbitMQ>>]    as CONSUMER
+  interface "IUserService" as iUSER_SVC
+  USERS       -- iUSER_SVC
+  REDEMPTIONS --( iUSER_SVC
+  COINS       --( iUSER_SVC
 
-  ' --- Dependências entre módulos e serviços ---
-  BENEFITS    --> STORAGE  : upload de imagem
-  COINS       --> PRODUCER : publica notificação\nde envio de moedas
-  REDEMPTIONS --> PRODUCER : publica evento\nde resgate
-  CONSUMER    --> EMAIL_SVC : aciona envio de e-mail
+  interface "IBenefitService" as iBENEFIT_SVC
+  BENEFITS    -- iBENEFIT_SVC
+  REDEMPTIONS --( iBENEFIT_SVC
 
-  REDEMPTIONS --> BENEFITS : consulta vantagem
-  REDEMPTIONS --> USERS    : valida saldo do aluno
-  COINS       --> USERS    : debita / credita saldo
+  interface "IStorageService" as iSTORAGE_SVC
+  STORAGE     -- iSTORAGE_SVC
+  BENEFITS    --( iSTORAGE_SVC
 
-  ' --- Interfaces requeridas: Banco de Dados ---
   interface "JDBC / TCP" as iDB
   AUTH        --( iDB
   USERS       --( iDB
@@ -105,13 +98,11 @@ rectangle "Backend Monolito <<Spring Boot>>" as MONOLITH #FEF9EE {
   COINS       --( iDB
   COURSES     --( iDB
 
-  ' --- Interfaces requeridas: Mensageria (AMQP) ---
-  interface "AMQP\n(publicação)" as iAMQP_PUB
-  interface "AMQP\n(consumo)"    as iAMQP_SUB
-  PRODUCER --( iAMQP_PUB
-  CONSUMER --( iAMQP_SUB
+  interface "HTTPS"      as iCLOUD
+  interface "SMTP / TLS" as iSMTP
+  STORAGE   --( iCLOUD
+  EMAIL_SVC --( iSMTP
 
-  ' --- Layout dos módulos de domínio ---
   AUTH        -[hidden]right- USERS
   USERS       -[hidden]right- BENEFITS
   BENEFITS    -[hidden]right- REDEMPTIONS
@@ -119,34 +110,24 @@ rectangle "Backend Monolito <<Spring Boot>>" as MONOLITH #FEF9EE {
   COINS       -[hidden]right- COURSES
 }
 
-' ===== INTERFACES REQUERIDAS: SERVIÇOS EXTERNOS =====
-interface "HTTPS" as iCLOUD
-interface "SMTP / TLS" as iSMTP
-
-STORAGE   --( iCLOUD : HTTPS
-EMAIL_SVC --( iSMTP  : SMTP/TLS
-
-' ===== BANCO DE DADOS (único) =====
-database "PostgreSQL\n<<Banco de Dados Único>>" as DB
+database "Banco de Dados\nPostgreSQL" as DB
 iDB -down- DB
 
-' ===== MENSAGERIA =====
 rectangle "Mensageria <<RabbitMQ / CloudAMQP>>" as MQ #FFF8E7 {
-  queue "coin.transfer"          as Q_COIN
-  queue "coin.transfer.dlq"      as Q_COIN_DLQ
-  queue "benefit.redemption"     as Q_BENEFIT
-  queue "benefit.redemption.dlq" as Q_BENEFIT_DLQ
+  queue "coin.transfer"      as Q_COIN
+  queue "benefit.redemption" as Q_BENEFIT
 
-  Q_COIN    -[hidden]right- Q_COIN_DLQ
-  Q_BENEFIT -[hidden]right- Q_BENEFIT_DLQ
+  Q_COIN -[hidden]right- Q_BENEFIT
 }
 
-iAMQP_PUB -- MQ
-MQ         -- iAMQP_SUB
+COINS       --> Q_COIN    : AMQP
+REDEMPTIONS --> Q_BENEFIT : AMQP
 
-' ===== SERVIÇOS EXTERNOS =====
+Q_COIN    --> EMAIL_SVC : AMQP
+Q_BENEFIT --> EMAIL_SVC : AMQP
+
 rectangle "Serviços Externos" as EXT #FDE8D0 {
-  [Cloudinary API\n<<Armazenamento\nde Imagens>>] as CLOUDINARY
+  [Cloudinary API] as CLOUDINARY
   [Servidor de E-mail\n<<SMTP / Gmail>>]          as SMTP_SVC
 
   CLOUDINARY -[hidden]right- SMTP_SVC
@@ -155,7 +136,6 @@ rectangle "Serviços Externos" as EXT #FDE8D0 {
 CLOUDINARY -- iCLOUD
 SMTP_SVC   -- iSMTP
 
-' ===== LAYOUT GERAL =====
 DB  -[hidden]right- MQ
 MQ  -[hidden]right- EXT
 
