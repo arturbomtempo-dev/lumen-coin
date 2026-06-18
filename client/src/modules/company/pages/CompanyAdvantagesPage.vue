@@ -125,7 +125,7 @@ async function handleCreate(e: Event) {
                 description: createForm.value.description.trim(),
                 cost: Number(createForm.value.cost),
             },
-            createImage.value!,
+            createImage.value!
         );
         toast.success('Vantagem criada com sucesso!');
         createForm.value = { name: '', description: '', cost: '' };
@@ -167,7 +167,7 @@ async function handleUpdate() {
                 description: editForm.value.description.trim(),
                 cost: Number(editForm.value.cost),
             },
-            editImage.value,
+            editImage.value
         );
         toast.success('Vantagem atualizada com sucesso!');
         closeEdit();
@@ -183,8 +183,7 @@ async function handleDelete(id: string) {
         await deleteBenefit(id);
         benefits.value = benefits.value.filter((b) => b.id !== id);
         toast.success('Vantagem removida com sucesso!');
-    } catch {
-    }
+    } catch {}
 }
 
 onMounted(() => {
@@ -283,12 +282,7 @@ onMounted(() => {
                     </p>
                 </div>
 
-                <PixelButton
-                    variant="success"
-                    class="w-full"
-                    type="submit"
-                    :disabled="isCreating"
-                >
+                <PixelButton variant="success" class="w-full" type="submit" :disabled="isCreating">
                     <PhPlus weight="bold" />
                     {{ isCreating ? 'PUBLICANDO...' : 'PUBLICAR VANTAGEM' }}
                 </PixelButton>
@@ -344,17 +338,20 @@ onMounted(() => {
                             <div
                                 v-if="redeemedBenefitIds.has(benefit.id)"
                                 class="flex items-center gap-1.5 border-2 border-border px-2 py-1 font-pixel text-[8px]"
-                                style="color: hsl(var(--muted-foreground)); background: hsl(var(--muted))"
+                                style="
+                                    color: hsl(var(--muted-foreground));
+                                    background: hsl(var(--muted));
+                                "
                             >
-                                <PhLockSimple weight="fill" :size="12" class="pixel-icon shrink-0" />
+                                <PhLockSimple
+                                    weight="fill"
+                                    :size="12"
+                                    class="pixel-icon shrink-0"
+                                />
                                 JÁ RESGATADA
                             </div>
                             <div v-else class="flex gap-2">
-                                <PixelButton
-                                    size="sm"
-                                    variant="ghost"
-                                    @click="openEdit(benefit)"
-                                >
+                                <PixelButton size="sm" variant="ghost" @click="openEdit(benefit)">
                                     <PhPencil weight="fill" :size="14" />
                                 </PixelButton>
                                 <PixelButton
@@ -463,12 +460,7 @@ onMounted(() => {
                 </div>
 
                 <div class="flex gap-3 pt-2">
-                    <PixelButton
-                        variant="ghost"
-                        class="flex-1"
-                        type="button"
-                        @click="closeEdit"
-                    >
+                    <PixelButton variant="ghost" class="flex-1" type="button" @click="closeEdit">
                         CANCELAR
                     </PixelButton>
                     <PixelButton

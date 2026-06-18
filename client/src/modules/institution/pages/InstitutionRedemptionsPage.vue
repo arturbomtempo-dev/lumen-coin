@@ -127,16 +127,11 @@ async function handleConfirmRedemption() {
                             style="color: hsl(var(--success))"
                         />
                         <div class="space-y-1 text-sm">
-                            <div
-                                class="font-pixel text-[9px]"
-                                style="color: hsl(var(--success))"
-                            >
+                            <div class="font-pixel text-[9px]" style="color: hsl(var(--success))">
                                 CÓDIGO VÁLIDO
                             </div>
                             <div class="font-display text-lg">
-                                <span class="font-sans text-xs text-muted-foreground"
-                                    >Aluno:
-                                </span>
+                                <span class="font-sans text-xs text-muted-foreground">Aluno: </span>
                                 {{ validatedRedemption.studentName }}
                             </div>
                             <div class="font-display text-lg">
@@ -146,9 +141,7 @@ async function handleConfirmRedemption() {
                                 {{ validatedRedemption.benefitName }}
                             </div>
                             <div class="font-display text-lg flex items-center gap-1">
-                                <span class="font-sans text-xs text-muted-foreground"
-                                    >Custo:
-                                </span>
+                                <span class="font-sans text-xs text-muted-foreground">Custo: </span>
                                 <CoinIcon :size="12" />
                                 {{ validatedRedemption.coinsSpent }}
                             </div>
@@ -202,10 +195,7 @@ async function handleConfirmRedemption() {
                             style="color: hsl(var(--success))"
                         />
                         <div>
-                            <div
-                                class="font-pixel text-[9px]"
-                                style="color: hsl(var(--success))"
-                            >
+                            <div class="font-pixel text-[9px]" style="color: hsl(var(--success))">
                                 RESGATE CONFIRMADO!
                             </div>
                             <div class="font-sans text-sm mt-0.5 text-muted-foreground">
@@ -214,12 +204,7 @@ async function handleConfirmRedemption() {
                         </div>
                     </div>
                     <div class="mt-3">
-                        <PixelButton
-                            variant="ghost"
-                            size="sm"
-                            class="w-full"
-                            @click="resetForm"
-                        >
+                        <PixelButton variant="ghost" size="sm" class="w-full" @click="resetForm">
                             VALIDAR OUTRO CÓDIGO
                         </PixelButton>
                     </div>

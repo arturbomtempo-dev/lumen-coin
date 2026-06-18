@@ -42,7 +42,7 @@ export function getRedeemedBenefitIds() {
 export function validateCoupon(couponCode: string) {
     return api.get<ValidateBenefitRedemptionResponse>(
         `/benefit-redemptions/validate/${encodeURIComponent(couponCode)}`,
-        { skipGlobalErrorToast: true },
+        { skipGlobalErrorToast: true }
     );
 }
 

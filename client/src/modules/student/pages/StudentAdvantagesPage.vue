@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { getBenefitsByCompany } from '@/modules/company/services/benefit.service';
 import { getBenefitsByInstitution } from '@/modules/institution/services/benefit.service';
-import {
-    getCompanies,
-    getInstitutions,
-} from '@/modules/institution/services/institution.service';
+import { getCompanies, getInstitutions } from '@/modules/institution/services/institution.service';
 import {
     getRedeemedBenefitIds,
     redeemBenefit,
@@ -66,13 +63,13 @@ async function loadBenefits() {
                 companiesRes.data.map(async (company) => {
                     const res = await getBenefitsByCompany(company.id);
                     return res.data.map((b) => ({ ...b, ownerName: company.name }));
-                }),
+                })
             ),
             Promise.all(
                 institutionsRes.data.map(async (institution) => {
                     const res = await getBenefitsByInstitution(institution.id);
                     return res.data.map((b) => ({ ...b, ownerName: institution.name }));
-                }),
+                })
             ),
         ]);
         benefits.value = [...companyBenefits.flat(), ...institutionBenefits.flat()];
@@ -90,7 +87,7 @@ const filteredBenefits = computed(() => {
             (b) =>
                 b.name.toLowerCase().includes(q) ||
                 b.description.toLowerCase().includes(q) ||
-                b.ownerName.toLowerCase().includes(q),
+                b.ownerName.toLowerCase().includes(q)
         );
     }
     if (onlyAffordable.value) list = list.filter((b) => balance.value >= b.cost);
@@ -170,10 +167,7 @@ onMounted(() => {
             </div>
         </PixelCard>
 
-        <div
-            v-if="isLoading"
-            class="font-pixel text-[10px] text-muted-foreground py-8 text-center"
-        >
+        <div v-if="isLoading" class="font-pixel text-[10px] text-muted-foreground py-8 text-center">
             CARREGANDO VANTAGENS...
         </div>
 
@@ -234,11 +228,11 @@ onMounted(() => {
                             :disabled="pendingBenefitIds.has(benefit.id) || balance < benefit.cost"
                             @click="
                                 !pendingBenefitIds.has(benefit.id) &&
-                                    (pendingRedemption = {
-                                        id: benefit.id,
-                                        name: benefit.name,
-                                        cost: benefit.cost,
-                                    })
+                                (pendingRedemption = {
+                                    id: benefit.id,
+                                    name: benefit.name,
+                                    cost: benefit.cost,
+                                })
                             "
                         >
                             <PhSparkle weight="fill" class="pixel-icon" />
@@ -274,8 +268,8 @@ onMounted(() => {
                     Resgatar
                     <span class="text-primary">{{ pendingRedemption.name }}</span> por
                     <span class="inline-flex items-center gap-1">
-                        <CoinIcon :size="16" /> {{ pendingRedemption.cost }}
-                    </span>?
+                        <CoinIcon :size="16" /> {{ pendingRedemption.cost }} </span
+                    >?
                 </p>
                 <p class="font-sans text-sm text-muted-foreground mt-3">
                     Um cupom será gerado no seu extrato. Saldo após resgate:
@@ -339,11 +333,7 @@ onMounted(() => {
                     vantagem.
                 </p>
                 <div class="mt-6">
-                    <PixelButton
-                        variant="success"
-                        class="w-full"
-                        @click="redemptionSuccess = null"
-                    >
+                    <PixelButton variant="success" class="w-full" @click="redemptionSuccess = null">
                         FECHAR
                     </PixelButton>
                 </div>

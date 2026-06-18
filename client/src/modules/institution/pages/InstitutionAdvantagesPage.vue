@@ -139,7 +139,7 @@ async function handleCreate(e: Event) {
                 description: createForm.value.description.trim(),
                 cost: Number(createForm.value.cost),
             },
-            createImage.value!,
+            createImage.value!
         );
         toast.success('Vantagem criada com sucesso!');
         createForm.value = { name: '', description: '', cost: '' };
@@ -181,7 +181,7 @@ async function handleUpdate() {
                 description: editForm.value.description.trim(),
                 cost: Number(editForm.value.cost),
             },
-            editImage.value,
+            editImage.value
         );
         toast.success('Vantagem atualizada com sucesso!');
         closeEdit();
@@ -661,11 +661,7 @@ onMounted(() => {
                                     {{ isConfirming ? 'CONFIRMANDO...' : 'CONFIRMAR RESGATE' }}
                                 </PixelButton>
                             </div>
-                            <PixelButton
-                                variant="danger"
-                                class="w-full"
-                                @click="openDenyModal"
-                            >
+                            <PixelButton variant="danger" class="w-full" @click="openDenyModal">
                                 <PhX weight="bold" class="pixel-icon" />
                                 DENY REDEMPTION
                             </PixelButton>
@@ -674,19 +670,38 @@ onMounted(() => {
                         <div
                             v-if="redemptionDenied"
                             class="border-2 border-border p-4"
-                            style="border-color: hsl(var(--destructive)); background: hsl(var(--destructive) / 0.08)"
+                            style="
+                                border-color: hsl(var(--destructive));
+                                background: hsl(var(--destructive) / 0.08);
+                            "
                         >
                             <div class="flex items-center gap-3">
-                                <PhX weight="bold" class="pixel-icon shrink-0" :size="20" style="color: hsl(var(--destructive))" />
+                                <PhX
+                                    weight="bold"
+                                    class="pixel-icon shrink-0"
+                                    :size="20"
+                                    style="color: hsl(var(--destructive))"
+                                />
                                 <div>
-                                    <div class="font-pixel text-[9px]" style="color: hsl(var(--destructive))">REDEMPTION DENIED</div>
+                                    <div
+                                        class="font-pixel text-[9px]"
+                                        style="color: hsl(var(--destructive))"
+                                    >
+                                        REDEMPTION DENIED
+                                    </div>
                                     <div class="font-sans text-sm mt-0.5 text-muted-foreground">
-                                        The student was notified by email. Their coins have been refunded.
+                                        The student was notified by email. Their coins have been
+                                        refunded.
                                     </div>
                                 </div>
                             </div>
                             <div class="mt-3">
-                                <PixelButton variant="ghost" size="sm" class="w-full" @click="resetCouponForm">
+                                <PixelButton
+                                    variant="ghost"
+                                    size="sm"
+                                    class="w-full"
+                                    @click="resetCouponForm"
+                                >
                                     VALIDATE ANOTHER CODE
                                 </PixelButton>
                             </div>
@@ -736,12 +751,19 @@ onMounted(() => {
                 <!-- Histórico de Resgates -->
                 <PixelCard class="p-6">
                     <div class="font-pixel text-sm mb-4 flex items-center gap-2">
-                        <PhClockCounterClockwise weight="fill" class="pixel-icon" /> HISTÓRICO DE RESGATES
+                        <PhClockCounterClockwise weight="fill" class="pixel-icon" /> HISTÓRICO DE
+                        RESGATES
                     </div>
-                    <div v-if="isLoadingHistory" class="font-pixel text-[10px] text-muted-foreground py-4 text-center">
+                    <div
+                        v-if="isLoadingHistory"
+                        class="font-pixel text-[10px] text-muted-foreground py-4 text-center"
+                    >
                         CARREGANDO HISTÓRICO...
                     </div>
-                    <div v-else-if="redemptions.length === 0" class="font-pixel text-[9px] text-muted-foreground py-4 text-center">
+                    <div
+                        v-else-if="redemptions.length === 0"
+                        class="font-pixel text-[9px] text-muted-foreground py-4 text-center"
+                    >
                         NENHUM RESGATE ENCONTRADO
                     </div>
                     <div v-else class="space-y-4">
@@ -751,26 +773,37 @@ onMounted(() => {
                             class="border-2 border-border p-3 flex flex-col gap-2 bg-card/50"
                         >
                             <div class="flex items-center justify-between gap-2">
-                                <div class="font-pixel text-[9px] truncate max-w-[70%] text-foreground">
+                                <div
+                                    class="font-pixel text-[9px] truncate max-w-[70%] text-foreground"
+                                >
                                     {{ redemption.studentName }}
                                 </div>
                                 <span
                                     class="font-pixel text-[8px] px-2 py-0.5 border-2"
-                                    :style="redemption.status === 'USED' 
-                                        ? 'color: hsl(var(--success)); border-color: hsl(var(--success)); background: hsl(var(--success) / 0.05)'
-                                        : 'color: hsl(var(--warning)); border-color: hsl(var(--warning)); background: hsl(var(--warning) / 0.05)'"
+                                    :style="
+                                        redemption.status === 'USED'
+                                            ? 'color: hsl(var(--success)); border-color: hsl(var(--success)); background: hsl(var(--success) / 0.05)'
+                                            : 'color: hsl(var(--warning)); border-color: hsl(var(--warning)); background: hsl(var(--warning) / 0.05)'
+                                    "
                                 >
                                     {{ redemption.status === 'USED' ? 'UTILIZADO' : 'PENDENTE' }}
                                 </span>
                             </div>
-                            <div class="font-sans text-xs text-muted-foreground flex items-center justify-between gap-1 flex-wrap">
+                            <div
+                                class="font-sans text-xs text-muted-foreground flex items-center justify-between gap-1 flex-wrap"
+                            >
                                 <span>{{ redemption.benefitName }}</span>
                                 <span class="flex items-center gap-0.5 shrink-0">
                                     <CoinIcon :size="10" /> {{ redemption.coinsSpent }}
                                 </span>
                             </div>
-                            <div class="flex items-center justify-between text-[9px] font-sans text-muted-foreground/60 border-t border-border/50 pt-1.5">
-                                <span>Código: <span class="font-mono">{{ redemption.couponCode }}</span></span>
+                            <div
+                                class="flex items-center justify-between text-[9px] font-sans text-muted-foreground/60 border-t border-border/50 pt-1.5"
+                            >
+                                <span
+                                    >Código:
+                                    <span class="font-mono">{{ redemption.couponCode }}</span></span
+                                >
                                 <span>{{ formatDate(redemption.redeemedAt) }}</span>
                             </div>
                         </div>
@@ -882,12 +915,7 @@ onMounted(() => {
                 </div>
 
                 <div class="flex gap-3 pt-2">
-                    <PixelButton
-                        variant="ghost"
-                        class="flex-1"
-                        type="button"
-                        @click="closeEdit"
-                    >
+                    <PixelButton variant="ghost" class="flex-1" type="button" @click="closeEdit">
                         CANCELAR
                     </PixelButton>
                     <PixelButton
@@ -914,7 +942,10 @@ onMounted(() => {
         >
             <div
                 class="border-b-4 border-border px-4 py-2 flex items-center justify-between"
-                style="background: hsl(var(--destructive)); color: hsl(var(--destructive-foreground))"
+                style="
+                    background: hsl(var(--destructive));
+                    color: hsl(var(--destructive-foreground));
+                "
             >
                 <span class="font-pixel text-xs">DENY REDEMPTION</span>
                 <button
@@ -928,10 +959,13 @@ onMounted(() => {
             </div>
             <div class="p-6 space-y-4">
                 <p class="font-sans text-sm text-muted-foreground">
-                    The student will be notified by email with your reason. Their coins will be fully refunded.
+                    The student will be notified by email with your reason. Their coins will be
+                    fully refunded.
                 </p>
                 <div>
-                    <label class="font-pixel text-[10px] block mb-2">DENIAL REASON <span style="color: hsl(var(--destructive))">*</span></label>
+                    <label class="font-pixel text-[10px] block mb-2"
+                        >DENIAL REASON <span style="color: hsl(var(--destructive))">*</span></label
+                    >
                     <textarea
                         v-model="denialReason"
                         rows="4"

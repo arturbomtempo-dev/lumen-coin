@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { scanRedemption, validateCoupon, type ValidateBenefitRedemptionResponse } from '@/modules/company/services/benefit-redemption.service';
+import {
+    scanRedemption,
+    validateCoupon,
+    type ValidateBenefitRedemptionResponse,
+} from '@/modules/company/services/benefit-redemption.service';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
@@ -31,11 +35,12 @@ async function startScanner() {
             { facingMode: 'environment' },
             { fps: 10, qrbox: { width: 240, height: 240 } },
             onScanSuccess,
-            undefined,
+            undefined
         );
     } catch {
         scanState.value = 'error';
-        scanError.value = 'Não foi possível acessar a câmera. Verifique as permissões do navegador.';
+        scanError.value =
+            'Não foi possível acessar a câmera. Verifique as permissões do navegador.';
         scanner = null;
     }
 }
@@ -111,7 +116,8 @@ onUnmounted(() => {
 
         <div v-if="scanState === 'idle'" class="space-y-4">
             <p class="font-sans text-sm" style="color: hsl(var(--muted-foreground))">
-                Aponte a câmera para o QR Code do cupom do aluno para validar e confirmar o resgate automaticamente.
+                Aponte a câmera para o QR Code do cupom do aluno para validar e confirmar o resgate
+                automaticamente.
             </p>
             <PixelButton variant="primary" class="w-full" @click="startScanner">
                 <PhCamera weight="fill" class="pixel-icon mr-2" />
@@ -125,24 +131,30 @@ onUnmounted(() => {
                 class="w-full border-2 border-border overflow-hidden"
                 style="min-height: 300px"
             />
-            <p class="font-pixel text-[9px] text-center" style="color: hsl(var(--muted-foreground))">
+            <p
+                class="font-pixel text-[9px] text-center"
+                style="color: hsl(var(--muted-foreground))"
+            >
                 APONTE PARA O QR CODE DO CUPOM
             </p>
-            <PixelButton variant="secondary" class="w-full" @click="reset">
-                CANCELAR
-            </PixelButton>
+            <PixelButton variant="secondary" class="w-full" @click="reset"> CANCELAR </PixelButton>
         </div>
 
         <div v-if="scanState === 'validating'" class="space-y-4">
             <div class="flex items-center justify-center gap-3 py-8">
-                <span class="font-pixel text-[10px]" style="color: hsl(var(--muted-foreground))">VALIDANDO QR CODE...</span>
+                <span class="font-pixel text-[10px]" style="color: hsl(var(--muted-foreground))"
+                    >VALIDANDO QR CODE...</span
+                >
             </div>
         </div>
 
         <div v-if="scanState === 'error'" class="space-y-4">
             <div
                 class="border-2 border-border p-4 flex items-start gap-3"
-                style="border-color: hsl(var(--destructive)); background: hsl(var(--destructive) / 0.08)"
+                style="
+                    border-color: hsl(var(--destructive));
+                    background: hsl(var(--destructive) / 0.08);
+                "
             >
                 <PhXCircle
                     weight="fill"
@@ -151,7 +163,9 @@ onUnmounted(() => {
                     style="color: hsl(var(--destructive))"
                 />
                 <div class="space-y-1">
-                    <div class="font-pixel text-[9px]" style="color: hsl(var(--destructive))">ERRO</div>
+                    <div class="font-pixel text-[9px]" style="color: hsl(var(--destructive))">
+                        ERRO
+                    </div>
                     <div class="font-sans text-sm">{{ scanError }}</div>
                 </div>
             </div>
@@ -172,8 +186,12 @@ onUnmounted(() => {
                     style="color: hsl(var(--success))"
                 />
                 <div class="space-y-1">
-                    <div class="font-pixel text-[9px]" style="color: hsl(var(--success))">RESGATE CONFIRMADO!</div>
-                    <div class="font-sans text-sm">O resgate foi registrado com sucesso via QR Code.</div>
+                    <div class="font-pixel text-[9px]" style="color: hsl(var(--success))">
+                        RESGATE CONFIRMADO!
+                    </div>
+                    <div class="font-sans text-sm">
+                        O resgate foi registrado com sucesso via QR Code.
+                    </div>
                 </div>
             </div>
             <PixelButton variant="secondary" class="w-full" @click="reset">
@@ -193,7 +211,9 @@ onUnmounted(() => {
                     style="color: hsl(var(--success))"
                 />
                 <div class="space-y-1 text-sm">
-                    <div class="font-pixel text-[9px]" style="color: hsl(var(--success))">QR CODE VÁLIDO</div>
+                    <div class="font-pixel text-[9px]" style="color: hsl(var(--success))">
+                        QR CODE VÁLIDO
+                    </div>
                     <div class="font-display text-lg">
                         <span class="font-sans text-xs text-muted-foreground">Aluno: </span>
                         {{ validatedRedemption.studentName }}
@@ -214,7 +234,12 @@ onUnmounted(() => {
                 class="border-2 border-border p-3 flex items-center gap-2"
                 style="background: hsl(var(--warning) / 0.1); border-color: hsl(var(--warning))"
             >
-                <PhWarning weight="fill" :size="16" style="color: hsl(var(--warning))" class="shrink-0" />
+                <PhWarning
+                    weight="fill"
+                    :size="16"
+                    style="color: hsl(var(--warning))"
+                    class="shrink-0"
+                />
                 <p class="font-pixel text-[8px]" style="color: hsl(var(--warning))">
                     AO CONFIRMAR, O RESGATE SERÁ MARCADO COMO UTILIZADO.
                 </p>

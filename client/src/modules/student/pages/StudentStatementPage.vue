@@ -101,7 +101,10 @@ onMounted(async () => {
             <h2 class="font-pixel text-sm md:text-lg mb-4 flex items-center gap-2">
                 <PhTicket weight="fill" class="pixel-icon text-secondary" /> MEUS CUPONS
             </h2>
-            <div v-if="isLoadingCoupons" class="p-6 font-sans text-sm text-muted-foreground text-center">
+            <div
+                v-if="isLoadingCoupons"
+                class="p-6 font-sans text-sm text-muted-foreground text-center"
+            >
                 Carregando cupons...
             </div>
             <PixelCard
@@ -120,7 +123,7 @@ onMounted(async () => {
                         }}</PixelBadge>
                     </div>
                     <div class="font-sans text-sm text-muted-foreground mt-1">
-                       Fornecido por {{ c.companyName || c.institutionName || 'Parceiro' }}
+                        Fornecido por {{ c.companyName || c.institutionName || 'Parceiro' }}
                     </div>
                     <div
                         class="mt-3 border-2 border-dashed border-border bg-hud text-hud-foreground p-3"

@@ -119,7 +119,8 @@ export const routes: RouteRecordRaw[] = [
             {
                 path: 'vantagens',
                 name: 'institution-advantages',
-                component: () => import('@/modules/institution/pages/InstitutionAdvantagesPage.vue'),
+                component: () =>
+                    import('@/modules/institution/pages/InstitutionAdvantagesPage.vue'),
             },
         ],
     },

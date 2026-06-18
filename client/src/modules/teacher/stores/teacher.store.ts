@@ -37,5 +37,15 @@ export const useTeacherStore = defineStore('teacher', () => {
         isLoaded.value = false;
     }
 
-    return { name, balance, institutionId, firstLogin, isLoaded, loadProfile, setName, setBalance, reset };
+    return {
+        name,
+        balance,
+        institutionId,
+        firstLogin,
+        isLoaded,
+        loadProfile,
+        setName,
+        setBalance,
+        reset,
+    };
 });
