@@ -49,6 +49,9 @@ WEB --> FRONT : HTTPS
 rectangle "Render" as RENDER #FEF9EE {
 
   [Lumen Coin API\n<<Spring Boot Monolito>>] as API
+  [ZXing\n<<Gerador QR\nEmbarcado>>] as ZXING
+
+  API --> ZXING : uso interno
 
   interface "REST /auth"           as iAUTH
   interface "REST /usuarios"       as iUSERS

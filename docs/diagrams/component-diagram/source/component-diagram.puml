@@ -69,6 +69,7 @@ rectangle "Backend Monolito <<Spring Boot>>" as MONOLITH #FEF9EE {
 
   [Serviço de\nArmazenamento\n<<Cloudinary>>] as STORAGE
   [Serviço de\nE-mail]    as EMAIL_SVC
+  [Gerador de\nQR Code\n<<ZXing>>] as QR_GEN
 
   AUTH        -up- iAUTH
   USERS       -up- iUSERS
@@ -124,7 +125,8 @@ COINS       --> Q_COIN    : AMQP
 REDEMPTIONS --> Q_BENEFIT : AMQP
 
 Q_COIN    --> EMAIL_SVC : AMQP
-Q_BENEFIT --> EMAIL_SVC : AMQP
+Q_BENEFIT --> QR_GEN    : AMQP (consumer)
+QR_GEN    --> EMAIL_SVC : PNG gerado
 
 rectangle "Serviços Externos" as EXT #FDE8D0 {
   [Cloudinary API] as CLOUDINARY
