@@ -137,6 +137,8 @@ const {
     clearErrors: clearCourseErrors,
 } = useForm(registerCourseSchema);
 
+courseData.value = { name: '', shift: '', periods: 0 };
+
 function startEditCourse(course: CourseResponse) {
     editingCourseId.value = course.id;
     courseData.value = {
