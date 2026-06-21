@@ -171,8 +171,7 @@ async function submitCourse(e: Event) {
             toast.success(`Curso "${response.data.name}" criado!`);
         }
 
-        // reset form after submit
-        courseData.value = { name: '', shift: '', periods: 1 };
+        courseData.value = { name: '', shift: '', periods: 0 };
         editingCourseId.value = null;
     } catch {
     } finally {
@@ -609,7 +608,7 @@ onMounted(async () => {
                                 >NÚMERO DE PERÍODOS</label
                             >
                             <PixelInput
-                                :model-value="courseData.periods"
+                                :model-value="courseData.periods || ''"
                                 type="number"
                                 min="1"
                                 placeholder="Ex: 8"
@@ -641,7 +640,7 @@ onMounted(async () => {
                                         editingCourseId = null;
                                         courseData.name = '';
                                         courseData.shift = '';
-                                        courseData.periods = 1;
+                                        courseData.periods = 0;
                                         clearCourseErrors();
                                     }
                                 "
