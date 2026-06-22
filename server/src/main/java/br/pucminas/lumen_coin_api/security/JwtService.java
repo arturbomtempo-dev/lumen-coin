@@ -6,8 +6,9 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import org.springframework.http.ResponseCookie;
+
 import javax.crypto.SecretKey;
-import jakarta.servlet.http.Cookie;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
@@ -70,22 +71,24 @@ public class JwtService {
         return cookieName;
     }
 
-    public Cookie buildAuthCookie(UserPrincipal principal) {
-        Cookie cookie = new Cookie(cookieName, generateToken(principal));
-        cookie.setHttpOnly(true);
-        cookie.setSecure(cookieSecure);
-        cookie.setPath("/");
-        cookie.setMaxAge((int) (jwtExpirationMs / 1000));
-        return cookie;
+    public ResponseCookie buildAuthCookie(UserPrincipal principal) {
+        return ResponseCookie.from(cookieName, generateToken(principal))
+                .httpOnly(true)
+                .secure(cookieSecure)
+                .path("/")
+                .maxAge(jwtExpirationMs / 1000)
+                .sameSite(cookieSecure ? "None" : "Lax")
+                .build();
     }
 
-    public Cookie buildClearCookie() {
-        Cookie cookie = new Cookie(cookieName, "");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(cookieSecure);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        return cookie;
+    public ResponseCookie buildClearCookie() {
+        return ResponseCookie.from(cookieName, "")
+                .httpOnly(true)
+                .secure(cookieSecure)
+                .path("/")
+                .maxAge(0)
+                .sameSite(cookieSecure ? "None" : "Lax")
+                .build();
     }
 
     private Claims getClaims(String token) {

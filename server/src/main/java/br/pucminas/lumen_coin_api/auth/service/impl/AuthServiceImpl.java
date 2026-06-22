@@ -15,6 +15,7 @@ import br.pucminas.lumen_coin_api.security.UserPrincipal;
 import br.pucminas.lumen_coin_api.user.entity.User;
 import br.pucminas.lumen_coin_api.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -50,14 +51,14 @@ public class AuthServiceImpl implements AuthService {
                 new UsernamePasswordAuthenticationToken(request.email(), request.password()));
 
         UserPrincipal principal = (UserPrincipal) auth.getPrincipal();
-        response.addCookie(jwtService.buildAuthCookie(principal));
+        response.addHeader(HttpHeaders.SET_COOKIE, jwtService.buildAuthCookie(principal).toString());
 
         return new AuthResponse("Logged in successfully");
     }
 
     @Override
     public AuthResponse logout(HttpServletResponse response) {
-        response.addCookie(jwtService.buildClearCookie());
+        response.addHeader(HttpHeaders.SET_COOKIE, jwtService.buildClearCookie().toString());
         return new AuthResponse("Logged out successfully");
     }
 
