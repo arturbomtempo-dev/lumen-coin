@@ -15,6 +15,7 @@ dependency-reduced-pom.xml
 
 .env
 .env.local
+.env.production
 .env.*.local
 
 ### STS (Spring Tool Suite) / Eclipse ###
