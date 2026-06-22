@@ -13,11 +13,11 @@ import java.util.Map;
 @Component
 public class BrevoMailClient {
 
-    private static final String BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
+    private static final String RESEND_API_URL = "https://api.resend.com/emails";
 
     private final RestClient restClient = RestClient.create();
 
-    @Value("${brevo.api-key}")
+    @Value("${resend.api-key}")
     private String apiKey;
 
     @Value("${app.mail.from}")
@@ -25,20 +25,20 @@ public class BrevoMailClient {
 
     public void send(String to, String subject, String htmlContent) {
         Map<String, Object> body = Map.of(
-                "sender", Map.of("email", fromEmail, "name", "Lumen Coin"),
-                "to", List.of(Map.of("email", to)),
+                "from", "Lumen Coin <" + fromEmail + ">",
+                "to", List.of(to),
                 "subject", subject,
-                "htmlContent", htmlContent
+                "html", htmlContent
         );
 
         restClient.post()
-                .uri(BREVO_API_URL)
-                .header("api-key", apiKey)
+                .uri(RESEND_API_URL)
+                .header("Authorization", "Bearer " + apiKey)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(body)
                 .retrieve()
                 .toBodilessEntity();
 
-        log.debug("Email sent via Brevo API to {}", to);
+        log.debug("Email sent via Resend API to {}", to);
     }
 }
