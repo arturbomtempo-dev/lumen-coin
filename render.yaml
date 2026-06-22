@@ -1,0 +1,93 @@
+services:
+  - type: web
+    name: lumen-coin-api
+    env: docker
+    plan: free
+    region: oregon
+    rootDir: server
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /institutions
+    envVars:
+      - key: SERVER_PORT
+        value: "8080"
+
+      # ── Database (NeonDB) ──────────────────────────────────────────────
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_SSL_PARAMS
+        value: "?sslmode=require&tcpKeepAlive=true"
+
+      # ── JPA ───────────────────────────────────────────────────────────
+      - key: JPA_DDL_AUTO
+        value: update
+      - key: JPA_SHOW_SQL
+        value: "false"
+
+      # ── Security ──────────────────────────────────────────────────────
+      - key: BCRYPT_STRENGTH
+        value: "12"
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRATION_MS
+        value: "86400000"
+      - key: JWT_COOKIE_NAME
+        value: lumen_auth
+      - key: JWT_COOKIE_SECURE
+        value: "true"
+
+      # ── CORS & App URL ────────────────────────────────────────────────
+      # Set ALLOWED_ORIGINS to your Vercel URL (e.g. https://lumen-coin.vercel.app)
+      - key: ALLOWED_ORIGINS
+        sync: false
+      # Set APP_URL to your Vercel URL (same as ALLOWED_ORIGINS)
+      - key: APP_URL
+        sync: false
+
+      # ── Email (Brevo SMTP) ────────────────────────────────────────────
+      - key: MAIL_HOST
+        value: smtp-relay.brevo.com
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: APP_MAIL_FROM
+        sync: false
+      - key: APP_MAIL_ENABLED
+        value: "true"
+
+      # ── RabbitMQ (CloudAMQP) ──────────────────────────────────────────
+      - key: RABBITMQ_HOST
+        sync: false
+      - key: RABBITMQ_PORT
+        value: "5671"
+      - key: RABBITMQ_USER
+        sync: false
+      - key: RABBITMQ_PASSWORD
+        sync: false
+      - key: RABBITMQ_VHOST
+        sync: false
+      - key: RABBITMQ_SSL
+        value: "true"
+
+      # ── WhatsApp (desabilitado no plano free) ─────────────────────────
+      - key: WAHA_ENABLED
+        value: "false"
+
+      # ── Cloudinary ────────────────────────────────────────────────────
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
