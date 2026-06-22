@@ -28,12 +28,32 @@ const isConfirming = ref(false);
 const scannedCode = ref('');
 
 let scanner: Html5Qrcode | null = null;
+const devices = ref<Array<{ id: string; label: string }>>([]);
+const selectedCameraId = ref<string>('');
 
 async function startScanner() {
     scanError.value = '';
     validatedRedemption.value = null;
     scannedCode.value = '';
+    devices.value = [];
 
+    // 1. Verificar contexto seguro (HTTPS ou localhost)
+    if (window.isSecureContext === false) {
+        scanState.value = 'error';
+        scanError.value =
+            'O acesso à câmera requer uma conexão segura (HTTPS ou localhost). Se você estiver testando no celular usando o IP do computador (ex: http://192.168.x.x:5173), o navegador bloqueará o acesso por segurança. Para testar no celular, configure HTTPS ou utilize uma ferramenta de túnel (ex: Ngrok).';
+        return;
+    }
+
+    // 2. Verificar suporte à API de mídia no navegador
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        scanState.value = 'error';
+        scanError.value =
+            'Seu navegador não suporta acesso à câmera ou a API de mídia está desativada.';
+        return;
+    }
+
+    // 3. Verificar permissão prévia via Query API (opcional, onde suportado)
     if (navigator.permissions) {
         try {
             const { state } = await navigator.permissions.query({
@@ -42,7 +62,7 @@ async function startScanner() {
             if (state === 'denied') {
                 scanState.value = 'error';
                 scanError.value =
-                    'Acesso à câmera bloqueado. Clique no ícone de cadeado na barra de endereço do navegador e permita o acesso à câmera.';
+                    'Acesso à câmera bloqueado nas configurações do navegador. Clique no ícone de cadeado na barra de endereço e permita o acesso à câmera.';
                 return;
             }
         } catch {}
@@ -51,20 +71,79 @@ async function startScanner() {
     scanState.value = 'scanning';
     await nextTick();
 
-    scanner = new Html5Qrcode('qr-reader');
-
     try {
+        scanner = new Html5Qrcode('qr-reader');
+
+        // Solicita permissão e lista as câmeras disponíveis
+        const cameraDevices = await Html5Qrcode.getCameras();
+        devices.value = cameraDevices || [];
+
+        if (devices.value.length === 0) {
+            throw new Error('Nenhuma câmera encontrada no dispositivo.');
+        }
+
+        // Escolhe a melhor câmera padrão:
+        // Prefere a câmera traseira/ambiente em dispositivos móveis, caso contrário escolhe a primeira disponível
+        let defaultCameraId = selectedCameraId.value;
+        if (!defaultCameraId || !devices.value.some((d) => d.id === defaultCameraId)) {
+            const rearCamera = devices.value.find((d) => {
+                const label = d.label.toLowerCase();
+                return (
+                    label.includes('back') ||
+                    label.includes('traseira') ||
+                    label.includes('rear') ||
+                    label.includes('environment')
+                );
+            });
+            defaultCameraId = rearCamera ? rearCamera.id : devices.value[0].id;
+        }
+
+        selectedCameraId.value = defaultCameraId;
+
+        // Inicia o scanner com a câmera selecionada
         await scanner.start(
-            { facingMode: { ideal: 'environment' } },
+            selectedCameraId.value,
             { fps: 10, qrbox: { width: 240, height: 240 } },
             onScanSuccess,
             undefined
         );
-    } catch {
+    } catch (err: any) {
+        scanState.value = 'error';
+        const errorMsg = err?.message || err;
+        if (
+            errorMsg.includes('NotAllowedError') ||
+            errorMsg.includes('Permission denied') ||
+            errorMsg.includes('permission')
+        ) {
+            scanError.value =
+                'Acesso à câmera não autorizado. Por favor, permita o acesso à câmera quando solicitado pelo navegador.';
+        } else {
+            scanError.value =
+                'Não foi possível acessar a câmera. Verifique a conexão e permissões. Detalhes: ' +
+                errorMsg;
+        }
+        scanner = null;
+    }
+}
+
+async function handleCameraChange() {
+    if (!scanner || !selectedCameraId.value) return;
+
+    try {
+        try {
+            await scanner.stop();
+        } catch {}
+
+        await scanner.start(
+            selectedCameraId.value,
+            { fps: 10, qrbox: { width: 240, height: 240 } },
+            onScanSuccess,
+            undefined
+        );
+    } catch (err: any) {
         scanState.value = 'error';
         scanError.value =
-            'Não foi possível acessar a câmera. Verifique as permissões do navegador.';
-        scanner = null;
+            'Erro ao alternar para a câmera selecionada. Detalhes: ' + (err?.message || err);
     }
 }
 
@@ -167,6 +246,21 @@ onUnmounted(() => {
         </div>
 
         <div v-if="scanState === 'scanning'" class="space-y-4">
+            <div v-if="devices.length > 1" class="space-y-1">
+                <label class="font-pixel text-[9px] text-muted-foreground block">
+                    SELECIONAR CÂMERA
+                </label>
+                <select
+                    v-model="selectedCameraId"
+                    @change="handleCameraChange"
+                    class="w-full bg-background border-2 border-border px-3 py-2 font-display text-sm focus:outline-none focus:border-primary cursor-pointer mb-2"
+                >
+                    <option v-for="d in devices" :key="d.id" :value="d.id">
+                        {{ d.label || `Câmera ${devices.indexOf(d) + 1}` }}
+                    </option>
+                </select>
+            </div>
+
             <div
                 id="qr-reader"
                 class="w-full border-2 border-border"
