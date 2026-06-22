@@ -2,8 +2,8 @@
 
 title Diagrama de Implantação - Sistema Lumen Coin
 
-skinparam nodesep 30
-skinparam ranksep 80
+skinparam nodesep 150
+skinparam ranksep 120
 
 skinparam component {
   BackgroundColor #FDF8F0
@@ -113,7 +113,7 @@ iAMQP -- RABBIT
 
 rectangle "Serviços Externos" as EXT #FDE8D0 {
   [Cloudinary API\n<<Armazenamento\nde Imagens>>] as CLOUDINARY
-  [Servidor de E-mail\n<<SMTP / Gmail>>]          as SMTP_SVC
+  [Servidor de E-mail\n<<SMTP / Brevo>>]           as SMTP_SVC
 
   CLOUDINARY -[hidden]right- SMTP_SVC
 }
