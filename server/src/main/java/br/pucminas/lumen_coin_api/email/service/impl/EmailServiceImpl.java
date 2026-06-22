@@ -1,5 +1,6 @@
 package br.pucminas.lumen_coin_api.email.service.impl;
 
+import br.pucminas.lumen_coin_api.email.BrevoMailClient;
 import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionCompanyNotificationEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionStudentApprovedEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionStudentQrScanEmailContext;
@@ -12,26 +13,21 @@ import br.pucminas.lumen_coin_api.email.dto.TeacherWelcomeEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.WelcomeEmailContext;
 import br.pucminas.lumen_coin_api.email.service.EmailService;
 import br.pucminas.lumen_coin_api.email.template.HandlebarsTemplateEngine;
-import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.Base64;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
-    private final JavaMailSender mailSender;
+    private final BrevoMailClient mailClient;
     private final HandlebarsTemplateEngine templateEngine;
-
-    @Value("${app.mail.from}")
-    private String from;
 
     @Value("${app.mail.enabled}")
     private boolean enabled;
@@ -211,25 +207,14 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-    private void send(String to, String subject, String html) throws Exception {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-        helper.setFrom(from);
-        helper.setTo(to);
-        helper.setSubject(subject);
-        helper.setText(html, true);
-        mailSender.send(message);
+    private void send(String to, String subject, String html) {
+        mailClient.send(to, subject, html);
     }
 
-    private void sendWithInlineImage(String to, String subject, String html, String imageId, byte[] imageBytes,
-            String mimeType) throws Exception {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-        helper.setFrom(from);
-        helper.setTo(to);
-        helper.setSubject(subject);
-        helper.setText(html, true);
-        helper.addInline(imageId, new ByteArrayResource(imageBytes), mimeType);
-        mailSender.send(message);
+    // Substitui cid:imageId por data URI base64 — compatível com a API HTTP do Brevo
+    private void sendWithInlineImage(String to, String subject, String html,
+            String imageId, byte[] imageBytes, String mimeType) {
+        String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imageBytes);
+        mailClient.send(to, subject, html.replace("cid:" + imageId, dataUri));
     }
 }
