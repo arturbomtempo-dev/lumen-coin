@@ -151,10 +151,7 @@ async function handleLogin(e: Event) {
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between font-pixel text-[9px]">
-                            <label class="flex items-center gap-2">
-                                <input type="checkbox" class="accent-primary" /> LEMBRAR
-                            </label>
+                        <div class="flex items-center justify-end font-pixel text-[9px]">
                             <RouterLink to="/forgot-password" class="hover:text-primary"
                                 >ESQUECI A SENHA</RouterLink
                             >
