@@ -20,5 +20,7 @@ public interface EmailService {
 
     void sendBenefitRedemptionApprovedToStudent(String to, String studentName, String benefitName, String usageNotes);
 
+    void sendBenefitRedemptionQrScannedToStudent(String to, String studentName, String benefitName, String companyName);
+
     void sendBenefitRedemptionDeniedToStudent(String to, String studentName, String benefitName, String denialReason);
 }

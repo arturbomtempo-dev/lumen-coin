@@ -679,7 +679,7 @@ onMounted(() => {
             </template>
 
             <template v-if="tab === 'scanner'">
-                <div class="max-w-lg">
+                <div class="max-w-2xl mx-auto">
                     <CompanyQrScannerPage />
                 </div>
             </template>

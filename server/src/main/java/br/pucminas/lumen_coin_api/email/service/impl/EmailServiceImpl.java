@@ -2,6 +2,7 @@ package br.pucminas.lumen_coin_api.email.service.impl;
 
 import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionCompanyNotificationEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionStudentApprovedEmailContext;
+import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionStudentQrScanEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionStudentDeniedEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionStudentConfirmationEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.CoinReceivedEmailContext;
@@ -171,6 +172,24 @@ public class EmailServiceImpl implements EmailService {
             log.info("Benefit redemption approved email sent to {}", to);
         } catch (Exception e) {
             log.error("Failed to send benefit redemption approved email to {}: {}", to, e.getMessage());
+        }
+    }
+
+    @Async
+    @Override
+    public void sendBenefitRedemptionQrScannedToStudent(String to, String studentName, String benefitName,
+            String companyName) {
+        if (!enabled) {
+            log.debug("Mail disabled - skipping benefit redemption qr scan email to {}", to);
+            return;
+        }
+        try {
+            String html = templateEngine.render("benefit-redemption-student-qr-scan",
+                    new BenefitRedemptionStudentQrScanEmailContext(studentName, benefitName, companyName));
+            send(to, "Seu resgate via QR Code foi confirmado! - Lumen Coin", html);
+            log.info("Benefit redemption qr scan email sent to {}", to);
+        } catch (Exception e) {
+            log.error("Failed to send benefit redemption qr scan email to {}: {}", to, e.getMessage());
         }
     }
 

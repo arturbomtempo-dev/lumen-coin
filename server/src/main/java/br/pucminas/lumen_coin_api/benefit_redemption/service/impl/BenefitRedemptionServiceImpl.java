@@ -371,11 +371,14 @@ public class BenefitRedemptionServiceImpl implements BenefitRedemptionService {
                 Benefit benefit = benefitRepository.findById(saved.getBenefitId())
                                 .orElseThrow(() -> new BenefitNotFoundException(saved.getBenefitId()));
 
-                emailService.sendBenefitRedemptionApprovedToStudent(
+                Company company = companyRepository.findById(companyId)
+                                .orElseThrow(() -> new UserNotFoundException(companyId));
+
+                emailService.sendBenefitRedemptionQrScannedToStudent(
                                 student.getEmail(),
                                 student.getName(),
                                 benefit.getName(),
-                                "Resgate confirmado via QR Code.");
+                                company.getName());
 
                 return toResponse(saved);
         }

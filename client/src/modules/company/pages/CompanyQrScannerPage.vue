@@ -30,18 +30,32 @@ const scannedCode = ref('');
 let scanner: Html5Qrcode | null = null;
 
 async function startScanner() {
-    scanState.value = 'scanning';
     scanError.value = '';
     validatedRedemption.value = null;
     scannedCode.value = '';
 
+    if (navigator.permissions) {
+        try {
+            const { state } = await navigator.permissions.query({
+                name: 'camera' as PermissionName,
+            });
+            if (state === 'denied') {
+                scanState.value = 'error';
+                scanError.value =
+                    'Acesso à câmera bloqueado. Clique no ícone de cadeado na barra de endereço do navegador e permita o acesso à câmera.';
+                return;
+            }
+        } catch {}
+    }
+
+    scanState.value = 'scanning';
     await nextTick();
 
     scanner = new Html5Qrcode('qr-reader');
 
     try {
         await scanner.start(
-            { facingMode: 'environment' },
+            { facingMode: { ideal: 'environment' } },
             { fps: 10, qrbox: { width: 240, height: 240 } },
             onScanSuccess,
             undefined
