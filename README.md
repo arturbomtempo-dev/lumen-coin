@@ -687,18 +687,98 @@ lumen-coin/
 
 ## 🎥 Demonstração
 
+Use GIFs e prints para mostrar o projeto em ação.
+
+> [!WARNING]
+> Dê preferência a hospedar suas imagens em um **CDN** (Content Delivery Network) ou no **GitHub Pages** para garantir que elas carreguem rapidamente e não quebrem. Saiba mais sobre o GitHub Pages clicando [aqui](https://github.com/joaopauloaramuni/joaopauloaramuni.github.io).
+
+### 📱 Aplicativo Mobile
+
+- GIF de demonstração (exemplo de fluxo de usuário):
+
+| Demonstração 1                                                                                                   | Demonstração 2                                                                                                   | Demonstração 3                                                                                                   | Demonstração 4                                                                                                   |
+| ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| <img src="https://joaopauloaramuni.github.io/image/fundo_mobile_engsoft.jpeg" alt="Demonstração 1" height="400"> | <img src="https://joaopauloaramuni.github.io/image/fundo_mobile_engsoft.jpeg" alt="Demonstração 2" height="400"> | <img src="https://joaopauloaramuni.github.io/image/fundo_mobile_engsoft.jpeg" alt="Demonstração 3" height="400"> | <img src="https://joaopauloaramuni.github.io/image/fundo_mobile_engsoft.jpeg" alt="Demonstração 4" height="400"> |
+| _Sua gif aqui_                                                                                                   | _Sua gif aqui_                                                                                                   | _Sua gif aqui_                                                                                                   | _Sua gif aqui_                                                                                                   |
+
+Para melhor visualização, as telas principais estão organizadas lado a lado.
+
+|                                                           Tela                                                           |                                                     Captura de Tela                                                      |
+| :----------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------: |
+|                                                 **Tela Inicial (Home)**                                                  |                                              **Tela de Perfil / Settings**                                               |
+| <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela 1 do Mobile" width="120px" height="120px"> | <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela 2 do Mobile" width="120px" height="120px"> |
+|                                                   **Tela de Cadastro**                                                   |                                               **Tela de Lista / Detalhes**                                               |
+| <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela 3 do Mobile" width="120px" height="120px"> | <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela 4 do Mobile" width="120px" height="120px"> |
+
 ### 🌐 Aplicação Web
 
 Para melhor visualização, as telas principais estão organizadas lado a lado.
 
-|                   Tela                   | Captura de Tela |
-| :--------------------------------------: | :-------------: |
-|         **Página Inicial (Home)**        |  _em breve_     |
-|           **Página de Login**            |  _em breve_     |
-|      **Dashboard do Estudante**          |  _em breve_     |
-|      **Dashboard do Professor**          |  _em breve_     |
-|      **Resgate de Vantagens**            |  _em breve_     |
-| **Gerenciamento (Instituição/Empresa)**  |  _em breve_     |
+|                                                                 Tela                                                                  |                                                           Captura de Tela                                                            |
+| :-----------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------: |
+|                                                       **Página Inicial (Home)**                                                       |                                                         **Página de Login**                                                          |
+| <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela Inicial da Aplicação Web" width="120px" height="120px"> |        <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela de Login" width="120px" height="120px">         |
+|                                                       **Cadastro de Clientes**                                                        |                                                       **Cadastro de Produtos**                                                       |
+| <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela de Cadastro de Clientes" width="120px" height="120px">  | <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela de Cadastro de Produtos" width="120px" height="120px"> |
+|                                                      **Dashboard (Visão Geral)**                                                      |                                                   **Página Admin / Configurações**                                                   |
+|       <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela de Dashboard" width="120px" height="120px">       |     <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela Administrativa" width="120px" height="120px">      |
+
+### 💻 Exemplo de Saída no Terminal (para Back-end, API, CLI)
+
+Caso o projeto seja focado em serviços de Back-end (API, microserviço, CLI), utilize esta seção para demonstrar a interação com o sistema e a resposta esperada.
+
+#### 1. Demonstração da API (Exemplo com cURL)
+
+Mostra uma chamada simples para um endpoint da API (ex: GET de listagem).
+
+```bash
+# Chama o endpoint de listagem de usuários com o token de autenticação
+curl -X GET 'http://localhost:3000/api/v1/users' \
+     -H 'Authorization: Bearer <seu-jwt-token>'
+```
+
+**Saída Esperada:**
+
+```json
+{
+    "total": 2,
+    "users": [
+        {
+            "id": "1a2b3c",
+            "name": "Prof. Aramuni",
+            "email": "contato@exemplo.com",
+            "status": "active"
+        },
+        {
+            "id": "4d5e6f",
+            "name": "Colaborador Teste",
+            "email": "teste@exemplo.com",
+            "status": "inactive"
+        }
+    ]
+}
+```
+
+---
+
+#### 2. Demonstração de Execução de CLI/Script
+
+Mostra como executar uma ferramenta de linha de comando ou um script de manutenção do projeto (ex: rodar migrações ou um job agendado).
+
+```bash
+# Executa a ferramenta de validação de Schema
+npm run cli validate:schema --target=production
+```
+
+**Saída Esperada:**
+
+```text
+[INFO] Iniciando validação do banco de dados...
+[SUCCESS] 15/15 tabelas verificadas.
+[WARNING] Coluna 'descricao' na tabela 'produtos' é nullable.
+[SUCCESS] Validação concluída. Nenhum erro crítico encontrado.
+Tempo de execução: 1.25s
+```
 
 ---
 
