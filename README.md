@@ -689,18 +689,47 @@ lumen-coin/
 
 ### 🌐 Aplicação Web
 
-Para melhor visualização, as telas principais estão organizadas lado a lado.
+#### 🏠 Página Inicial (Home)
 
-|                                                                 Tela                                                                  |                                                           Captura de Tela                                                            |
-| :-----------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------: |
-|                                                       **Página Inicial (Home)**                                                       |                                                         **Página de Login**                                                          |
+| Hero | Como Funciona |
+| :--: | :-----------: |
+| <img src="./docs/screenshots/home-hero.png" alt="Home — Hero" width="460px"> | <img src="./docs/screenshots/home-como-funciona.png" alt="Home — Como Funciona" width="460px"> |
+
+| Regras por Perfil | Personagens |
+| :---------------: | :---------: |
+| <img src="./docs/screenshots/home-regras.png" alt="Home — Regras por Perfil" width="460px"> | <img src="./docs/screenshots/home-personagens.png" alt="Home — Personagens" width="460px"> |
+
+#### 🔐 Autenticação e Cadastro
+
+| Login | Escolha de Perfil |
+| :---: | :---------------: |
+| <img src="./docs/screenshots/login.png" alt="Página de Login" width="460px"> | <img src="./docs/screenshots/signup-escolha-perfil.png" alt="Escolha de Perfil" width="460px"> |
+
+| Cadastro de Aluno | Cadastro de Empresa |
+| :---------------: | :-----------------: |
+| <img src="./docs/screenshots/signup-aluno.png" alt="Cadastro de Aluno" width="460px"> | <img src="./docs/screenshots/signup-empresa.png" alt="Cadastro de Empresa" width="460px"> |
+
+| Cadastro de Instituição | |
+| :---------------------: | - |
+| <img src="./docs/screenshots/signup-instituicao.png" alt="Cadastro de Instituição" width="460px"> | |
+
+#### 🎓 Área do Estudante
+
+| Dashboard do Estudante | Marketplace de Vantagens |
+| :--------------------: | :----------------------: |
+| <img src="./docs/screenshots/dashboard-student.png" alt="Dashboard do Estudante" width="460px"> | <img src="./docs/screenshots/student-marketplace.png" alt="Marketplace de Vantagens" width="460px"> |
+
+#### 👨‍🏫 Área do Professor
+
+| Dashboard do Professor | Envio de Moedas |
+| :--------------------: | :-------------: |
 | _em breve_ | _em breve_ |
-|                                                       **Dashboard do Estudante**                                                      |                                                       **Dashboard do Professor**                                                     |
-| _em breve_ | _em breve_ |
-|                                                        **Envio de Moedas**                                                            |                                                       **Resgate de Vantagens**                                                       |
-| _em breve_ | _em breve_ |
-|                                               **Gerenciamento de Instituição**                                                        |                                                  **Gerenciamento de Empresa Parceira**                                               |
-| _em breve_ | _em breve_ |
+
+#### 🏫 Área da Instituição
+
+| Gerenciamento de Instituição | Gerenciamento de Empresa Parceira |
+| :--------------------------: | :-------------------------------: |
+| <img src="./docs/screenshots/institution-dashboard.png" alt="Gerenciamento de Instituição" width="460px"> | _em breve_ |
 
 ---
 
