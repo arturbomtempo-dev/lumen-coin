@@ -687,149 +687,62 @@ lumen-coin/
 
 ## 🎥 Demonstração
 
-Use GIFs e prints para mostrar o projeto em ação.
-
-> [!WARNING]
-> Dê preferência a hospedar suas imagens em um **CDN** (Content Delivery Network) ou no **GitHub Pages** para garantir que elas carreguem rapidamente e não quebrem. Saiba mais sobre o GitHub Pages clicando [aqui](https://github.com/joaopauloaramuni/joaopauloaramuni.github.io).
-
-### 📱 Aplicativo Mobile
-
-- GIF de demonstração (exemplo de fluxo de usuário):
-
-| Demonstração 1                                                                                                   | Demonstração 2                                                                                                   | Demonstração 3                                                                                                   | Demonstração 4                                                                                                   |
-| ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| <img src="https://joaopauloaramuni.github.io/image/fundo_mobile_engsoft.jpeg" alt="Demonstração 1" height="400"> | <img src="https://joaopauloaramuni.github.io/image/fundo_mobile_engsoft.jpeg" alt="Demonstração 2" height="400"> | <img src="https://joaopauloaramuni.github.io/image/fundo_mobile_engsoft.jpeg" alt="Demonstração 3" height="400"> | <img src="https://joaopauloaramuni.github.io/image/fundo_mobile_engsoft.jpeg" alt="Demonstração 4" height="400"> |
-| _Sua gif aqui_                                                                                                   | _Sua gif aqui_                                                                                                   | _Sua gif aqui_                                                                                                   | _Sua gif aqui_                                                                                                   |
-
-Para melhor visualização, as telas principais estão organizadas lado a lado.
-
-|                                                           Tela                                                           |                                                     Captura de Tela                                                      |
-| :----------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------: |
-|                                                 **Tela Inicial (Home)**                                                  |                                              **Tela de Perfil / Settings**                                               |
-| <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela 1 do Mobile" width="120px" height="120px"> | <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela 2 do Mobile" width="120px" height="120px"> |
-|                                                   **Tela de Cadastro**                                                   |                                               **Tela de Lista / Detalhes**                                               |
-| <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela 3 do Mobile" width="120px" height="120px"> | <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela 4 do Mobile" width="120px" height="120px"> |
-
 ### 🌐 Aplicação Web
 
 Para melhor visualização, as telas principais estão organizadas lado a lado.
 
-|                                                                 Tela                                                                  |                                                           Captura de Tela                                                            |
-| :-----------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------: |
-|                                                       **Página Inicial (Home)**                                                       |                                                         **Página de Login**                                                          |
-| <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela Inicial da Aplicação Web" width="120px" height="120px"> |        <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela de Login" width="120px" height="120px">         |
-|                                                       **Cadastro de Clientes**                                                        |                                                       **Cadastro de Produtos**                                                       |
-| <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela de Cadastro de Clientes" width="120px" height="120px">  | <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela de Cadastro de Produtos" width="120px" height="120px"> |
-|                                                      **Dashboard (Visão Geral)**                                                      |                                                   **Página Admin / Configurações**                                                   |
-|       <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela de Dashboard" width="120px" height="120px">       |     <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Tela Administrativa" width="120px" height="120px">      |
-
-### 💻 Exemplo de Saída no Terminal (para Back-end, API, CLI)
-
-Caso o projeto seja focado em serviços de Back-end (API, microserviço, CLI), utilize esta seção para demonstrar a interação com o sistema e a resposta esperada.
-
-#### 1. Demonstração da API (Exemplo com cURL)
-
-Mostra uma chamada simples para um endpoint da API (ex: GET de listagem).
-
-```bash
-# Chama o endpoint de listagem de usuários com o token de autenticação
-curl -X GET 'http://localhost:3000/api/v1/users' \
-     -H 'Authorization: Bearer <seu-jwt-token>'
-```
-
-**Saída Esperada:**
-
-```json
-{
-    "total": 2,
-    "users": [
-        {
-            "id": "1a2b3c",
-            "name": "Prof. Aramuni",
-            "email": "contato@exemplo.com",
-            "status": "active"
-        },
-        {
-            "id": "4d5e6f",
-            "name": "Colaborador Teste",
-            "email": "teste@exemplo.com",
-            "status": "inactive"
-        }
-    ]
-}
-```
-
----
-
-#### 2. Demonstração de Execução de CLI/Script
-
-Mostra como executar uma ferramenta de linha de comando ou um script de manutenção do projeto (ex: rodar migrações ou um job agendado).
-
-```bash
-# Executa a ferramenta de validação de Schema
-npm run cli validate:schema --target=production
-```
-
-**Saída Esperada:**
-
-```text
-[INFO] Iniciando validação do banco de dados...
-[SUCCESS] 15/15 tabelas verificadas.
-[WARNING] Coluna 'descricao' na tabela 'produtos' é nullable.
-[SUCCESS] Validação concluída. Nenhum erro crítico encontrado.
-Tempo de execução: 1.25s
-```
+|                   Tela                   | Captura de Tela |
+| :--------------------------------------: | :-------------: |
+|         **Página Inicial (Home)**        |  _em breve_     |
+|           **Página de Login**            |  _em breve_     |
+|      **Dashboard do Estudante**          |  _em breve_     |
+|      **Dashboard do Professor**          |  _em breve_     |
+|      **Resgate de Vantagens**            |  _em breve_     |
+| **Gerenciamento (Instituição/Empresa)**  |  _em breve_     |
 
 ---
 
 ## 🧪 Testes
 
-### Testes Unitários e de Integração
+### Back-end (Spring Boot)
 
-Para rodar os testes da unidade e integração:
+O back-end utiliza **JUnit 5** via `spring-boot-starter-test` e **Spring Security Test** para testes de integração dos endpoints protegidos. Para executar:
 
-```
-npm run test
-```
-
-_Ferramenta utilizada: Jest, Vitest, Mocha, etc._
-
-### Testes End-to-End (E2E)
-
-Para rodar os testes de ponta a ponta (E2E):
-
-```
-npm run test:e2e
+```bash
+cd server
+./mvnw test
 ```
 
-_Ferramenta utilizada: Cypress, Playwright, Selenium, etc._
+No Windows PowerShell:
+
+```powershell
+cd server
+.\mvnw.cmd test
+```
+
+### Front-end (Vue + Vite)
+
+O projeto não possui testes automatizados configurados no front-end no momento.
 
 ---
 
 ## 🔗 Documentações utilizadas
-
-Liste aqui links para documentação técnica, referências de bibliotecas complexas ou guias de estilo que foram cruciais para o projeto.
 
 - 📖 **Framework/Biblioteca (Front-end):** [Documentação Oficial do **Vue.js**](https://vuejs.org/guide/introduction.html)
 - 📖 **Build Tool (Front-end):** [Guia de Configuração do **Vite**](https://vitejs.dev/config/)
 - 📖 **Framework (Back-end):** [Documentação Oficial do **Spring Boot**](https://docs.spring.io/spring-boot/docs/current/reference/html/)
 - 📖 **Containerização:** [Documentação de Referência do **Docker**](https://docs.docker.com/)
 - 📖 **Guia de Estilo:** [**Conventional Commits** (Padrão de Mensagens)](https://www.conventionalcommits.org/en/v1.0.0/)
-- 📖 **Documentação Interna:** [Design System do Projeto](./docs/design-system.md)
 
 ---
 
 ## 👥 Autores
 
-Liste os principais contribuidores. Você pode usar links para seus perfis.
-
-| 👤 Nome | 🖼️ Foto                                                                                                                   | :octocat: GitHub                                                                                                                                             | 💼 LinkedIn                                                                                                                                                             | 📤 Gmail                                                                                                                                                  |
-| ------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Nome 1  | <div align="center"><img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" width="70px" height="70px"></div> | <div align="center"><a href="https://github.com/user1"><img src="https://joaopauloaramuni.github.io/image/github6.png" width="50px" height="50px"></a></div> | <div align="center"><a href="https://www.linkedin.com/in/user1"><img src="https://joaopauloaramuni.github.io/image/linkedin2.png" width="50px" height="50px"></a></div> | <div align="center"><a href="mailto:user1@gmail.com"><img src="https://joaopauloaramuni.github.io/image/gmail3.png" width="50px" height="50px"></a></div> |
-| Nome 2  | <div align="center"><img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" width="70px" height="70px"></div> | <div align="center"><a href="https://github.com/user2"><img src="https://joaopauloaramuni.github.io/image/github6.png" width="50px" height="50px"></a></div> | <div align="center"><a href="https://www.linkedin.com/in/user2"><img src="https://joaopauloaramuni.github.io/image/linkedin2.png" width="50px" height="50px"></a></div> | <div align="center"><a href="mailto:user2@gmail.com"><img src="https://joaopauloaramuni.github.io/image/gmail3.png" width="50px" height="50px"></a></div> |
-
-> [!TIP]
-> 💡 **Dica:** Escolha uma foto profissional, preferencialmente de rosto, evitando imagens com baixa qualidade, filtros excessivos ou elementos distrativos.
+| 👤 Nome | 🖼️ Foto | :octocat: GitHub | 💼 LinkedIn | 📤 Gmail |
+| ------- | ------- | ---------------- | ----------- | -------- |
+| Artur Bomtempo Colen  | _em breve_ | <div align="center"><a href="https://github.com/arturbomtempo-dev"><img src="https://joaopauloaramuni.github.io/image/github6.png" width="50px" height="50px"></a></div> | _em breve_ | <div align="center"><a href="mailto:arturbcolen@gmail.com"><img src="https://joaopauloaramuni.github.io/image/gmail3.png" width="50px" height="50px"></a></div> |
+| Eduarda Vieira  | _em breve_ | <div align="center"><a href="https://github.com/eduardavieira-dev"><img src="https://joaopauloaramuni.github.io/image/github6.png" width="50px" height="50px"></a></div> | _em breve_ | <div align="center"><a href="mailto:eduarda.vieira.goncalves7@gmail.com"><img src="https://joaopauloaramuni.github.io/image/gmail3.png" width="50px" height="50px"></a></div> |
+| Vitor Azevedo  | _em breve_ | <div align="center"><a href="https://github.com/vitorazevedo-p7"><img src="https://joaopauloaramuni.github.io/image/github6.png" width="50px" height="50px"></a></div> | _em breve_ | <div align="center"><a href="mailto:vitorviana7137@gmail.com"><img src="https://joaopauloaramuni.github.io/image/gmail3.png" width="50px" height="50px"></a></div> |
 
 ---
 
@@ -844,15 +757,13 @@ Guia para contribuições ao projeto.
 5.  Abra um **Pull Request (PR)**.
 
 > [!IMPORTANT]
-> 📝 **Regras:** Por favor, verifique o arquivo [`CONTRIBUTING.md`](./CONTRIBUTING.md) para detalhes sobre nosso guia de estilo de código e o processo de submissão de PRs.
+> 📝 **Regras:** Utilize [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) nas mensagens de commit e certifique-se de que o projeto compila e os testes passam antes de abrir o PR.
 
 ---
 
 ## 🙏 Agradecimentos
 
-Em ambiente acadêmico, citar fontes e inspirações é crucial (integridade acadêmica). Em ambiente profissional, mostra humildade e conexão com a comunidade.
-
-Gostaria de agradecer aos seguintes canais e pessoas que foram fundamentais para o desenvolvimento deste projeto:
+Agradecemos aos seguintes canais e pessoas que foram fundamentais para o desenvolvimento deste projeto:
 
 - [**Engenharia de Software PUC Minas**](https://www.instagram.com/engsoftwarepucminas/) - Pelo apoio institucional, estrutura acadêmica e fomento à inovação e boas práticas de engenharia.
 - [**Prof. Dr. João Paulo Aramuni**](https://github.com/joaopauloaramuni) - Pelos valiosos ensinamentos sobre **Arquitetura de Software** e **Padrões de Projeto**.
