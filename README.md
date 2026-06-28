@@ -126,11 +126,18 @@ As seguintes ferramentas, frameworks e bibliotecas foram utilizados na construç
 - **Validação:** Jakarta Bean Validation (spring-boot-starter-validation)
 - **Mapeamento DTO ↔ Entidade:** [MapStruct v1.5.5](https://mapstruct.org/)
 - **Redução de Boilerplate:** [Lombok](https://projectlombok.org/)
+- **Armazenamento de Imagens:** [Cloudinary SDK v1.38.0](https://cloudinary.com/documentation/java_integration)
+- **Geração de QR Code:** [ZXing v3.5.3](https://github.com/zxing/zxing)
+- **Templates de Email:** [Handlebars v4.4](https://github.com/jknack/handlebars.java)
+- **Message Broker:** [Spring AMQP](https://spring.io/projects/spring-amqp) (integração com RabbitMQ)
 - **Build Tool:** [Maven](https://maven.apache.org/)
 
 ### ⚙️ Infraestrutura & DevOps
 
-- **Containerização:** [Docker / Docker Compose](https://www.docker.com/) (banco de dados PostgreSQL)
+- **Containerização:** [Docker / Docker Compose](https://www.docker.com/) (PostgreSQL e RabbitMQ)
+- **Message Broker:** [RabbitMQ v4.0](https://www.rabbitmq.com/) (processamento assíncrono de notificações)
+- **Armazenamento de Imagens:** [Cloudinary](https://cloudinary.com/) (upload e gerenciamento de imagens em nuvem)
+- **Email (Produção):** [Brevo SMTP](https://www.brevo.com/) (envio de emails transacionais)
 
 ---
 
@@ -158,7 +165,7 @@ Os principais diagramas utilizados na modelagem e documentação do sistema est�
 |                                      Diagrama Entidade-Relacionamento                                      |                                        Diagrama de Caso de Uso                                        |
 | :--------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------: |
 |                                      **Modelagem do Banco de Dados**                                       |                              **Interações e Funcionalidades do Sistema**                              |
-| <img src="./docs/diagrams/er-diagram/er-diagram.jpg" alt="Diagrama Entidade Relacionamento" width="320px"> | <img src="./docs/diagrams/use-case/use-case-diagram.png" alt="Diagrama de Caso de Uso" width="320px"> |
+| <img src="./docs/diagrams/er-diagram/er-diagram.png" alt="Diagrama Entidade Relacionamento" width="320px"> | <img src="./docs/diagrams/use-case/use-case-diagram.png" alt="Diagrama de Caso de Uso" width="320px"> |
 
 ---
 
@@ -325,7 +332,7 @@ Aplicação web disponível em: `http://localhost:5173`
 
 ### 🐳 Execução com Docker Compose (somente banco)
 
-Neste repositório, o `docker compose` da pasta `server` orquestra **apenas o PostgreSQL**. O back-end e o front-end continuam sendo executados localmente com Maven Wrapper e Vite.
+Neste repositório, o `docker compose` da pasta `server` orquestra o **PostgreSQL** e o **RabbitMQ**. O back-end e o front-end continuam sendo executados localmente com Maven Wrapper e Vite.
 
 Fluxo recomendado:
 
@@ -502,7 +509,10 @@ lumen-coin/
 │   │   ├── class-diagram/           # 📐 Diagrama de classes
 │   │   ├── component-diagram/       # 🧩 Diagrama de componentes
 │   │   ├── er-diagram/              # 🗄️ Diagrama entidade-relacionamento
-│   │   └── use-case/                # 👤 Diagrama de casos de uso
+│   │   ├── use-case/                # 👤 Diagrama de casos de uso
+│   │   ├── sequence-diagram/        # 🔁 Diagramas de sequência (uc-01 a uc-14 + overview)
+│   │   ├── comunication-diagram/    # 💬 Diagrama de comunicação
+│   │   └── deployment-diagram/      # 🚀 Diagrama de implantação
 │   ├── presentation/                # 🎞️ Slides de apresentação
 │   └── user-story/                  # 📋 Histórias de usuário
 │
@@ -628,6 +638,34 @@ lumen-coin/
         │       │   ├── exception/
         │       │   ├── mapper/
         │       │   ├── repository/
+        │       │   └── service/
+        │       ├── benefit/                 # 🎁 Módulo de benefícios
+        │       │   ├── controller/
+        │       │   ├── dto/
+        │       │   ├── entity/
+        │       │   ├── mapper/
+        │       │   ├── repository/
+        │       │   └── service/
+        │       ├── benefit_redemption/      # 🎟️ Módulo de resgate de benefícios e cupons QR
+        │       │   ├── controller/
+        │       │   ├── dto/
+        │       │   ├── entity/
+        │       │   ├── enums/
+        │       │   ├── mapper/
+        │       │   ├── repository/
+        │       │   └── service/
+        │       ├── coin_transfer/           # 💰 Módulo de transferência de moedas
+        │       │   ├── controller/
+        │       │   ├── dto/
+        │       │   ├── entity/
+        │       │   ├── mapper/
+        │       │   ├── repository/
+        │       │   └── service/
+        │       ├── email/                   # 📧 Módulo de envio de emails (templates Handlebars)
+        │       │   └── service/
+        │       ├── storage/                 # 🖼️ Integração com Cloudinary
+        │       │   └── service/
+        │       ├── whatsapp/                # 💬 Notificações WhatsApp (desabilitado no plano free)
         │       │   └── service/
         │       ├── config/
         │       │   └── SecurityConfig.java  # 🛡️ Configuração Spring Security e CORS
@@ -772,7 +810,7 @@ _Ferramenta utilizada: Cypress, Playwright, Selenium, etc._
 
 Liste aqui links para documentação técnica, referências de bibliotecas complexas ou guias de estilo que foram cruciais para o projeto.
 
-- 📖 **Framework/Biblioteca (Front-end):** [Documentação Oficial do **React**](https://react.dev/reference/react)
+- 📖 **Framework/Biblioteca (Front-end):** [Documentação Oficial do **Vue.js**](https://vuejs.org/guide/introduction.html)
 - 📖 **Build Tool (Front-end):** [Guia de Configuração do **Vite**](https://vitejs.dev/config/)
 - 📖 **Framework (Back-end):** [Documentação Oficial do **Spring Boot**](https://docs.spring.io/spring-boot/docs/current/reference/html/)
 - 📖 **Containerização:** [Documentação de Referência do **Docker**](https://docs.docker.com/)
