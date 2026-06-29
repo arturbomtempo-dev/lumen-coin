@@ -741,7 +741,7 @@ lumen-coin/
 
 | Perfil da Instituição | Gerenciamento de Empresa Parceira |
 | :-------------------: | :-------------------------------: |
-| <img src="./docs/screenshots/institution-perfil.png" alt="Perfil da Instituição" width="460px"> | _em breve_ |
+| <img src="./docs/screenshots/institution-perfil.png" alt="Perfil da Instituição" width="460px"> | <img src="./docs/screenshots/company-dashboard.png" alt="Gerenciamento de Empresa Parceira" width="460px"> |
 
 ---
 
