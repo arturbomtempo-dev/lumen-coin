@@ -21,6 +21,7 @@ OK.
   - Aumento da coesão
   - Aumento da legibilidade
 
+- Padronizar o tratamento de avatar nulo
 ### Camada Controller
 OK.
 

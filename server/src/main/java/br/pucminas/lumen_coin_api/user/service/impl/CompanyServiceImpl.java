@@ -24,6 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service OK. Só alguns pequenos detalhes poderiam melhorar (veja os comentários).
+ */
 @Service
 @RequiredArgsConstructor
 public class CompanyServiceImpl implements CompanyService {
@@ -33,9 +36,15 @@ public class CompanyServiceImpl implements CompanyService {
     private final UserMapper mapper;
     private final EmailService emailService;
 
+    /// Sugestões:
+    /// - Utilizar um construtor com parâmetros de Company para criar a empresa
+    /// deixaria o código mais legível e diminuiria um pouco o número de linhas.
+    /// - Mudar o nome do DTO para identificá-lo como um também aumentaria a legibilidade.
+    /// - Mudar o nome do objeto "request" para "req" teria o mesmo efeito ao ser usado dentro do construtor de Company
+    /// - Criar uma variável para a senha criptografada também.
     @Override
     @Transactional
-    public CompanyResponse register(RegisterCompanyRequest request) {
+    public CompanyResponse register(/* RegisterCompanyRequestDTO req */ RegisterCompanyRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new EmailAlreadyInUseException(request.email());
         }
@@ -43,10 +52,14 @@ public class CompanyServiceImpl implements CompanyService {
             throw new CnpjAlreadyInUseException(request.cnpj());
         }
 
+        // String encodedPswd = passwordEncoder.encode(req.password());
+        /* Company comparny = new Company(req.name(), req.email(), encodedPswd, req.cnpj());*/
+
         Company company = new Company();
         company.setName(request.name());
         company.setEmail(request.email());
         company.setPassword(passwordEncoder.encode(request.password()));
+        // Uso de setter OK
         company.setAvatar(request.avatar() != null ? request.avatar() : Avatar.COMPANY);
         company.setCnpj(request.cnpj());
 
@@ -55,6 +68,7 @@ public class CompanyServiceImpl implements CompanyService {
         return mapper.toResponse(saved);
     }
 
+    // OK
     @Override
     @Transactional(readOnly = true)
     public List<CompanyResponse> findAll() {
@@ -64,6 +78,7 @@ public class CompanyServiceImpl implements CompanyService {
                 .toList();
     }
 
+    // OK
     @Override
     @Transactional(readOnly = true)
     public CompanyResponse findById(UUID id) {
@@ -72,6 +87,11 @@ public class CompanyServiceImpl implements CompanyService {
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
+    /// Sugestões:
+    /// - Verificações de atributos obrigatórios nulos poderiam ser eliminadas
+    /// se houvesse um tratamento dessas situações na criação da request ou mesmo no front-end. Isso aumentaria a legibilidade
+    /// e diminuiria o número de linhas, além de aumentar a coesão do métod0 update ao tirar dele um grande
+    /// número de tarefas envolvendo verificação de null
     @Override
     @Transactional
     public CompanyResponse update(UUID id, UpdateCompanyRequest request) {
@@ -105,6 +125,7 @@ public class CompanyServiceImpl implements CompanyService {
         return mapper.toResponse(companyRepository.save(company));
     }
 
+    // OK
     @Override
     @Transactional
     public void changePassword(UUID id, ChangeCompanyPasswordRequest request) {
@@ -122,6 +143,7 @@ public class CompanyServiceImpl implements CompanyService {
         companyRepository.save(company);
     }
 
+    // OK
     @Override
     @Transactional
     public void delete(UUID id) {
