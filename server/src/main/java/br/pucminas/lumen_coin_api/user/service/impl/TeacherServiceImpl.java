@@ -27,6 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service OK. Só alguns pequenos detalhes poderiam melhorar (veja os comentários).
+ */
 @Service
 @RequiredArgsConstructor
 public class TeacherServiceImpl implements TeacherService {
@@ -37,9 +40,15 @@ public class TeacherServiceImpl implements TeacherService {
     private final EmailService emailService;
     private final WhatsAppService whatsAppService;
 
+    /// Sugestões:
+    /// - Utilizar um construtor com parâmetros de Teacher para criar o professor
+    /// deixaria o código mais legível e diminuiria um pouco o número de linhas.
+    /// - Mudar o nome do DTO para identificá-lo como um também aumentaria a legibilidade.
+    /// - Mudar o nome do objeto "request" para "req" teria o mesmo efeito ao ser usado dentro do construtor de Teacher
+    /// - Criar uma variável para a senha criptografada também.
     @Override
     @Transactional
-    public TeacherResponse register(RegisterTeacherRequest request, UUID institutionId) {
+    public TeacherResponse register(/* RegisterTeacherRequestDTO req */ RegisterTeacherRequest request, UUID institutionId) {
         if (userRepository.existsByEmail(request.email())) {
             throw new EmailAlreadyInUseException(request.email());
         }
@@ -47,17 +56,24 @@ public class TeacherServiceImpl implements TeacherService {
             throw new CpfAlreadyInUseException(request.cpf());
         }
 
+        // String encodedPswd = passwordEncoder.encode(PasswordGenerator.generate())
         String generatedPassword = PasswordGenerator.generate();
+
+        /* Teacher teacher = new Teacher(req.name(), req.email(), encodedPswd, req.cpf(), req.department(), req.institutionId(),
+        * req.phone()); */
 
         Teacher teacher = new Teacher();
         teacher.setName(request.name());
         teacher.setEmail(request.email());
         teacher.setPassword(passwordEncoder.encode(generatedPassword));
+        /// Parece que o tratamenro do avatar nulo varia de acordo com o tipo de usuário. Caso essa pré definição
+        /// de avatar não seja importante, seria bom padronizar.
         teacher.setAvatar(Avatar.MARIO);
         teacher.setCpf(request.cpf());
         teacher.setDepartment(request.department());
         teacher.setInstitutionId(institutionId);
         teacher.setPhone(request.phone());
+        // Uso OK de setter.
         teacher.setBalance(1000);
 
         Teacher saved = teacherRepository.save(teacher);
@@ -66,6 +82,7 @@ public class TeacherServiceImpl implements TeacherService {
         return mapper.toResponse(saved);
     }
 
+    // OK
     @Override
     @Transactional(readOnly = true)
     public List<TeacherResponse> findAll() {
@@ -75,6 +92,7 @@ public class TeacherServiceImpl implements TeacherService {
                 .toList();
     }
 
+    // OK
     @Override
     @Transactional(readOnly = true)
     public TeacherResponse findById(UUID id) {
@@ -83,6 +101,11 @@ public class TeacherServiceImpl implements TeacherService {
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
+    /// Sugestões:
+    /// - Verificações de atributos obrigatórios nulos poderiam ser eliminadas
+    /// se houvesse um tratamento dessas situações na criação da request ou mesmo no front-end. Isso aumentaria a legibilidade
+    /// e diminuiria o número de linhas, além de aumentar a coesão do métod0 update ao tirar dele um grande
+    /// número de tarefas envolvendo verificação de null
     @Override
     @Transactional
     public TeacherResponse update(UUID id, UpdateTeacherRequest request) {
@@ -122,6 +145,7 @@ public class TeacherServiceImpl implements TeacherService {
         return mapper.toResponse(teacherRepository.save(teacher));
     }
 
+    // OK
     @Override
     @Transactional
     public void changePassword(UUID id, ChangeTeacherPasswordRequest request) {
@@ -139,6 +163,7 @@ public class TeacherServiceImpl implements TeacherService {
         teacherRepository.save(teacher);
     }
 
+    // OK
     @Override
     @Transactional
     public void changeInitialPassword(UUID id, ChangeInitialPasswordRequest request) {
@@ -154,6 +179,7 @@ public class TeacherServiceImpl implements TeacherService {
         teacherRepository.save(teacher);
     }
 
+    // OK
     @Override
     @Transactional
     public void delete(UUID id) {

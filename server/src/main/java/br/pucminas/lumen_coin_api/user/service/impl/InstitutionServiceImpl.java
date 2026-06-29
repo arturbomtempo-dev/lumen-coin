@@ -53,7 +53,7 @@ public class InstitutionServiceImpl implements InstitutionService {
     /// - Criar uma variável para a senha criptografada também.
     @Override
     @Transactional
-    public InstitutionResponse register(RegisterInstitutionRequest request) {
+    public InstitutionResponse register(/* RegisterInstitutionRequestDTO req */ RegisterInstitutionRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new EmailAlreadyInUseException(request.email());
         }
