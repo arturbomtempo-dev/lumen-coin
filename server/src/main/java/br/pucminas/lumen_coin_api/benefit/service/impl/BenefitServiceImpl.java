@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.UUID;
 
+// Considerar uso de construtores com parâmetros e redução de verificações de null
+// Utilizar construtores com parâmetros nas operações de CREATE evita repetição de código.
 @Service
 @RequiredArgsConstructor
 public class BenefitServiceImpl implements BenefitService {
@@ -40,6 +42,7 @@ public class BenefitServiceImpl implements BenefitService {
 
         String imageUrl = storageService.upload(image);
 
+        /* Benefit benefit = new Benefit(companyId, req.name(), req.description(), imageUrl, req.cost()); */
         Benefit benefit = new Benefit();
         benefit.setCompanyId(companyId);
         benefit.setName(request.name());
@@ -59,6 +62,7 @@ public class BenefitServiceImpl implements BenefitService {
 
         String imageUrl = storageService.upload(image);
 
+        /* Benefit benefit = new Benefit(institutionId, req.name(), req.description(), imageUrl, req.cost()); */
         Benefit benefit = new Benefit();
         benefit.setInstitutionId(institutionId);
         benefit.setName(request.name());
