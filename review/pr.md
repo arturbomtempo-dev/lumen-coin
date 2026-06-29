@@ -5,14 +5,9 @@ Review do código do projeto de moeda estudantil desenvolvido pelo grupo Lumen C
 
 No geral, o projeto está seguindo muito bem as boas práticas aprendidas na disciplina de Projeto de Software, porém com alguns detalhes importantes que foram destacados nessa pull request para serem considerados pelo grupo.
 
-### Camada Model
-OK.
+## User
 
-### Repositories
-
-### DTOs
-
-### Camada Service
+### Service
 - Usar construtor com parâmetros para criação de objetos. 
   - Aumento de legibilidade
   - Redução do número de linhas
@@ -22,10 +17,17 @@ OK.
   - Aumento da legibilidade
 
 - Padronizar o tratamento de avatar nulo
-### Camada Controller
-OK.
 
-### Exceptions
-- Criar novas exceptions lidando com atributos nulos antes que passem para os DTOs. Elimina necessidade de verificar nulos constantemente nos Services
+## Email
 
-## Conclusão
+### DTO
+
+- Adicionar anotações como as que foram feitas para os DTOs de Usuario.
+
+## Course
+
+### Service
+
+- Usar construtor com parâmetros para criação de objetos.
+    - Aumento de legibilidade
+    - Redução do número de linhas
