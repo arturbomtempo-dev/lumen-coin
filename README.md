@@ -723,13 +723,25 @@ lumen-coin/
 
 | Dashboard do Professor | Envio de Moedas |
 | :--------------------: | :-------------: |
-| _em breve_ | _em breve_ |
+| <img src="./docs/screenshots/teacher-dashboard.png" alt="Dashboard do Professor" width="460px"> | <img src="./docs/screenshots/teacher-enviar.png" alt="Envio de Moedas" width="460px"> |
+
+| Extrato de Envios | Perfil do Professor |
+| :---------------: | :-----------------: |
+| <img src="./docs/screenshots/teacher-extrato.png" alt="Extrato de Envios" width="460px"> | <img src="./docs/screenshots/teacher-perfil.png" alt="Perfil do Professor" width="460px"> |
 
 #### 🏫 Área da Instituição
 
-| Gerenciamento de Instituição | Gerenciamento de Empresa Parceira |
-| :--------------------------: | :-------------------------------: |
-| <img src="./docs/screenshots/institution-dashboard.png" alt="Gerenciamento de Instituição" width="460px"> | _em breve_ |
+| Painel Principal | Gerenciamento de Cursos |
+| :--------------: | :---------------------: |
+| <img src="./docs/screenshots/institution-dashboard.png" alt="Painel Principal da Instituição" width="460px"> | <img src="./docs/screenshots/institution-cursos.png" alt="Gerenciamento de Cursos" width="460px"> |
+
+| Gerenciamento de Professores | Gerenciamento de Alunos |
+| :--------------------------: | :---------------------: |
+| <img src="./docs/screenshots/institution-professores.png" alt="Gerenciamento de Professores" width="460px"> | <img src="./docs/screenshots/institution-alunos.png" alt="Gerenciamento de Alunos" width="460px"> |
+
+| Perfil da Instituição | Gerenciamento de Empresa Parceira |
+| :-------------------: | :-------------------------------: |
+| <img src="./docs/screenshots/institution-perfil.png" alt="Perfil da Instituição" width="460px"> | _em breve_ |
 
 ---
 
