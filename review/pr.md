@@ -5,37 +5,37 @@ Review do código do projeto de moeda estudantil desenvolvido pelo grupo Lumen C
 
 No geral, o projeto está seguindo muito bem as boas práticas aprendidas na disciplina de Projeto de Software, porém com alguns detalhes importantes que foram destacados nessa pull request para serem considerados pelo grupo.
 
-## User
+## 📁🧍 User
 
-### Service
-- Usar construtor com parâmetros para criação de objetos. 
-  - Aumento de legibilidade
-  - Redução do número de linhas
+### 📁⚙️ Service
+- ℹ️ Usar construtor com parâmetros para criação de objetos. 
+  - ✅ Aumento de legibilidade
+  - ✅ Redução do número de linhas
   
-- Eliminar verificações de atributos obrigatórios nulos em DTOs
-  - Aumento da coesão
-  - Aumento da legibilidade
+- ℹ️ Eliminar verificações de atributos obrigatórios nulos em DTOs
+  - ✅ Aumento da coesão
+  - ✅ Aumento da legibilidade
 
-- Padronizar o tratamento de avatar nulo
+- ℹ️ Padronizar o tratamento de avatar nulo
 
-## Email
+## 📁📧 Email
 
-### DTO
+### 📁🔃 DTO
 
-- Adicionar anotações como as que foram feitas para os DTOs de Usuario.
+- ℹ️ Adicionar anotações como as que foram feitas para os DTOs de Usuario.
 
-## Course
+## 📁🎓 Course
 
-### Service
+### 📁⚙️ Service
 
-- Usar construtor com parâmetros para criação de objetos.
-    - Aumento de legibilidade
-    - Redução do número de linhas
+- ℹ️ Usar construtor com parâmetros para criação de objetos.
+    - ✅ Aumento de legibilidade
+    - ✅ Redução do número de linhas
 
-## Benefit
+## 📁🛍️ Benefit
 
-### Service
+### 📁⚙️ Service
 
-- Usar construtor com parâmetros nas operações de CREATE.
-    - Redução da repetição de código (DRY)
-    - Legibilidade
+- ℹ️ Usar construtor com parâmetros nas operações de CREATE.
+    - ✅ Redução da repetição de código (DRY)
+    - ✅ Legibilidade
