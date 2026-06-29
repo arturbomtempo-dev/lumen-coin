@@ -45,7 +45,7 @@ public class StudentServiceImpl implements StudentService {
     private final WhatsAppService whatsAppService;
 
     /// Sugestões:
-    /// - Utilizar um constrututor com parâmetros de Student para criar o aluno
+    /// - Utilizar um construtor com parâmetros de Student para criar o aluno
     /// deixaria o código mais legível e diminuiria um pouco o número de linhas.
     /// - Mudar o nome do DTO para identificá-lo como um também aumentaria a legibilidade.
     /// - Mudar o nome do objeto "request" para "req" teria o mesmo efeito ao ser usado dentro do construtor de Student
@@ -64,13 +64,15 @@ public class StudentServiceImpl implements StudentService {
 
         // String encodedPswd = passwordEncoder.encode(req.password());
 
-        /* Student student = new Student(req.name(), req.email(), encodedPswd, req.avatar(), req.cpf(), req.rg(), req.zipCode(),
+        /* Student student = new Student(req.name(), req.email(), encodedPswd, req.cpf(), req.rg(), req.zipCode(),
         req.address(), req.phone())*/
 
         Student student = new Student();
         student.setName(request.name());
         student.setEmail(request.email());
         student.setPassword(passwordEncoder.encode(request.password()));
+        // Possível erro: verificação de avatar nulo não está sendo feita para a criação de alunos.
+        // student.setAvatar(request.avatar() != null ? request.avatar() : Avatar.INSTITUTION);
         student.setAvatar(request.avatar());
         student.setCpf(request.cpf());
         student.setRg(request.rg());
@@ -118,7 +120,7 @@ public class StudentServiceImpl implements StudentService {
 
     /// Sugestões:
     /// - Verificações de atributos obrigatórios nulos poderiam ser eliminadas
-    /// se houvesse um tratamento dessas situações na criação da request. Isso aumentaria a legibilidade
+    /// se houvesse um tratamento dessas situações na criação da request ou mesmo no front-end. Isso aumentaria a legibilidade
     /// e diminuiria o número de linhas, além de aumentar a coesão do métod0 update ao tirar dele um grande
     /// número de tarefas envolvendo verificação de null
     @Override
