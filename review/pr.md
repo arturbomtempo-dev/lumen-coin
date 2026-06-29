@@ -31,3 +31,11 @@ No geral, o projeto está seguindo muito bem as boas práticas aprendidas na dis
 - Usar construtor com parâmetros para criação de objetos.
     - Aumento de legibilidade
     - Redução do número de linhas
+
+## Benefit
+
+### Service
+
+- Usar construtor com parâmetros nas operações de CREATE.
+    - Redução da repetição de código (DRY)
+    - Legibilidade
