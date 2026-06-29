@@ -9,8 +9,6 @@ import br.pucminas.lumen_coin_api.user.entity.Company;
 import br.pucminas.lumen_coin_api.user.enums.Avatar;
 import br.pucminas.lumen_coin_api.user.exception.CnpjAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
-import br.pucminas.lumen_coin_api.user.exception.IncorrectPasswordException;
-import br.pucminas.lumen_coin_api.user.exception.PasswordMismatchException;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
 import br.pucminas.lumen_coin_api.user.mapper.UserMapper;
 import br.pucminas.lumen_coin_api.user.repository.CompanyRepository;
@@ -30,6 +28,7 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserPasswordManager userPasswordManager;
     private final UserMapper mapper;
     private final EmailService emailService;
 
@@ -111,14 +110,8 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
-        if (!passwordEncoder.matches(request.currentPassword(), company.getPassword())) {
-            throw new IncorrectPasswordException();
-        }
-        if (!request.newPassword().equals(request.confirmNewPassword())) {
-            throw new PasswordMismatchException();
-        }
-
-        company.setPassword(passwordEncoder.encode(request.newPassword()));
+        userPasswordManager.changePassword(company, request.currentPassword(), request.newPassword(),
+                request.confirmNewPassword());
         companyRepository.save(company);
     }
 

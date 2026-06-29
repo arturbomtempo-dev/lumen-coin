@@ -13,8 +13,6 @@ import br.pucminas.lumen_coin_api.user.entity.Teacher;
 import br.pucminas.lumen_coin_api.user.enums.Avatar;
 import br.pucminas.lumen_coin_api.user.exception.CnpjAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
-import br.pucminas.lumen_coin_api.user.exception.IncorrectPasswordException;
-import br.pucminas.lumen_coin_api.user.exception.PasswordMismatchException;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
 import br.pucminas.lumen_coin_api.user.mapper.UserMapper;
 import br.pucminas.lumen_coin_api.user.repository.InstitutionRepository;
@@ -39,6 +37,7 @@ public class InstitutionServiceImpl implements InstitutionService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserPasswordManager userPasswordManager;
     private final UserMapper mapper;
     private final EmailService emailService;
 
@@ -127,14 +126,8 @@ public class InstitutionServiceImpl implements InstitutionService {
         Institution institution = institutionRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
-        if (!passwordEncoder.matches(request.currentPassword(), institution.getPassword())) {
-            throw new IncorrectPasswordException();
-        }
-        if (!request.newPassword().equals(request.confirmNewPassword())) {
-            throw new PasswordMismatchException();
-        }
-
-        institution.setPassword(passwordEncoder.encode(request.newPassword()));
+        userPasswordManager.changePassword(institution, request.currentPassword(), request.newPassword(),
+                request.confirmNewPassword());
         institutionRepository.save(institution);
     }
 

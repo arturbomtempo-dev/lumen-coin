@@ -12,7 +12,6 @@ import br.pucminas.lumen_coin_api.user.entity.Teacher;
 import br.pucminas.lumen_coin_api.user.enums.Avatar;
 import br.pucminas.lumen_coin_api.user.exception.CpfAlreadyInUseException;
 import br.pucminas.lumen_coin_api.user.exception.EmailAlreadyInUseException;
-import br.pucminas.lumen_coin_api.user.exception.IncorrectPasswordException;
 import br.pucminas.lumen_coin_api.user.exception.PasswordMismatchException;
 import br.pucminas.lumen_coin_api.user.exception.UserNotFoundException;
 import br.pucminas.lumen_coin_api.user.mapper.UserMapper;
@@ -33,6 +32,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final TeacherRepository teacherRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserPasswordManager userPasswordManager;
     private final UserMapper mapper;
     private final EmailService emailService;
     private final WhatsAppService whatsAppService;
@@ -128,14 +128,8 @@ public class TeacherServiceImpl implements TeacherService {
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
-        if (!passwordEncoder.matches(request.currentPassword(), teacher.getPassword())) {
-            throw new IncorrectPasswordException();
-        }
-        if (!request.newPassword().equals(request.confirmNewPassword())) {
-            throw new PasswordMismatchException();
-        }
-
-        teacher.setPassword(passwordEncoder.encode(request.newPassword()));
+        userPasswordManager.changePassword(teacher, request.currentPassword(), request.newPassword(),
+                request.confirmNewPassword());
         teacherRepository.save(teacher);
     }
 
