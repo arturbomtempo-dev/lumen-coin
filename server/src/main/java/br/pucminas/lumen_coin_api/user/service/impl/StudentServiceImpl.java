@@ -29,6 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service OK. Só alguns pequenos detalhes poderiam melhorar (veja os comentários).
+ */
 @Service
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
@@ -41,15 +44,28 @@ public class StudentServiceImpl implements StudentService {
     private final EmailService emailService;
     private final WhatsAppService whatsAppService;
 
+    /// Sugestões:
+    /// - Utilizar um constrututor com parâmetros de Student para criar o aluno
+    /// deixaria o código mais legível e diminuiria um pouco o número de linhas.
+    /// - Mudar o nome do DTO para identificá-lo como um também aumentaria a legibilidade.
+    /// - Mudar o nome do objeto "request" para "req" teria o mesmo efeito ao ser usado dentro do construtor de Student
+    /// - Criar uma variável para a senha criptografada também.
     @Override
     @Transactional
-    public StudentResponse register(RegisterStudentRequest request) {
+    public StudentResponse register(/* RegisterStudentRequestDTO req */ RegisterStudentRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new EmailAlreadyInUseException(request.email());
         }
         if (studentRepository.existsByCpf(request.cpf())) {
             throw new CpfAlreadyInUseException(request.cpf());
         }
+
+        // Diminuindo de 10 para 3 linhas a mesma operação
+
+        // String encodedPswd = passwordEncoder.encode(req.password());
+
+        /* Student student = new Student(req.name(), req.email(), encodedPswd, req.avatar(), req.cpf(), req.rg(), req.zipCode(),
+        req.address(), req.phone())*/
 
         Student student = new Student();
         student.setName(request.name());
@@ -73,6 +89,7 @@ public class StudentServiceImpl implements StudentService {
             throw new StudentInstitutionCourseMismatchException(request.institutionId(), request.courseId());
         }
 
+        // O uso dos setters realmente é a melhor opção nesse caso.
         student.setInstitutionId(request.institutionId());
         student.setCourseId(request.courseId());
 
@@ -99,6 +116,11 @@ public class StudentServiceImpl implements StudentService {
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
+    /// Sugestões:
+    /// - Verificações de atributos obrigatórios nulos poderiam ser eliminadas
+    /// se houvesse um tratamento dessas situações na criação da request. Isso aumentaria a legibilidade
+    /// e diminuiria o número de linhas, além de aumentar a coesão do métod0 update ao tirar dele um grande
+    /// número de tarefas envolvendo verificação de null
     @Override
     @Transactional
     public StudentResponse update(UUID id, UpdateStudentRequest request) {
@@ -167,6 +189,7 @@ public class StudentServiceImpl implements StudentService {
         return mapper.toResponse(studentRepository.save(student));
     }
 
+    // OK
     @Override
     @Transactional
     public void changePassword(UUID id, ChangeStudentPasswordRequest request) {
@@ -184,6 +207,7 @@ public class StudentServiceImpl implements StudentService {
         studentRepository.save(student);
     }
 
+    // OK
     @Override
     @Transactional
     public void delete(UUID id) {
@@ -192,6 +216,7 @@ public class StudentServiceImpl implements StudentService {
         studentRepository.delete(student);
     }
 
+    // OK
     @Override
     @Transactional(readOnly = true)
     public List<StudentResponse> findByInstitutionId(UUID institutionId) {
