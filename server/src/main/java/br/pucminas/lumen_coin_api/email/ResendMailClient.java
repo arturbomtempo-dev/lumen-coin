@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class BrevoMailClient {
+public class ResendMailClient {
 
     private static final String RESEND_API_URL = "https://api.resend.com/emails";
 

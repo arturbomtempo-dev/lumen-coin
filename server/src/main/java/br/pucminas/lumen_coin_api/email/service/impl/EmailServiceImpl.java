@@ -1,6 +1,6 @@
 package br.pucminas.lumen_coin_api.email.service.impl;
 
-import br.pucminas.lumen_coin_api.email.BrevoMailClient;
+import br.pucminas.lumen_coin_api.email.ResendMailClient;
 import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionCompanyNotificationEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionStudentApprovedEmailContext;
 import br.pucminas.lumen_coin_api.email.dto.BenefitRedemptionStudentQrScanEmailContext;
@@ -26,7 +26,7 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
-    private final BrevoMailClient mailClient;
+    private final ResendMailClient mailClient;
     private final HandlebarsTemplateEngine templateEngine;
 
     @Value("${app.mail.enabled}")
@@ -211,7 +211,7 @@ public class EmailServiceImpl implements EmailService {
         mailClient.send(to, subject, html);
     }
 
-    // Substitui cid:imageId por data URI base64 — compatível com a API HTTP do Brevo
+    // Substitui cid:imageId por data URI base64 — compatível com a API HTTP do Resend
     private void sendWithInlineImage(String to, String subject, String html,
             String imageId, byte[] imageBytes, String mimeType) {
         String dataUri = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(imageBytes);
