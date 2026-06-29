@@ -87,13 +87,7 @@ public class CoinTransferServiceImpl implements CoinTransferService {
         public List<CoinTransferResponse> getSentByTeacher(UUID teacherId) {
                 return coinTransferRepository.findBySenderIdOrderBySentAtDesc(teacherId)
                                 .stream()
-                                .map(t -> {
-                                        String senderName = teacherRepository.findById(t.getSenderId())
-                                                        .map(Teacher::getName).orElse("Desconhecido");
-                                        String recipientName = studentRepository.findById(t.getRecipientId())
-                                                        .map(Student::getName).orElse("Desconhecido");
-                                        return toResponse(t, senderName, recipientName);
-                                })
+                                .map(this::toResponseWithNames)
                                 .toList();
         }
 
@@ -102,14 +96,16 @@ public class CoinTransferServiceImpl implements CoinTransferService {
         public List<CoinTransferResponse> getReceivedByStudent(UUID studentId) {
                 return coinTransferRepository.findByRecipientIdOrderBySentAtDesc(studentId)
                                 .stream()
-                                .map(t -> {
-                                        String senderName = teacherRepository.findById(t.getSenderId())
-                                                        .map(Teacher::getName).orElse("Desconhecido");
-                                        String recipientName = studentRepository.findById(t.getRecipientId())
-                                                        .map(Student::getName).orElse("Desconhecido");
-                                        return toResponse(t, senderName, recipientName);
-                                })
+                                .map(this::toResponseWithNames)
                                 .toList();
+        }
+
+        private CoinTransferResponse toResponseWithNames(CoinTransfer t) {
+                String senderName = teacherRepository.findById(t.getSenderId())
+                                .map(Teacher::getName).orElse("Desconhecido");
+                String recipientName = studentRepository.findById(t.getRecipientId())
+                                .map(Student::getName).orElse("Desconhecido");
+                return toResponse(t, senderName, recipientName);
         }
 
         private CoinTransferResponse toResponse(CoinTransfer t, String senderName, String recipientName) {
