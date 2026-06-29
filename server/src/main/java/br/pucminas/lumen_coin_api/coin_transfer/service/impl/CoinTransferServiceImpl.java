@@ -22,6 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service OK. Só alguns pequenos detalhes poderiam melhorar (veja os comentários).
+ */
 @Service
 @RequiredArgsConstructor
 public class CoinTransferServiceImpl implements CoinTransferService {
@@ -33,6 +36,7 @@ public class CoinTransferServiceImpl implements CoinTransferService {
         private final EmailService emailService;
         private final WhatsAppService whatsAppService;
 
+        // Possibilidade de usar construtores com parâmetros outra vez.
         @Override
         @Transactional
         public CoinTransferResponse send(UUID teacherId, SendCoinTransferRequest request) {
@@ -49,6 +53,7 @@ public class CoinTransferServiceImpl implements CoinTransferService {
                 teacher.setBalance(teacher.getBalance() - request.amount());
                 teacherRepository.save(teacher);
 
+                /* CoinTransfer transfer = new CoinTransfer(teacherId, req.studentId(), req.amount(), req.message()); */
                 CoinTransfer transfer = new CoinTransfer();
                 transfer.setSenderId(teacherId);
                 transfer.setRecipientId(request.studentId());
