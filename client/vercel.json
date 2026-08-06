@@ -1,12 +1,12 @@
 {
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://lumen-coin-api.onrender.com/:path*"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
+    "rewrites": [
+        {
+            "source": "/api/:path*",
+            "destination": "https://lumen-coin-api.onrender.com/:path*"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
 }

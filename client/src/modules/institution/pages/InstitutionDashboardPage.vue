@@ -909,7 +909,9 @@ onMounted(async () => {
                         <div class="font-pixel text-[9px] text-muted-foreground">CNPJ</div>
                         <div class="font-sans text-sm mt-1">
                             {{
-                                institutionProfile?.cnpj ? cnpj.format(institutionProfile.cnpj) : '-'
+                                institutionProfile?.cnpj
+                                    ? cnpj.format(institutionProfile.cnpj)
+                                    : '-'
                             }}
                         </div>
                     </div>
@@ -1156,7 +1158,9 @@ onMounted(async () => {
                         <PixelBadge tone="blue">
                             CNPJ:
                             {{
-                                institutionProfile?.cnpj ? cnpj.format(institutionProfile.cnpj) : '-'
+                                institutionProfile?.cnpj
+                                    ? cnpj.format(institutionProfile.cnpj)
+                                    : '-'
                             }}
                         </PixelBadge>
                         <PixelBadge tone="green">
