@@ -12,6 +12,7 @@
     "dependencies": {
         "@phosphor-icons/vue": "^2.2.1",
         "axios": "^1.16.0",
+        "docsbr": "^1.0.1",
         "html5-qrcode": "^2.3.8",
         "maska": "^3.2.0",
         "pinia": "^3.0.4",

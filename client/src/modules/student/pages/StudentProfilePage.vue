@@ -18,7 +18,6 @@ import {
     type UpdateStudentDto,
 } from '@/modules/student/services/student.service';
 import { useStudentStore } from '@/modules/student/stores/student.store';
-import { useGamification } from '@/shared/composables/useGamification';
 import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
 import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
@@ -27,8 +26,8 @@ import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import { useForm } from '@/shared/composables/useForm';
+import { useGamification } from '@/shared/composables/useGamification';
 import { MARIO_CHARACTERS, type MarioCharacter } from '@/shared/data/characters';
-import { storeToRefs } from 'pinia';
 import {
     PhEye,
     PhEyeSlash,
@@ -41,7 +40,9 @@ import {
     PhUser,
     PhX,
 } from '@phosphor-icons/vue';
+import { cpf } from 'docsbr';
 import { vMaska } from 'maska/vue';
+import { storeToRefs } from 'pinia';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
@@ -162,11 +163,6 @@ const rgMaskOptions = {
     },
 };
 
-function formatCpf(cpf: string): string {
-    const digits = cpf.replace(/\D/g, '');
-    return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-}
-
 function formatRg(rg: string): string {
     const clean = rg.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
     if (!/^[A-Z]{2}\d{8}$/.test(clean)) return rg;
@@ -191,7 +187,7 @@ function setProfileForm(profile: StudentProfile) {
     profileData.value = {
         name: profile.name,
         email: profile.email,
-        cpf: formatCpf(profile.cpf),
+        cpf: cpf.format(profile.cpf),
         rg: formatRg(profile.rg),
         zipCode: formatZipCode(profile.zipCode ?? ''),
         address: profile.address ?? '',
@@ -251,7 +247,7 @@ async function submitProfileUpdate() {
         const payload: UpdateStudentFormData = {
             name: profileData.value.name.trim(),
             email: profileData.value.email.trim(),
-            cpf: digitsOnly(profileData.value.cpf),
+            cpf: cpf.unformat(profileData.value.cpf),
             rg: alphaNumericOnly(profileData.value.rg).toUpperCase(),
             zipCode: digitsOnly(profileData.value.zipCode),
             address: profileData.value.address.trim(),
@@ -452,7 +448,7 @@ onMounted(async () => {
                 <div class="border-2 border-border bg-card p-3">
                     <div class="font-pixel text-[9px] text-muted-foreground">CPF</div>
                     <div class="font-sans md">
-                        {{ studentProfile?.cpf ? formatCpf(studentProfile.cpf) : '-' }}
+                        {{ studentProfile?.cpf ? cpf.format(studentProfile.cpf) : '-' }}
                     </div>
                 </div>
 

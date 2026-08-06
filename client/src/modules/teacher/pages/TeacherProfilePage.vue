@@ -19,8 +19,8 @@ import {
 } from '@/modules/teacher/services/teacher.service';
 import { useTeacherStore } from '@/modules/teacher/stores/teacher.store';
 import CharacterAvatar from '@/shared/components/CharacterAvatar.vue';
-import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
 import CoinIcon from '@/shared/components/CoinIcon.vue';
+import PasswordStrengthHint from '@/shared/components/PasswordStrengthHint.vue';
 import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
@@ -36,6 +36,7 @@ import {
     PhUser,
     PhX,
 } from '@phosphor-icons/vue';
+import { cpf } from 'docsbr';
 import { vMaska } from 'maska/vue';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -108,16 +109,12 @@ function selectAvatar(character: TeacherCharacter) {
     profileData.value.avatar = character.toUpperCase() as TeacherAvatar;
 }
 
-function digitsOnly(value: string) {
-    return value.replace(/\D/g, '');
-}
-
 function setProfileForm(profile: TeacherProfile) {
     profileData.value = {
         name: profile.name,
         email: profile.email,
         avatar: (profile.avatar || 'MARIO') as TeacherAvatar,
-        cpf: profile.cpf,
+        cpf: cpf.format(profile.cpf),
         department: profile.department ?? '',
     };
 }
@@ -168,7 +165,7 @@ async function submitProfileUpdate() {
             name: profileData.value.name.trim(),
             email: profileData.value.email.trim(),
             avatar: profileData.value.avatar,
-            cpf: digitsOnly(profileData.value.cpf),
+            cpf: cpf.unformat(profileData.value.cpf),
             department: profileData.value.department.trim(),
         };
 
@@ -307,7 +304,9 @@ onMounted(loadProfile);
 
                 <div class="border-2 border-border bg-card p-3">
                     <div class="font-pixel text-[9px] text-muted-foreground">CPF</div>
-                    <div class="font-sans text-sm mt-1">{{ teacherProfile?.cpf ?? '-' }}</div>
+                    <div class="font-sans text-sm mt-1">
+                        {{ teacherProfile?.cpf ? cpf.format(teacherProfile.cpf) : '-' }}
+                    </div>
                 </div>
             </div>
 

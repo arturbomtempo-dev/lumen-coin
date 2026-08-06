@@ -8,6 +8,7 @@ import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import { useForm } from '@/shared/composables/useForm';
 import { PhArrowLeft, PhEye, PhEyeSlash } from '@phosphor-icons/vue';
+import { cnpj } from 'docsbr';
 import { vMaska } from 'maska/vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -37,7 +38,7 @@ async function handleSubmit(e: Event) {
             name: fields.value.name,
             email: fields.value.email,
             password: fields.value.password,
-            cnpj: fields.value.cnpj.replace(/\D/g, ''),
+            cnpj: cnpj.unformat(fields.value.cnpj),
         });
         toast.success('Empresa cadastrada com sucesso!', {
             description: 'Faça login para acessar o portal.',

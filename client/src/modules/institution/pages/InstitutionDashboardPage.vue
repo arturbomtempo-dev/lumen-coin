@@ -49,6 +49,7 @@ import {
     PhUser,
     PhX,
 } from '@phosphor-icons/vue';
+import { cnpj, cpf } from 'docsbr';
 import { vMaska } from 'maska/vue';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -248,7 +249,7 @@ async function submitTeacher(e: Event) {
     try {
         const response = await registerTeacher({
             ...teacherData.value,
-            cpf: (teacherData.value.cpf ?? '').replace(/\D/g, ''),
+            cpf: cpf.unformat(teacherData.value.cpf ?? ''),
         });
         teachers.value.unshift(response.data);
         toast.success(`Professor "${response.data.name}" cadastrado!`);
@@ -317,11 +318,6 @@ async function proceedDeleteTeacher() {
     cancelDeleteTeacher();
 }
 
-function formatCpf(cpf: string): string {
-    const digits = cpf.replace(/\D/g, '');
-    return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-}
-
 const allStudents = ref<StudentResponse[]>([]);
 
 async function loadStudents() {
@@ -334,11 +330,6 @@ function formatDate(value: string) {
         dateStyle: 'medium',
         timeStyle: 'short',
     }).format(new Date(value));
-}
-
-function formatCnpj(cnpj: string): string {
-    const digits = cnpj.replace(/\D/g, '');
-    return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
 }
 
 function formatZipCode(zipCode: string): string {
@@ -356,7 +347,7 @@ async function loadInstitutionProfile() {
         profileData.value = {
             name: response.data.name,
             email: response.data.email,
-            cnpj: formatCnpj(response.data.cnpj),
+            cnpj: cnpj.format(response.data.cnpj),
             zipCode: formatZipCode(response.data.zipCode ?? ''),
             address: response.data.address ?? '',
         };
@@ -368,7 +359,7 @@ function startEditInstitutionProfile() {
     profileData.value = {
         name: institutionProfile.value.name,
         email: institutionProfile.value.email,
-        cnpj: formatCnpj(institutionProfile.value.cnpj),
+        cnpj: cnpj.format(institutionProfile.value.cnpj),
         zipCode: formatZipCode(institutionProfile.value.zipCode ?? ''),
         address: institutionProfile.value.address ?? '',
     };
@@ -381,7 +372,7 @@ function cancelEditInstitutionProfile() {
     profileData.value = {
         name: institutionProfile.value.name,
         email: institutionProfile.value.email,
-        cnpj: formatCnpj(institutionProfile.value.cnpj),
+        cnpj: cnpj.format(institutionProfile.value.cnpj),
         zipCode: formatZipCode(institutionProfile.value.zipCode ?? ''),
         address: institutionProfile.value.address ?? '',
     };
@@ -400,7 +391,7 @@ async function handleUpdateInstitutionProfile(e: Event) {
         const response = await updateInstitution(authStore.user.id, {
             name: profileData.value.name.trim(),
             email: profileData.value.email.trim(),
-            cnpj: profileData.value.cnpj.replace(/\D/g, ''),
+            cnpj: cnpj.unformat(profileData.value.cnpj),
             zipCode: profileData.value.zipCode.replace(/\D/g, ''),
             address: profileData.value.address.trim(),
         });
@@ -410,7 +401,7 @@ async function handleUpdateInstitutionProfile(e: Event) {
         profileData.value = {
             name: response.data.name,
             email: response.data.email,
-            cnpj: formatCnpj(response.data.cnpj),
+            cnpj: cnpj.format(response.data.cnpj),
             zipCode: formatZipCode(response.data.zipCode ?? ''),
             address: response.data.address ?? '',
         };
@@ -788,7 +779,7 @@ onMounted(async () => {
                                 <div class="min-w-0">
                                     <div class="font-pixel text-xs">{{ teacher.name }}</div>
                                     <div class="font-sans text-xs text-muted-foreground mt-0.5">
-                                        {{ teacher.email }} · {{ formatCpf(teacher.cpf) }}
+                                        {{ teacher.email }} · {{ cpf.format(teacher.cpf) }}
                                     </div>
                                     <div class="flex flex-wrap gap-1.5 mt-2">
                                         <PixelBadge v-if="teacher.department" tone="teal">{{
@@ -918,7 +909,7 @@ onMounted(async () => {
                         <div class="font-pixel text-[9px] text-muted-foreground">CNPJ</div>
                         <div class="font-sans text-sm mt-1">
                             {{
-                                institutionProfile?.cnpj ? formatCnpj(institutionProfile.cnpj) : '-'
+                                institutionProfile?.cnpj ? cnpj.format(institutionProfile.cnpj) : '-'
                             }}
                         </div>
                     </div>
@@ -1165,7 +1156,7 @@ onMounted(async () => {
                         <PixelBadge tone="blue">
                             CNPJ:
                             {{
-                                institutionProfile?.cnpj ? formatCnpj(institutionProfile.cnpj) : '-'
+                                institutionProfile?.cnpj ? cnpj.format(institutionProfile.cnpj) : '-'
                             }}
                         </PixelBadge>
                         <PixelBadge tone="green">

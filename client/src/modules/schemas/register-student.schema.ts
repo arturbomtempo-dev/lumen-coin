@@ -1,3 +1,4 @@
+import { cpf } from 'docsbr';
 import { z } from 'zod';
 
 const avatarValues = ['MARIO', 'LUIGI', 'PEACH', 'TOAD', 'YOSHI', 'BOWSER'] as const;
@@ -27,8 +28,8 @@ export const registerStudentSchema = z
             .regex(/[^A-Za-z0-9]/, 'A senha deve conter pelo menos um caractere especial'),
         confirmPassword: z.string().min(1, 'Confirme sua senha'),
         avatar: z.enum(avatarValues, { message: 'Selecione um avatar' }),
-        cpf: z.string().refine((value) => /^\d{11}$/.test(digitsOnly(value)), {
-            message: 'O CPF deve conter exatamente 11 dígitos',
+        cpf: z.string().refine((value) => cpf.isValid(value), {
+            message: 'O CPF informado não é válido',
         }),
         rg: z
             .string()

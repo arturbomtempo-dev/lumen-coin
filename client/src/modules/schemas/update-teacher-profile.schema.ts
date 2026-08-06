@@ -1,6 +1,5 @@
+import { cpf } from 'docsbr';
 import { z } from 'zod';
-
-const digitsOnly = (value: string) => value.replace(/\D/g, '');
 
 const teacherAvatars = ['MARIO', 'LUIGI', 'PEACH', 'TOAD', 'YOSHI', 'BOWSER'] as const;
 
@@ -16,8 +15,8 @@ export const updateTeacherProfileSchema = z.object({
         .email('E-mail inválido')
         .max(255, 'O e-mail deve ter no máximo 255 caracteres'),
     avatar: z.enum(teacherAvatars),
-    cpf: z.string().refine((value) => /^\d{11}$/.test(digitsOnly(value)), {
-        message: 'O CPF deve conter exatamente 11 dígitos',
+    cpf: z.string().refine((value) => cpf.isValid(value), {
+        message: 'O CPF informado não é válido',
     }),
     department: z
         .string()

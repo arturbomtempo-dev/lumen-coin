@@ -1,6 +1,5 @@
+import { cpf } from 'docsbr';
 import { z } from 'zod';
-
-const digitsOnly = (value: string) => value.replace(/\D/g, '');
 
 export const registerTeacherSchema = z.object({
     name: z
@@ -13,8 +12,8 @@ export const registerTeacherSchema = z.object({
         .trim()
         .email('E-mail inválido')
         .max(255, 'O e-mail deve ter no máximo 255 caracteres'),
-    cpf: z.string().refine((value) => /^\d{11}$/.test(digitsOnly(value)), {
-        message: 'O CPF é inválido',
+    cpf: z.string().refine((value) => cpf.isValid(value), {
+        message: 'O CPF informado não é válido',
     }),
     department: z
         .string()

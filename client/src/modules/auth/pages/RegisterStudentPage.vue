@@ -29,6 +29,7 @@ import {
     PhIdentificationCard,
     PhUser,
 } from '@phosphor-icons/vue';
+import { cpf } from 'docsbr';
 import { vMaska } from 'maska/vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -252,7 +253,7 @@ async function submitStudent() {
             email: studentData.value.email.trim(),
             password: studentData.value.password,
             avatar: studentData.value.avatar,
-            cpf: digitsOnly(studentData.value.cpf),
+            cpf: cpf.unformat(studentData.value.cpf),
             rg: alphaNumericOnly(studentData.value.rg).toUpperCase(),
             zipCode: digitsOnly(studentData.value.zipCode) || undefined,
             address: buildAddress(),

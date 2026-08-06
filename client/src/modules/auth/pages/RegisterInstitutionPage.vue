@@ -20,6 +20,7 @@ import {
     PhHouse,
     PhIdentificationCard,
 } from '@phosphor-icons/vue';
+import { cnpj } from 'docsbr';
 import { vMaska } from 'maska/vue';
 import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -152,7 +153,7 @@ async function submitInstitution(): Promise<void> {
             name: institutionForm.value.name.trim(),
             email: institutionForm.value.email.trim(),
             password: institutionForm.value.password,
-            cnpj: digitsOnly(institutionForm.value.cnpj),
+            cnpj: cnpj.unformat(institutionForm.value.cnpj),
             zipCode: digitsOnly(institutionForm.value.zipCode),
             address: getAddress(),
         });

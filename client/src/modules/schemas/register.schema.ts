@@ -1,10 +1,11 @@
+import { cpf } from 'docsbr';
 import { z } from 'zod';
 
 export const registerStudentSchema = z
     .object({
         name: z.string().min(2, 'O nome deve ter pelo menos 2 caracteres'),
         email: z.string().email('E-mail inválido'),
-        cpf: z.string().length(11, 'O CPF deve ter exatamente 11 dígitos'),
+        cpf: z.string().refine((value) => cpf.isValid(value), 'CPF inválido'),
         rg: z.string().min(7, 'RG inválido'),
         address: z.string().min(5, 'Informe o endereço'),
         institutionId: z.string().min(1, 'Selecione uma instituição'),

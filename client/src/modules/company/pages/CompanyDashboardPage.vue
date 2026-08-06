@@ -27,6 +27,7 @@ import PixelButton from '@/shared/components/PixelButton.vue';
 import PixelCard from '@/shared/components/PixelCard.vue';
 import PixelInput from '@/shared/components/PixelInput.vue';
 import { useForm } from '@/shared/composables/useForm';
+import { cnpj } from 'docsbr';
 
 import { useThemeStore } from '@/shared/stores/theme.store';
 import {
@@ -226,15 +227,6 @@ const showCurrentPassword = ref(false);
 const showNewPassword = ref(false);
 const showConfirmNewPassword = ref(false);
 
-function digitsOnly(value: string): string {
-    return value.replace(/\D/g, '');
-}
-
-function formatCnpj(cnpj: string): string {
-    const digits = cnpj.replace(/\D/g, '');
-    return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-}
-
 async function loadProfile() {
     if (!authStore.user?.id) return;
     try {
@@ -242,7 +234,7 @@ async function loadProfile() {
         profileData.value = {
             name: response.data.name,
             email: response.data.email,
-            cnpj: formatCnpj(response.data.cnpj),
+            cnpj: cnpj.format(response.data.cnpj),
         };
     } catch {}
 }
@@ -255,7 +247,7 @@ async function handleUpdateProfile(e: Event) {
         await updateCompany(authStore.user.id, {
             name: profileData.value.name.trim(),
             email: profileData.value.email.trim(),
-            cnpj: digitsOnly(profileData.value.cnpj),
+            cnpj: cnpj.unformat(profileData.value.cnpj),
         });
         toast.success('Perfil atualizado com sucesso!');
         clearProfileErrors();

@@ -1,6 +1,5 @@
+import { cnpj } from 'docsbr';
 import { z } from 'zod';
-
-const digitsOnly = (v: string) => v.replace(/\D/g, '');
 
 export const registerCompanySchema = z
     .object({
@@ -17,7 +16,7 @@ export const registerCompanySchema = z
         cnpj: z
             .string()
             .min(1, 'O CNPJ é obrigatório')
-            .refine((v) => digitsOnly(v).length === 14, 'O CNPJ deve ter exatamente 14 dígitos'),
+            .refine((v) => cnpj.isValid(v), 'O CNPJ informado não é válido'),
         password: z
             .string()
             .min(8, 'A senha deve ter pelo menos 8 caracteres')
